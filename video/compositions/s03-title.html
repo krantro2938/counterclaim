@@ -1,0 +1,45 @@
+<template>
+  <style>
+    @font-face { font-family: "Newsreader"; src: url("assets/fonts/newsreader.woff2") format("woff2"); font-weight: 200 800; }
+    @font-face { font-family: "Geist"; src: url("assets/fonts/geist.woff2") format("woff2"); font-weight: 100 900; }
+    @font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono.woff2") format("woff2"); font-weight: 100 900; }
+    @font-face { font-family: "Fraunces"; src: url("assets/fonts/fraunces.woff2") format("woff2"); font-weight: 100 900; }
+    #root {
+      position: absolute; inset: 0; overflow: hidden;
+      --paper: oklch(0.985 0.004 85); --ink: oklch(0.22 0.012 60); --muted: oklch(0.5 0.012 60);
+      --line: oklch(0.9 0.008 80); --card: oklch(0.995 0.003 85); --seal: oklch(0.42 0.075 175);
+      --seal-soft: oklch(0.94 0.02 175); --won: oklch(0.5 0.13 150); --won-soft: oklch(0.95 0.04 150);
+      --lost: oklch(0.53 0.17 28); --lost-soft: oklch(0.95 0.03 28); --deadline: oklch(0.55 0.13 65); --deadline-soft: oklch(0.96 0.05 80);
+      --sim: oklch(0.52 0.12 300); --sim-soft: oklch(0.96 0.03 300);
+      background: var(--paper); color: var(--ink); font-family: "Geist", sans-serif;
+    }
+    .display { font-family: "Newsreader", serif; font-optical-sizing: auto; letter-spacing: -0.01em; line-height: 1.1; }
+    .mono { font-family: "Geist Mono", monospace; font-variant-numeric: tabular-nums; }
+
+    #s3-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #s3-mark { display: flex; align-items: center; gap: 40px; }
+    #s3-word { font-size: 170px; font-weight: 600; }
+    #s3-sub { font-size: 46px; color: var(--muted); margin-top: 36px; }
+    #s3-line { position: absolute; left: 50%; top: 690px; width: 720px; height: 3px; margin-left: -360px; background: var(--seal); transform-origin: center; }
+
+  </style>
+  <div id="root" data-composition-id="s03-title" data-width="1920" data-height="1080">
+
+    <div id="s3-wrap" data-hold="true" class="clip" data-start="0" data-duration="8" data-track-index="1">
+      <div id="s3-mark"><span id="s3-logo"><svg viewBox="0 0 32 32" width="120" height="120"><rect width="32" height="32" rx="8" fill="oklch(0.42 0.075 175)"/><path d="M21.5 11.2a7 7 0 1 0 0 9.6" stroke="oklch(0.985 0.004 85)" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="22" cy="16" r="2" fill="oklch(0.985 0.004 85)"/></svg></span><span id="s3-word" class="display"><span class="l">C</span><span class="l">o</span><span class="l">u</span><span class="l">n</span><span class="l">t</span><span class="l">e</span><span class="l">r</span><span class="l">c</span><span class="l">l</span><span class="l">a</span><span class="l">i</span><span class="l">m</span></span></div>
+      <div id="s3-sub">An AI dispute agent for small PayPal merchants.</div>
+      <div id="s3-line"></div>
+    </div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#s3-logo", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, 0.2);
+    tl.fromTo("#s3-word .l", { opacity: 0.25, filter: "blur(4px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, stagger: 0.05 }, 0.45);
+    tl.fromTo("#s3-sub", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 1.6);
+    tl.fromTo("#s3-line", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power4.out" }, 1.9);
+
+    window.__timelines["s03-title"] = tl;
+  </script>
+</template>

@@ -1,0 +1,7 @@
+.hyperframes
+renders
+out
+node_modules
+recordings
+audio/*.wav
+!audio/candidates/

@@ -1,0 +1,48 @@
+<template>
+  <style>
+    @font-face { font-family: "Newsreader"; src: url("assets/fonts/newsreader.woff2") format("woff2"); font-weight: 200 800; }
+    @font-face { font-family: "Geist"; src: url("assets/fonts/geist.woff2") format("woff2"); font-weight: 100 900; }
+    @font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono.woff2") format("woff2"); font-weight: 100 900; }
+    @font-face { font-family: "Fraunces"; src: url("assets/fonts/fraunces.woff2") format("woff2"); font-weight: 100 900; }
+    #root {
+      position: absolute; inset: 0; overflow: hidden;
+      --paper: oklch(0.985 0.004 85); --ink: oklch(0.22 0.012 60); --muted: oklch(0.5 0.012 60);
+      --line: oklch(0.9 0.008 80); --card: oklch(0.995 0.003 85); --seal: oklch(0.42 0.075 175);
+      --seal-soft: oklch(0.94 0.02 175); --won: oklch(0.5 0.13 150); --won-soft: oklch(0.95 0.04 150);
+      --lost: oklch(0.53 0.17 28); --lost-soft: oklch(0.95 0.03 28); --deadline: oklch(0.55 0.13 65); --deadline-soft: oklch(0.96 0.05 80);
+      --sim: oklch(0.52 0.12 300); --sim-soft: oklch(0.96 0.03 300);
+      background: var(--paper); color: var(--ink); font-family: "Geist", sans-serif;
+    }
+    .display { font-family: "Newsreader", serif; font-optical-sizing: auto; letter-spacing: -0.01em; line-height: 1.1; }
+    .mono { font-family: "Geist Mono", monospace; font-variant-numeric: tabular-nums; }
+
+    #s12-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #s12-mark { display: flex; align-items: center; gap: 28px; }
+    #s12-word { font-size: 110px; font-weight: 600; }
+    #s12-tag { font-size: 52px; margin-top: 30px; }
+    #s12-urls { margin-top: 64px; display: flex; flex-direction: column; align-items: center; gap: 14px; font-size: 34px; }
+    #s12-urls .mono { color: var(--seal); }
+    #s12-fine { position: absolute; bottom: 70px; left: 0; right: 0; text-align: center; font-size: 26px; color: var(--muted); }
+
+  </style>
+  <div id="root" data-composition-id="s12-outro" data-width="1920" data-height="1080">
+
+    <div id="s12-wrap" class="clip" data-start="0" data-duration="7" data-track-index="1">
+      <div id="s12-mark"><span id="s12-logo"><svg viewBox="0 0 32 32" width="84" height="84"><rect width="32" height="32" rx="8" fill="oklch(0.42 0.075 175)"/><path d="M21.5 11.2a7 7 0 1 0 0 9.6" stroke="oklch(0.985 0.004 85)" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="22" cy="16" r="2" fill="oklch(0.985 0.004 85)"/></svg></span><span id="s12-word" class="display">Counterclaim</span></div>
+      <div id="s12-tag" class="display"><span class="w">Stop</span> <span class="w">losing</span> <span class="w">disputes</span> <span class="w">you</span> <span class="w">should</span> <span class="w">win.</span></div>
+      <div id="s12-urls"><span class="mono">counterclaim.aansl.com</span><span class="mono" style="color:var(--muted)">github.com/krantro2938/counterclaim</span></div>
+    </div>
+    <div id="s12-fine" class="clip" data-start="0" data-duration="7" data-track-index="2">Built on the PayPal sandbox for the PayPal AI Hackathon · Voice-over generated with Mistral Voxtral TTS · Carrier scans in the demo are simulated</div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#s12-mark", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, 0.1);
+    tl.fromTo("#s12-tag .w", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.07 }, 0.6);
+    tl.fromTo("#s12-urls > span", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.2 }, 1.4);
+    tl.fromTo("#s12-fine", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 1.8);
+
+    window.__timelines["s12-outro"] = tl;
+  </script>
+</template>

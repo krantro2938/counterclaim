@@ -11,7 +11,8 @@ _Last update: Wed Nov 11 00:45 MSK · Current gate: **G0 (late, blocked on PayPa
    - Then I'll run `pnpm tsx --env-file=.env scripts/paypal-check.ts --register-webhook https://counterclaim.aansl.com/webhooks/paypal`, copy creds + webhook id to the server `.env`, and redeploy.
 2. **Sandbox buyer login in the connected browser.** Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
 3. _(optional)_ `ANTHROPIC_API_KEY` in `.env` for the Claude-vs-Mercury comparison at G2. Without it the demo runs on Mercury (works well, see below).
-4. _(optional)_ PayPal Claude Code plugin (`/plugin install paypal@claude-plugins-official`). Not needed: `scripts/paypal-check.ts` covers inspection.
+4. **Mistral API key has zero quota** (blocks Voxtral voice-over). `/v1/models` → 200, but every chat/TTS call returns 429 with `x-ratelimit-limit-req-minute: 0`. In https://console.mistral.ai → your workspace → **Billing / Plans**, activate a plan (the free "Experiment" tier or pay-as-you-go) so the key gets a non-zero rate limit. Then run: `pnpm tsx --env-file=.env video/tools/tts.ts --id 03 --text "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting." --voices voice_478,voice_3150,en_paul_neutral --out video/audio/candidates` (Sheila, James, Paul-neutral) and pick one. Fallback per VIDEO.md §3: record the VO yourself.
+5. _(optional)_ PayPal Claude Code plugin (`/plugin install paypal@claude-plugins-official`). Not needed: `scripts/paypal-check.ts` covers inspection.
 
 ## Done
 - **Env:** Node 22.23 + pnpm 12 pinned via `mise.toml` (system Node is 26). Docker OK. `gh` authenticated (krantro2938). SSH to aeza-de OK. `cloudflared` not installed (not needed, see Decisions).
@@ -29,7 +30,8 @@ Verify-first list when creds arrive (in order): token → `GET disputes?page_siz
 ## In progress / next
 - [ ] G0 sandbox truth (blocked #1): run `scripts/paypal-check.ts`, one purchase + one dispute, fill SPEC §6.5, mark ✅ in SPEC §6.3.
 - [x] README draft · webhook/REST tests with mocked fetch (30 tests) · agent chat (F15) · mobile QA of Overview/Inbox/Case (fixed overflow).
-- [ ] While blocked: video assets that don't depend on demo data (HyperFrames scenes 1–3, chapter cards, 11, 12; TTS tool). Script numbers wait for real data.
+- [x] Video (data-independent part): HyperFrames project in `video/` with scenes 1–3, chapter cards (Prevent/Defend/Decide), 11 (architecture), 12 (outro) = 63 s, `check` ok (remaining warnings: fine print under 28 px, no audio yet). `video/tools/tts.ts` (Voxtral, 429-backoff, 48 kHz, −16 LUFS, 300 ms pads). Voice candidates **blocked** (Needs Schreuder #4); local Kokoro fallback failed (espeak data path bug), dropped.
+- [ ] After G4: `video/script.md` from real demo data, render scenes, VO.
 
 ## Decisions
 - **Deploy target: aeza-de** (docker compose + existing Caddy) per Schreuder's brief instead of Render. Same image runs web (`node .output/server/index.mjs`) and worker (`tsx src/worker/index.ts`), `WORKER_MODE=separate`.
