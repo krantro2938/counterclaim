@@ -19,7 +19,7 @@ import {
 	saveColumnState,
 } from "#/components/grid";
 import { Money } from "#/components/money";
-import { PageHeader } from "#/components/page";
+import { Page, PageHeader } from "#/components/page";
 import { ProtectionBadge, SimulatedTag } from "#/components/status";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
@@ -68,15 +68,16 @@ function OrdersPage() {
 	const atRisk = rows.filter((r) => r.protectionStatus === "at_risk").length;
 
 	return (
-		<div className="flex flex-col gap-4 p-4 md:p-6">
+		<Page wide>
 			<PageHeader
+				eyebrow="Work"
 				title="Orders & Protection"
 				subtitle="Keep every order eligible for PayPal Seller Protection: tracking on file, shipped to the PayPal address."
 			/>
 			{atRisk > 0 && (
 				<div
 					role="status"
-					className="flex items-center gap-3 rounded-lg border border-deadline/30 bg-deadline-soft px-4 py-3 text-sm"
+					className="-mt-4 flex items-center gap-3 rounded-xl bg-deadline-soft px-5 py-4 text-sm"
 				>
 					<ShieldAlert className="size-4 shrink-0 text-deadline" />
 					<span>
@@ -88,28 +89,30 @@ function OrdersPage() {
 					</span>
 				</div>
 			)}
-			<div className="flex items-center gap-2">
-				<Input
-					value={quick}
-					onChange={(e) => setQuick(e.target.value)}
-					placeholder="Filter orders…"
-					className="h-9 w-full sm:w-64"
-					aria-label="Quick filter"
-				/>
+			<div className="flex flex-col gap-5">
+				<div className="flex items-center gap-2">
+					<Input
+						value={quick}
+						onChange={(e) => setQuick(e.target.value)}
+						placeholder="Filter orders…"
+						className="w-full rounded-full px-4 sm:w-72"
+						aria-label="Quick filter"
+					/>
+				</div>
+				{q.isError ? (
+					<ErrorBox
+						message={(q.error as Error).message}
+						onRetry={() => q.refetch()}
+					/>
+				) : isMobile ? (
+					<OrderCards rows={rows} loading={q.isLoading} quick={quick} />
+				) : (
+					<ClientOnly fallback={<GridSkeleton />}>
+						<OrdersGrid rows={rows} loading={q.isLoading} quick={quick} />
+					</ClientOnly>
+				)}
 			</div>
-			{q.isError ? (
-				<ErrorBox
-					message={(q.error as Error).message}
-					onRetry={() => q.refetch()}
-				/>
-			) : isMobile ? (
-				<OrderCards rows={rows} loading={q.isLoading} quick={quick} />
-			) : (
-				<ClientOnly fallback={<GridSkeleton />}>
-					<OrdersGrid rows={rows} loading={q.isLoading} quick={quick} />
-				</ClientOnly>
-			)}
-		</div>
+		</Page>
 	);
 }
 
@@ -189,7 +192,7 @@ export function ShipButton({
 						</SelectContent>
 					</Select>
 				</div>
-				<div className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+				<div className="flex items-center justify-between rounded-lg bg-muted px-3.5 py-2.5 text-sm">
 					<span>Generate tracking number</span>
 					<SimulatedTag />
 				</div>
@@ -378,7 +381,7 @@ function OrdersGrid({
 		<div
 			className="w-full"
 			style={{
-				height: Math.min(640, Math.max(260, 38 + sorted.length * 44 + 18)),
+				height: Math.min(780, Math.max(260, 46 + sorted.length * 60 + 24)),
 			}}
 		>
 			<AgGridReact<OrderRowDto>
@@ -435,9 +438,9 @@ function OrderCards({
 			</p>
 		);
 	return (
-		<ul className="divide-y rounded-lg border bg-card">
+		<ul className="space-y-3">
 			{list.map((o) => (
-				<li key={o.id} className="space-y-2 p-4">
+				<li key={o.id} className="field space-y-3 p-5">
 					<div className="flex items-center justify-between gap-2">
 						<span className="font-mono text-sm">#{o.number}</span>
 						<Money amountMinor={o.amountMinor} currency={o.currency} />

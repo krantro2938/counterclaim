@@ -28,12 +28,12 @@ export function ScoreMeter({
 			<div className={cn("text-muted-foreground", className)}>No score yet</div>
 		);
 	return (
-		<div className={cn("space-y-2", className)}>
-			<div className="flex items-baseline justify-between gap-3">
-				<span className="eyebrow">Win likelihood</span>
+		<div className={cn("space-y-3", className)}>
+			<div className="flex items-end justify-between gap-3">
+				<span className="eyebrow pb-1.5">Win likelihood</span>
 				<span
 					className={cn(
-						"font-display text-4xl font-medium tabular",
+						"font-display text-[56px] leading-none tabular",
 						textToneFor(final),
 					)}
 				>
@@ -41,7 +41,7 @@ export function ScoreMeter({
 				</span>
 			</div>
 			<div
-				className="relative h-2 overflow-hidden rounded-full bg-muted"
+				className="relative h-1.5 overflow-hidden rounded-full bg-muted"
 				role="meter"
 				aria-valuemin={0}
 				aria-valuemax={100}
@@ -57,7 +57,7 @@ export function ScoreMeter({
 				/>
 			</div>
 			{(rubric != null || llm != null) && (
-				<div className="grid grid-cols-2 gap-4 pt-1">
+				<div className="grid grid-cols-2 gap-6 pt-2">
 					<ThinBar
 						label="Rules"
 						value={rubric}
@@ -87,7 +87,7 @@ function ThinBar({
 					{value == null ? "—" : Math.round(value)}
 				</span>
 			</div>
-			<div className="mt-1 h-1 overflow-hidden rounded-full bg-muted">
+			<div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
 				<div
 					className="h-full rounded-full bg-foreground/40"
 					style={{ width: `${value ?? 0}%` }}

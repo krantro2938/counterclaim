@@ -8,24 +8,32 @@ import { Skeleton } from "./ui/skeleton";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-/** AG Grid Theming API mapped to our shadcn tokens (DESIGN §10). Dark mode follows the CSS variables. */
+/** AG Grid Theming API mapped to our tokens (DESIGN §10): no outer frame, no column lines,
+ * hairline rows, airy row height. Dark mode follows the CSS variables. */
 export const counterclaimGrid = themeQuartz.withParams({
 	fontFamily: "var(--font-sans)",
-	fontSize: 13,
-	headerFontSize: 12,
+	fontSize: 14,
+	headerFontSize: 11,
 	headerFontWeight: 500,
-	backgroundColor: "var(--card)",
+	backgroundColor: "var(--background)",
 	foregroundColor: "var(--foreground)",
-	headerBackgroundColor: "var(--muted)",
+	headerBackgroundColor: "var(--background)",
 	headerTextColor: "var(--muted-foreground)",
-	borderColor: "var(--border)",
-	rowHoverColor: "var(--accent)",
+	borderColor: "color-mix(in oklch, var(--border) 70%, transparent)",
+	wrapperBorder: false,
+	columnBorder: false,
+	headerColumnBorder: false,
+	headerColumnResizeHandleColor: "var(--border)",
+	headerRowBorder: true,
+	rowBorder: true,
+	pinnedColumnBorder: false,
+	rowHoverColor: "var(--muted)",
 	selectedRowBackgroundColor: "var(--accent)",
 	accentColor: "var(--primary)",
-	rowHeight: 44,
-	headerHeight: 36,
-	wrapperBorderRadius: "var(--radius)",
-	cellHorizontalPadding: 12,
+	rowHeight: 60,
+	headerHeight: 44,
+	wrapperBorderRadius: 0,
+	cellHorizontalPadding: 16,
 	valueChangeValueHighlightBackgroundColor: "var(--accent)",
 	browserColorScheme: "inherit",
 });
@@ -45,10 +53,14 @@ export function ClientOnly({
 
 export function GridSkeleton({ rows = 6 }: { rows?: number }) {
 	return (
-		<div className="w-full space-y-2 p-3" aria-busy="true" aria-label="Loading">
+		<div
+			className="w-full space-y-3 py-3"
+			aria-busy="true"
+			aria-label="Loading"
+		>
 			{Array.from({ length: rows }, (_, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton rows
-				<Skeleton key={i} className="h-8 w-full" />
+				<Skeleton key={i} className="h-11 w-full rounded-lg" />
 			))}
 		</div>
 	);

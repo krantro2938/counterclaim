@@ -144,17 +144,17 @@ export function ActionProposal({
 		<div
 			ref={ref}
 			className={cn(
-				"space-y-3 rounded-lg border bg-card p-4 transition-shadow",
-				highlight && "ring-2 ring-primary/40",
+				"field space-y-5 p-6 transition-shadow",
+				highlight && "ring-2 ring-primary/30",
 			)}
 		>
 			<div className="flex items-start gap-3">
-				<span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
+				<span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background text-primary">
 					<Icon className="size-4" />
 				</span>
 				<div className="min-w-0 flex-1">
 					<div className="flex flex-wrap items-center gap-2">
-						<p className="font-medium">
+						<p className="text-[15px] font-medium">
 							{primaryLabel(action, detail.dispute.currency)}
 						</p>
 						{action.source === "autopilot" && (
@@ -165,7 +165,7 @@ export function ActionProposal({
 						)}
 						<StatusPill status={status} />
 					</div>
-					<p className="mt-0.5 text-sm text-muted-foreground">
+					<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
 						{effectText(
 							{
 								type: action.type,
@@ -203,7 +203,7 @@ export function ActionProposal({
 						rows={action.type === "send_message" ? 4 : 3}
 						disabled={!editable || busy}
 						maxLength={2000}
-						className="text-sm"
+						className="bg-background text-sm"
 					/>
 				</div>
 			) : null}
@@ -223,7 +223,7 @@ export function ActionProposal({
 							value={amount}
 							onChange={(e) => setAmount(e.target.value)}
 							inputMode="decimal"
-							className="w-28 font-mono"
+							className="w-32 bg-background font-mono"
 							disabled={!editable || busy}
 							aria-invalid={Boolean(amountErr)}
 						/>
@@ -243,7 +243,7 @@ export function ActionProposal({
 			{status === "failed" && action.error ? (
 				<div
 					role="alert"
-					className="rounded-md border border-lost/30 bg-lost-soft px-3 py-2 text-sm text-lost"
+					className="rounded-lg bg-lost-soft px-4 py-3 text-sm text-lost"
 				>
 					<p className="font-medium">
 						{String((action.error as { name?: string }).name ?? "Failed")}
@@ -261,7 +261,7 @@ export function ActionProposal({
 				Date.now() - new Date(action.decidedAt).getTime() > 120_000 && (
 					<p
 						role="status"
-						className="rounded-md bg-deadline-soft px-3 py-2 text-sm text-deadline"
+						className="rounded-lg bg-deadline-soft px-4 py-3 text-sm text-deadline"
 					>
 						Outcome unknown: PayPal hasn't confirmed this yet. Check the dispute
 						in PayPal before trying again; Counterclaim never re-sends

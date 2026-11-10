@@ -5,120 +5,63 @@ Use the shadcn CLI's current TanStack Start setup. Ask `researcher` for the exac
 
 ---
 
-## 1. Design concept: "the case desk"
+## 1. Design concept: "Orchard" (revised Nov 11)
 
-Counterclaim should feel like a **calm, competent paralegal's desk**: paper-like surfaces, precise typography, numbers you can trust, and a clear verdict on every case. It's the opposite of a noisy fintech dashboard. Three principles:
+Counterclaim should feel **quiet, premium and unhurried**, like an editorial brand rather than a fintech dashboard. Reference: the "Orchard" identity, with cream paper, deep forest green, sage fields, a high-contrast serif and a wide-tracked uppercase wordmark. Space does the work that lines used to do. Three principles still hold:
 
-1. **Verdict first.** Every dispute screen answers "what should I do, and how sure are you?" above the fold. Details follow.
-2. **Show your work.** Every AI claim links to a fact. The reasoning trace is a first-class, beautiful view, not a debug dump.
-3. **Money is sacred.** Amounts use tabular figures, exact cents and consistent signs. Money-moving buttons are deliberate: clear labels, the amount restated, one confirmation step.
+1. **Verdict first.** Every dispute screen answers "what should I do, and how sure are you?" above the fold, in a forest-green verdict field.
+2. **Show your work.** Every AI claim links to a fact. The reasoning trace is a first-class view.
+3. **Money is sacred.** Tabular figures, exact cents, deliberate money buttons (amount restated, one confirm step).
 
-What to avoid: PayPal's brand blue as our primary colour (we're a third-party tool; use the official PayPal button only in the shop), purple AI gradients, sparkle emoji, glassmorphism, centred hero layouts inside the app, cards nested inside cards.
+Rules of the style:
+- **Space over lines.** No section dividers, no `divide-y` lists, no bordered cards. Separate with whitespace (sections 48–56 px apart) and flat colour **fields** (`.field` = `rounded-xl bg-card`, no border, no shadow).
+- **One inverted field per screen at most** (`.on-forest`): the verdict card, and the won outcome. Tokens re-map inside it, so buttons become cream-on-green.
+- **Serif for voice, sans for work.** Big serif for titles, headlines and key numbers; small uppercase tracked eyebrows for labels.
+- Avoid: PayPal blue as our colour, purple AI gradients, sparkle emoji, glassmorphism, cards inside cards, hairlines around everything.
 
 ## 2. Typography
 
 | Role | Font | Usage |
 |---|---|---|
-| Display | **Newsreader** (Google Fonts, variable, opsz) | Page titles, the dispute headline, big KPI numbers on Overview. Weight 500–600, optical size high. |
-| UI | **Geist** (Vercel, via `@fontsource-variable/geist` or Google Fonts) | Everything else. |
-| Mono / figures | **Geist Mono** | IDs (dispute, capture, tracking), money columns in grids, trace payloads. |
+| Display | **Instrument Serif** 400 (`@fontsource/instrument-serif`) | Page titles 44/56 px, verdict headline 34 px, KPI values 52 px, score 56 px, list headlines 26 px. Never bold (`font-synthesis-weight: none`). |
+| UI | **Geist** | Everything else. Base **15 px**, line-height 1.55. |
+| Mono | **Geist Mono** | IDs, money in grids, endpoints, trace payloads. |
 
-- Base size 14px for app UI (dense, tool-like), 16px for the shop.
-- Scale (px): 12 / 13 / 14 / 16 / 20 / 24 / 32 / 44. Line-height 1.45 for body, 1.15 for display.
-- `font-variant-numeric: tabular-nums` on every number. Money is always right-aligned in tables.
-- Letter-spacing: display −0.01em; small-caps labels (`text-xs uppercase tracking-wide`) for section eyebrows only, and sparingly.
+- `.eyebrow`: 11 px, uppercase, `tracking-[0.14em]`, muted. Used for section labels, grid headers, KPI labels.
+- `.wordmark`: "COUNTERCLAIM", 13 px semibold, `tracking-[0.24em]`. The mark is an open "C" holding a four-point star (`Logo` in `src/routes/app.tsx`), drawn in `currentColor` (forest).
+- The evidence PDF keeps Newsreader (a formal document).
+
+### 2.1 Mark
+Open C arc + four-point star, monochrome, no container. On light it's forest; on the forest field it's cream.
 
 ## 3. Colour tokens
 
-Define in `globals.css` as shadcn CSS variables (OKLCH, Tailwind v4 `@theme inline` mapping). Neutrals are warm ("paper and ink"). One brand accent ("seal" deep teal-green), plus semantic colours for case outcomes.
+Source of truth: `src/styles.css` (OKLCH, mapped in `@theme inline`). Summary:
 
-```css
-:root {
-  --radius: 0.5rem;
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--sidebar` | cream `0.952 0.012 98` | `0.165 0.01 150` | Outer canvas (the app is an inset paper panel on it) |
+| `--background` | paper `0.99 0.004 95` | near-black green `0.195 0.012 150` | Content panel |
+| `--card` | cream field `0.966 0.009 100` | `0.228 0.014 150` | Flat fields |
+| `--foreground` | forest ink `0.22 0.014 150` | cream `0.94 0.014 95` | Text |
+| `--primary` | forest `0.38 0.07 155` | sage `0.87 0.045 125` | Buttons, mark, links |
+| `--forest` / `--forest-foreground` / `--forest-muted` | `0.32 0.055 155` / cream / `0.79 0.035 135` | same | The verdict field (`.on-forest`) |
+| `--sage` / `--sage-foreground` | `0.87 0.03 125` / `0.25 0.03 145` | `0.36 0.03 140` / `0.92 0.025 125` | Avatar, chart accent |
+| `--accent` | sage tint `0.935 0.02 130` | `0.28 0.028 150` | Active nav, hover, selection |
 
-  --background: oklch(0.985 0.004 85);     /* warm paper */
-  --foreground: oklch(0.22 0.012 60);      /* ink */
-  --card: oklch(0.995 0.003 85);
-  --card-foreground: var(--foreground);
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
-  --muted: oklch(0.955 0.006 85);
-  --muted-foreground: oklch(0.50 0.012 60);
-  --border: oklch(0.90 0.008 80);
-  --input: oklch(0.88 0.008 80);
-  --ring: oklch(0.52 0.09 175);
+Outcome semantics, desaturated to sit with the palette: `won` leaf green, `lost` terracotta, `deadline` ochre, `review` slate, `simulated` plum, each with a `-soft` background. Contrast AA in both modes. Inside `.on-forest` they re-map to light tints.
 
-  --primary: oklch(0.42 0.075 175);         /* seal green-teal */
-  --primary-foreground: oklch(0.985 0.004 85);
-  --secondary: oklch(0.945 0.008 85);
-  --secondary-foreground: var(--foreground);
-  --accent: oklch(0.94 0.02 175);
-  --accent-foreground: oklch(0.30 0.06 175);
-  --destructive: oklch(0.55 0.19 28);
-
-  /* outcome semantics */
-  --won: oklch(0.55 0.13 150);       --won-soft: oklch(0.95 0.04 150);
-  --lost: oklch(0.55 0.17 28);       --lost-soft: oklch(0.95 0.03 28);
-  --deadline: oklch(0.70 0.15 70);   --deadline-soft: oklch(0.96 0.05 80);
-  --review: oklch(0.55 0.10 250);    --review-soft: oklch(0.95 0.03 250);
-  --simulated: oklch(0.60 0.10 300); --simulated-soft: oklch(0.96 0.03 300);
-
-  /* likelihood scale (score bar) */
-  --score-low: var(--lost);
-  --score-mid: var(--deadline);
-  --score-high: var(--won);
-
-  --chart-1: var(--primary);
-  --chart-2: oklch(0.70 0.08 175);
-  --chart-3: var(--deadline);
-  --chart-4: var(--lost);
-  --chart-5: var(--review);
-
-  --sidebar: oklch(0.97 0.006 85);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-accent: oklch(0.93 0.012 85);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-ring: var(--ring);
-}
-
-.dark {
-  --background: oklch(0.17 0.008 60);
-  --foreground: oklch(0.93 0.006 85);
-  --card: oklch(0.205 0.008 60);
-  --popover: oklch(0.22 0.008 60);
-  --muted: oklch(0.25 0.008 60);
-  --muted-foreground: oklch(0.68 0.01 80);
-  --border: oklch(0.30 0.008 60);
-  --input: oklch(0.33 0.008 60);
-  --primary: oklch(0.72 0.09 175);
-  --primary-foreground: oklch(0.18 0.02 175);
-  --secondary: oklch(0.25 0.008 60);
-  --accent: oklch(0.28 0.03 175);
-  --accent-foreground: oklch(0.88 0.05 175);
-  --won: oklch(0.72 0.14 150);       --won-soft: oklch(0.28 0.05 150);
-  --lost: oklch(0.70 0.16 28);       --lost-soft: oklch(0.28 0.05 28);
-  --deadline: oklch(0.80 0.14 75);   --deadline-soft: oklch(0.30 0.05 75);
-  --review: oklch(0.72 0.10 250);    --review-soft: oklch(0.28 0.04 250);
-  --simulated: oklch(0.75 0.10 300); --simulated-soft: oklch(0.28 0.04 300);
-  --sidebar: oklch(0.19 0.008 60);
-  --sidebar-accent: oklch(0.25 0.01 60);
-}
-```
-Map the extra tokens in `@theme inline` (`--color-won: var(--won);` etc.) so classes like `bg-won-soft text-won` work. Contrast: verify AA (4.5:1) for text on soft backgrounds in both modes and adjust lightness if needed.
-
-Theme: follows the system by default, with a toggle in the user menu (light / dark / system).
+Theme follows the system, with a toggle (light / dark / system).
 
 ## 4. Layout, spacing, shape
 
-- Spacing unit 4px. Common: 8, 12, 16, 24, 32. Page padding 24px desktop, 16px mobile.
-- App shell: shadcn **Sidebar** (collapsible to icons) on the left, 240px. Top bar inside the content area: breadcrumb, global search (⌘K command palette), sync indicator, theme toggle.
-- Content max width: none for grids; 1200px for detail pages.
-- Radius: `--radius` 0.5rem. Cards are flat: 1px `border`, no shadow. Popovers and dialogs get `shadow-lg`.
-- Dividers over boxes: prefer separators and section headings to wrapping everything in cards.
-- Breakpoints: ≥1280 two-column dispute detail; 768–1279 stacked with sticky verdict; <768 single column, the sidebar becomes a sheet, grids switch to card lists (see §8).
+- **Shell:** shadcn Sidebar `variant="inset"`, `collapsible="icon"`. The sidebar has no border and sits on the cream canvas. Content is a rounded paper panel. The header is 64 px, borderless and translucent: breadcrumb, a search pill (⌘K), Live, theme.
+- **Page** (`<Page>` in `components/page.tsx`): `px-5 md:px-10`, sections `gap-12 md:gap-14`, max width 1280 px (1480 px `wide` for grids and the case page).
+- **PageHeader:** eyebrow, then serif title 44/56 px, then a 15 px muted subtitle.
+- **Radius:** `--radius` 0.75 rem. Fields are `rounded-xl` (16 px), the verdict `rounded-2xl`. **Buttons and selects are pills** (`rounded-full`, h-10 default, h-12 lg). Inputs are filled (`bg-muted`, no border); inside a field use `bg-background`.
+- **Segmented filters:** a pill track (`bg-muted p-1`); the active segment lifts to `bg-background`.
+- Overlays (popover, dropdown, dialog): `rounded-xl`/`2xl`, soft shadow, at most a 70 % hairline.
+- Breakpoints: ≥1280 two-column case page (3fr / 2fr, gap 56 px); below that the verdict comes first; <768 the sidebar is a sheet and grids become field cards.
 
 ## 5. Navigation and routes
 
@@ -147,7 +90,7 @@ Sidebar groups: **Work** (Overview, Disputes [count badge = needs decision], Ord
 | `ReasonLabel` | Human label for the PayPal reason enum: "Item not received", "Not as described", "Unauthorised", etc. + small icon. |
 | `DeadlineChip` | Relative due time ("2d 4h left"), turns `deadline` < 72 h and `lost` < 24 h. Tooltip shows the exact UTC/local time. |
 | `ScoreMeter` | Horizontal 0–100 bar on the score gradient, big number in display font, label "Win likelihood". Below it, two thin bars: "Rubric 82" and "AI 91", explaining the hybrid score. Never shows decimals. |
-| `VerdictCard` | Top of case detail: headline (Newsreader 24), ScoreMeter, recommended action as the **primary button** with the amount restated, secondary "Other options" menu. |
+| `VerdictCard` | Top of case detail, in the `.on-forest` field: eyebrow "Counterclaim recommends", headline (serif 34), ScoreMeter, recommended action as the **primary button** with the amount restated, secondary "Other options" menu. |
 | `FactChip` | Inline pill `F3` with source icon (PayPal / carrier / store / messages). Hover-card shows the full fact. Simulated facts get the `simulated` dot. |
 | `ReasoningList` | Numbered points; each ends with its FactChips. Risks in a muted sub-list with a warning icon. |
 | `ActionProposal` | Card per proposed action: type icon, what will happen in PayPal ("Sends PROOF_OF_FULFILLMENT with tracking 9400… and evidence.pdf"), editable params (message textarea, amount input), the API endpoint as a small mono caption, buttons Approve / Edit / Reject. Approve opens an `AlertDialog` restating the effect and the amount. |
@@ -155,7 +98,7 @@ Sidebar groups: **Work** (Overview, Disputes [count badge = needs decision], Ord
 | `TraceViewer` | "How Counterclaim reached this": steps as a collapsible list: Model thought summary → Tool call (name + args in mono) → Result (truncated, expandable) → Validation (✓ kept / ✕ dropped, with reason). A header line shows model, latency, tokens. |
 | `EvidencePreview` | PDF in an `<iframe>` inside a `Sheet` (right side, 720px) plus a download button; the thumbnail on the case page shows page 1 (render server-side to PNG if cheap, otherwise an icon + filename + size). |
 | `ProtectionBadge` | Protected (`won`, shield-check), At risk (`deadline`, shield-alert), Not eligible (`lost`, shield-x). Tooltip lists the reasons. |
-| `KpiTile` | Label (13px muted), value (Newsreader 32, tabular), delta vs previous period, tiny sparkline. No card background, just a top border, laid out in a 4-up row. |
+| `KpiTile` | Eyebrow label, value in Instrument Serif 52, quiet hint and tiny sparkline. No card, no border; a 4-up row with generous gaps. |
 | `LiveIndicator` | Dot + "Live" when SSE is connected; "Reconnecting…" otherwise. |
 | `SimulatedTag` | Small `simulated`-coloured tag "Simulated", used wherever CarrierSim or sandbox-only operations appear. Honesty is part of the design. |
 
@@ -215,28 +158,7 @@ Clearly a tool: `simulated`-tinted page header "Sandbox controls — these call 
 - Prices tuned for sandbox escalation timing (SPEC §6.4), e.g. $64.00, $11.50, $9.40.
 
 ## 10. AG Grid theming
-Use the AG Grid **Theming API** (`themeQuartz.withParams({...})`, not legacy CSS themes), mapped to our tokens so the grid looks native to shadcn:
-```ts
-const counterclaimGrid = themeQuartz.withParams({
-  fontFamily: 'var(--font-sans)',
-  fontSize: 13,
-  headerFontSize: 12,
-  headerFontWeight: 500,
-  backgroundColor: 'var(--card)',
-  foregroundColor: 'var(--foreground)',
-  headerBackgroundColor: 'var(--muted)',
-  headerTextColor: 'var(--muted-foreground)',
-  borderColor: 'var(--border)',
-  rowHoverColor: 'var(--accent)',
-  selectedRowBackgroundColor: 'var(--accent)',
-  accentColor: 'var(--primary)',
-  rowHeight: 44,
-  headerHeight: 36,
-  wrapperBorderRadius: 'var(--radius)',
-  cellHorizontalPadding: 12,
-});
-```
-Researcher should confirm the param names against current AG Grid docs; dark mode via the theme's colour-scheme part or by the CSS variables flipping automatically. Cell-change flash colour = `--accent`.
+Theming API (`counterclaimGrid` in `src/components/grid.tsx`): background = `--background` (the grid sits on the paper, no frame); `wrapperBorder`, `columnBorder` and `headerColumnBorder` are false; hairline `rowBorder` at 70 % border; header on the paper with the eyebrow voice (11 px uppercase, tracked via `.ag-header-cell-text`). Font 14 px, row height 60 (44 compact), header 44, cell padding 16, hover = `--muted`, flash = `--accent`. Group rows are full-width eyebrow labels with no fill.
 
 ## 11. Motion
 - Durations: 120 ms (hover, press), 200 ms (popovers, row flash), 320 ms (sheet, timeline item insert).

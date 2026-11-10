@@ -21,7 +21,7 @@ import {
 	saveColumnState,
 } from "#/components/grid";
 import { Money } from "#/components/money";
-import { PageHeader } from "#/components/page";
+import { Page, PageHeader } from "#/components/page";
 import { MiniScore } from "#/components/score-meter";
 import {
 	DeadlineChip,
@@ -123,137 +123,144 @@ function DisputesInbox() {
 	}, [q.data]);
 
 	return (
-		<div className="flex flex-col gap-4 p-4 md:p-6">
+		<Page wide>
 			<PageHeader
+				eyebrow="Work"
 				title="Disputes"
 				subtitle="Every PayPal dispute on your account, scored and ready for a decision."
 			/>
-			<div className="flex flex-wrap items-center gap-2">
-				<Input
-					value={quick}
-					onChange={(e) => setQuick(e.target.value)}
-					placeholder="Filter by buyer, order, ID…"
-					className="h-9 w-full sm:w-64"
-					aria-label="Quick filter"
-				/>
-				<ToggleGroup
-					type="single"
-					value={segment}
-					onValueChange={(v) => v && setSegment(v as Segment)}
-					variant="outline"
-					size="sm"
-					className="overflow-x-auto"
-				>
-					<ToggleGroupItem value="all">
-						All {counts.all ? <Count n={counts.all} /> : null}
-					</ToggleGroupItem>
-					<ToggleGroupItem value="yours">
-						Your move {counts.yours ? <Count n={counts.yours} /> : null}
-					</ToggleGroupItem>
-					<ToggleGroupItem value="paypal">
-						With PayPal {counts.paypal ? <Count n={counts.paypal} /> : null}
-					</ToggleGroupItem>
-					<ToggleGroupItem value="resolved">
-						Resolved {counts.resolved ? <Count n={counts.resolved} /> : null}
-					</ToggleGroupItem>
-				</ToggleGroup>
-				<Select value={reason} onValueChange={setReason}>
-					<SelectTrigger size="sm" className="w-44" aria-label="Reason">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">All reasons</SelectItem>
-						{Object.entries(REASON_LABELS).map(([k, v]) => (
-							<SelectItem key={k} value={k}>
-								{v}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				<div className="ml-auto flex items-center gap-1">
-					{!isMobile && (
-						<>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<Button
-										variant={grouped ? "secondary" : "ghost"}
-										size="icon"
-										className="size-9"
-										aria-label="Group by status"
-										aria-pressed={grouped}
-										onClick={() => setGrouped((g) => !g)}
-									>
-										<Layers className="size-4" />
-									</Button>
-								</TooltipTrigger>
-								<TooltipContent>Group by status</TooltipContent>
-							</Tooltip>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<Button
-										variant="ghost"
-										size="icon"
-										className="size-9"
-										aria-label="Toggle density"
-										onClick={() => setDense((d) => !d)}
-									>
-										{dense ? (
-											<Rows3 className="size-4" />
-										) : (
-											<Rows4 className="size-4" />
-										)}
-									</Button>
-								</TooltipTrigger>
-								<TooltipContent>
-									{dense ? "Comfortable rows" : "Compact rows"}
-								</TooltipContent>
-							</Tooltip>
-						</>
-					)}
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => sync.mutate()}
-						disabled={sync.isPending}
-						className="gap-1.5"
-					>
-						<RefreshCw
-							className={cn("size-3.5", sync.isPending && "animate-spin")}
-						/>
-						Sync now
-					</Button>
-				</div>
-			</div>
-			{q.isError ? (
-				<ErrorBox
-					message={(q.error as Error).message}
-					onRetry={() => q.refetch()}
-				/>
-			) : isMobile ? (
-				<DisputeCards rows={rows} loading={q.isLoading} quick={quick} />
-			) : (
-				<ClientOnly fallback={<GridSkeleton />}>
-					<DisputesGrid
-						rows={rows}
-						loading={q.isLoading}
-						quick={quick}
-						grouped={grouped}
-						dense={dense}
+			<div className="flex flex-col gap-5">
+				<div className="flex flex-wrap items-center gap-3">
+					<Input
+						value={quick}
+						onChange={(e) => setQuick(e.target.value)}
+						placeholder="Filter by buyer, order, ID…"
+						className="w-full rounded-full px-4 sm:w-72"
+						aria-label="Quick filter"
 					/>
-				</ClientOnly>
-			)}
-			<p className="text-xs text-muted-foreground">
-				Tip: <kbd className="font-mono">j</kbd>/
-				<kbd className="font-mono">k</kbd> to move,{" "}
-				<kbd className="font-mono">Enter</kbd> to open.
-			</p>
-		</div>
+					<ToggleGroup
+						type="single"
+						value={segment}
+						onValueChange={(v) => v && setSegment(v as Segment)}
+						spacing={1}
+						className={SEGMENTED}
+					>
+						<ToggleGroupItem value="all" className={SEGMENT}>
+							All {counts.all ? <Count n={counts.all} /> : null}
+						</ToggleGroupItem>
+						<ToggleGroupItem value="yours" className={SEGMENT}>
+							Your move {counts.yours ? <Count n={counts.yours} /> : null}
+						</ToggleGroupItem>
+						<ToggleGroupItem value="paypal" className={SEGMENT}>
+							With PayPal {counts.paypal ? <Count n={counts.paypal} /> : null}
+						</ToggleGroupItem>
+						<ToggleGroupItem value="resolved" className={SEGMENT}>
+							Resolved {counts.resolved ? <Count n={counts.resolved} /> : null}
+						</ToggleGroupItem>
+					</ToggleGroup>
+					<Select value={reason} onValueChange={setReason}>
+						<SelectTrigger className="w-48" aria-label="Reason">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">All reasons</SelectItem>
+							{Object.entries(REASON_LABELS).map(([k, v]) => (
+								<SelectItem key={k} value={k}>
+									{v}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+					<div className="ml-auto flex items-center gap-1">
+						{!isMobile && (
+							<>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											variant={grouped ? "secondary" : "ghost"}
+											size="icon"
+											className="size-9"
+											aria-label="Group by status"
+											aria-pressed={grouped}
+											onClick={() => setGrouped((g) => !g)}
+										>
+											<Layers className="size-4" />
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>Group by status</TooltipContent>
+								</Tooltip>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											variant="ghost"
+											size="icon"
+											className="size-9"
+											aria-label="Toggle density"
+											onClick={() => setDense((d) => !d)}
+										>
+											{dense ? (
+												<Rows3 className="size-4" />
+											) : (
+												<Rows4 className="size-4" />
+											)}
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>
+										{dense ? "Comfortable rows" : "Compact rows"}
+									</TooltipContent>
+								</Tooltip>
+							</>
+						)}
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => sync.mutate()}
+							disabled={sync.isPending}
+							className="gap-1.5"
+						>
+							<RefreshCw
+								className={cn("size-3.5", sync.isPending && "animate-spin")}
+							/>
+							Sync now
+						</Button>
+					</div>
+				</div>
+				{q.isError ? (
+					<ErrorBox
+						message={(q.error as Error).message}
+						onRetry={() => q.refetch()}
+					/>
+				) : isMobile ? (
+					<DisputeCards rows={rows} loading={q.isLoading} quick={quick} />
+				) : (
+					<ClientOnly fallback={<GridSkeleton />}>
+						<DisputesGrid
+							rows={rows}
+							loading={q.isLoading}
+							quick={quick}
+							grouped={grouped}
+							dense={dense}
+						/>
+					</ClientOnly>
+				)}
+				<p className="text-xs text-muted-foreground">
+					Tip: <kbd className="font-mono">j</kbd>/
+					<kbd className="font-mono">k</kbd> to move,{" "}
+					<kbd className="font-mono">Enter</kbd> to open.
+				</p>
+			</div>
+		</Page>
 	);
 }
 
+/** Pill segmented control (DESIGN §6.1): a muted track, the active segment lifts to paper. */
+export const SEGMENTED = "max-w-full overflow-x-auto rounded-full bg-muted p-1";
+export const SEGMENT =
+	"h-8 rounded-full px-3.5 text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm";
+
 function Count({ n }: { n: number }) {
 	return (
-		<span className="ml-1 rounded bg-muted px-1 font-mono text-[11px] tabular text-muted-foreground">
+		<span className="ml-0.5 font-mono text-[11px] tabular text-muted-foreground">
 			{n}
 		</span>
 	);
@@ -269,7 +276,7 @@ export function ErrorBox({
 	return (
 		<div
 			role="alert"
-			className="flex items-center justify-between gap-3 rounded-lg border border-lost/30 bg-lost-soft px-4 py-3 text-sm text-lost"
+			className="flex items-center justify-between gap-3 rounded-xl bg-lost-soft px-5 py-4 text-sm text-lost"
 		>
 			<span>Couldn't load data: {message}</span>
 			{onRetry && (
@@ -323,9 +330,11 @@ function IdCell({ value }: ICellRendererParams<Row, string>) {
 function GroupHeader({ data }: ICellRendererParams<Row>) {
 	if (!isGroup(data)) return null;
 	return (
-		<div className="flex h-full items-center gap-2 bg-muted/60 px-3 text-xs font-medium text-muted-foreground">
-			<span className="uppercase tracking-wide">{data.__group}</span>
-			<span className="font-mono tabular">{data.count}</span>
+		<div className="flex h-full items-end gap-2 px-4 pb-2.5">
+			<span className="eyebrow">{data.__group}</span>
+			<span className="font-mono text-[11px] tabular text-muted-foreground">
+				{data.count}
+			</span>
 		</div>
 	);
 }
@@ -355,7 +364,7 @@ function DisputesGrid({
 				headerName: "Status",
 				field: "status" as never,
 				pinned: "left",
-				width: 132,
+				width: 140,
 				cellRenderer: StatusCell,
 				enableCellChangeFlash: true,
 			},
@@ -363,14 +372,14 @@ function DisputesGrid({
 				colId: "id",
 				headerName: "Dispute",
 				field: "id",
-				width: 140,
+				width: 150,
 				cellRenderer: IdCell,
 			},
 			{
 				colId: "orderNumber",
 				headerName: "Order",
 				field: "orderNumber" as never,
-				width: 80,
+				width: 96,
 				valueFormatter: (p) => (p.value ? `#${p.value}` : "—"),
 				cellClass: "font-mono tabular",
 			},
@@ -386,7 +395,7 @@ function DisputesGrid({
 				colId: "reason",
 				headerName: "Reason",
 				field: "reason" as never,
-				width: 165,
+				width: 185,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
 						<ReasonLabel reason={p.data.reason} />
@@ -396,7 +405,7 @@ function DisputesGrid({
 				colId: "amount",
 				headerName: "Amount",
 				field: "amountMinor" as never,
-				width: 100,
+				width: 116,
 				type: "rightAligned",
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
@@ -410,7 +419,7 @@ function DisputesGrid({
 				colId: "due",
 				headerName: "Due",
 				field: "dueAt" as never,
-				width: 118,
+				width: 132,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
 						<DeadlineChip
@@ -423,7 +432,7 @@ function DisputesGrid({
 				colId: "score",
 				headerName: "Win likelihood",
 				field: "finalScore" as never,
-				width: 135,
+				width: 168,
 				enableCellChangeFlash: true,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
@@ -438,7 +447,7 @@ function DisputesGrid({
 				colId: "recommended",
 				headerName: "Recommended",
 				field: "recommendedAction" as never,
-				width: 165,
+				width: 180,
 				enableCellChangeFlash: true,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data &&
@@ -589,10 +598,10 @@ function DisputesGrid({
 			className="w-full"
 			style={{
 				height: Math.min(
-					640,
+					780,
 					Math.max(
 						260,
-						38 + (rows.length + (grouped ? 6 : 0)) * (dense ? 36 : 44) + 18,
+						46 + rows.length * (dense ? 44 : 60) + (grouped ? 4 * 48 : 0) + 24,
 					),
 				),
 			}}
@@ -610,7 +619,7 @@ function DisputesGrid({
 				quickFilterText={quick}
 				isFullWidthRow={(p) => isGroup(p.rowNode.data)}
 				fullWidthCellRenderer={GroupHeader}
-				getRowHeight={(p) => (isGroup(p.data) ? 32 : dense ? 36 : 44)}
+				getRowHeight={(p) => (isGroup(p.data) ? 48 : dense ? 44 : 60)}
 				getRowClass={(p: RowClassParams<Row>) =>
 					isGroup(p.data) ? undefined : "cursor-pointer"
 				}
@@ -660,13 +669,13 @@ function DisputeCards({
 			</p>
 		);
 	return (
-		<ul className="divide-y rounded-lg border bg-card">
+		<ul className="space-y-3">
 			{list.map((r) => (
 				<li key={r.id}>
 					<Link
 						to="/app/disputes/$disputeId"
 						params={{ disputeId: r.id }}
-						className="flex min-h-10 flex-col gap-2 p-4 active:bg-accent"
+						className="field flex min-h-10 flex-col gap-3 p-5 active:bg-accent"
 					>
 						<div className="flex items-center justify-between gap-2">
 							<StatusBadge status={r.status} outcome={r.outcome} />

@@ -22,13 +22,13 @@ export function EvidencePreview({ detail }: { detail: DisputeDetail }) {
 		? `/api/evidence/${sent.id}.pdf`
 		: `/api/disputes/${detail.dispute.id}/evidence-preview`;
 	return (
-		<section aria-label="Evidence" className="rounded-lg border bg-card p-4">
+		<section aria-label="Evidence" className="field p-6">
 			<button
 				type="button"
 				onClick={() => setOpen(true)}
-				className="flex w-full items-center gap-3 text-left"
+				className="flex w-full items-center gap-4 text-left"
 			>
-				<span className="flex h-16 w-12 shrink-0 flex-col items-center justify-center rounded border bg-background shadow-sm">
+				<span className="flex h-16 w-12 shrink-0 flex-col items-center justify-center rounded-md bg-background">
 					<FileText className="size-5 text-primary" />
 					<span className="mt-1 font-mono text-[9px] text-muted-foreground">
 						PDF
@@ -64,7 +64,7 @@ export function EvidencePreview({ detail }: { detail: DisputeDetail }) {
 							<iframe
 								title="Evidence PDF"
 								src={src}
-								className="h-[calc(100vh-170px)] w-full rounded border"
+								className="h-[calc(100vh-170px)] w-full rounded-lg bg-muted"
 							/>
 						)}
 						<Button

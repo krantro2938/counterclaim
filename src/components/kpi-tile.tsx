@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "#/lib/utils";
 
-/** KPI tile: label, display-font value, optional hint + sparkline. Top border, no card (DESIGN §6.1). */
+/** KPI tile: eyebrow label, big serif value, quiet hint + sparkline. No border, no card (DESIGN §6.1). */
 export function KpiTile({
 	label,
 	value,
@@ -18,25 +18,19 @@ export function KpiTile({
 	className?: string;
 }) {
 	const body = (
-		<div
-			className={cn(
-				"flex h-full flex-col gap-1 border-t-2 border-foreground/80 pt-3",
-				to && "group",
-				className,
-			)}
-		>
-			<span className="text-[13px] text-muted-foreground">{label}</span>
-			<span className="font-display text-[32px] leading-none font-medium tabular group-hover:text-primary">
+		<div className={cn("flex h-full flex-col gap-3", to && "group", className)}>
+			<span className="eyebrow">{label}</span>
+			<span className="font-display text-[52px] leading-none tabular transition-colors group-hover:text-primary">
 				{value}
 			</span>
-			<div className="mt-1 flex items-end justify-between gap-2 text-xs text-muted-foreground">
+			<div className="flex items-end justify-between gap-2 text-[13px] text-muted-foreground">
 				<span>{hint}</span>
 				{spark && spark.length > 1 && <Sparkline values={spark} />}
 			</div>
 		</div>
 	);
 	return to ? (
-		<Link to={to} className="block rounded-sm focus-visible:outline-2">
+		<Link to={to} className="block rounded-md focus-visible:outline-2">
 			{body}
 		</Link>
 	) : (

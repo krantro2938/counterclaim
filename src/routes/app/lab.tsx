@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, FlaskConical, RefreshCw, X } from "lucide-react";
 import { toast } from "sonner";
 import { Money } from "#/components/money";
-import { SectionHeading } from "#/components/page";
+import { Page, PageHeader, SectionHeading } from "#/components/page";
 import { ProtectionBadge, StatusBadge } from "#/components/status";
 import {
 	AlertDialog,
@@ -112,33 +112,35 @@ function LabPage() {
 			d.status === "UNDER_REVIEW");
 
 	return (
-		<div className="mx-auto flex max-w-[1200px] flex-col gap-8 p-4 md:p-6">
-			<div className="rounded-lg border border-simulated/30 bg-simulated-soft px-4 py-4">
-				<div className="flex items-center gap-2 text-simulated">
-					<FlaskConical className="size-5" />
-					<h1 className="font-display text-2xl font-medium">
-						Sandbox controls
-					</h1>
-				</div>
-				<p className="mt-1 text-sm">
+		<Page wide>
+			<PageHeader
+				eyebrow={
+					<span className="inline-flex items-center gap-1.5 text-simulated">
+						<FlaskConical className="size-3.5" /> Sandbox only
+					</span>
+				}
+				title="Sandbox controls"
+			/>
+			<div className="-mt-4 rounded-xl bg-simulated-soft p-6">
+				<p className="max-w-3xl text-sm leading-relaxed">
 					These call sandbox-only PayPal endpoints (
 					<span className="font-mono text-xs">require-evidence</span>,{" "}
 					<span className="font-mono text-xs">adjudicate</span>) or local
 					simulators (carrier scans, demo inbox). They stand in for time passing
 					and for PayPal's reviewers.
 				</p>
-				<div className="mt-3 flex flex-wrap gap-2">
+				<div className="mt-5 flex flex-wrap gap-2">
 					<Button
 						size="sm"
 						variant="outline"
 						onClick={() => run("/api/lab/sync", "Sync queued")}
-						className="gap-1.5 bg-card"
+						className="gap-1.5 bg-background"
 					>
 						<RefreshCw className="size-3.5" /> Sync now
 					</Button>
 					<AlertDialog>
 						<AlertDialogTrigger asChild>
-							<Button size="sm" variant="outline" className="bg-card">
+							<Button size="sm" variant="outline" className="bg-background">
 								Reset demo data
 							</Button>
 						</AlertDialogTrigger>
@@ -463,9 +465,12 @@ function LabPage() {
 						sync regardless.
 					</p>
 				) : (
-					<ul className="divide-y text-sm">
+					<ul className="space-y-0.5 text-sm">
 						{q.data.webhooks.map((w) => (
-							<li key={w.id} className="flex items-center gap-3 py-2">
+							<li
+								key={w.id}
+								className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-muted/60"
+							>
 								{w.verified ? (
 									<Check className="size-4 text-won" aria-label="Verified" />
 								) : (
@@ -483,6 +488,6 @@ function LabPage() {
 					</ul>
 				)}
 			</section>
-		</div>
+		</Page>
 	);
 }

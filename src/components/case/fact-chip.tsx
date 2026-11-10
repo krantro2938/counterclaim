@@ -26,8 +26,8 @@ export function FactChip({ id, facts }: { id: string; facts: FactDto[] }) {
 		<button
 			type="button"
 			className={cn(
-				"inline-flex h-5 items-center gap-1 rounded-full border bg-card px-1.5 align-middle font-mono text-[11px] text-muted-foreground transition-colors hover:border-primary hover:text-foreground",
-				f?.simulated && "border-simulated/40",
+				"inline-flex h-5 items-center gap-1 rounded-full bg-muted px-2 align-middle font-mono text-[11px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+				f?.simulated && "bg-simulated-soft",
 			)}
 			aria-label={`Fact ${id}`}
 		>

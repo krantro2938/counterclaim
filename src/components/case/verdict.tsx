@@ -62,7 +62,7 @@ export function VerdictCard({
 	const cur = detail.dispute.currency;
 	if (!a) {
 		return (
-			<section className="space-y-3 rounded-lg border bg-card p-5" aria-busy>
+			<section className="field space-y-4 p-7" aria-busy>
 				<div className="flex items-center gap-2 text-sm text-muted-foreground">
 					<Loader2 className="size-4 animate-spin" /> Counterclaim is building
 					the case file and assessing…
@@ -76,17 +76,18 @@ export function VerdictCard({
 	const primary = pending[0];
 	return (
 		<section
-			className="space-y-4 rounded-lg border bg-card p-5"
+			className="on-forest space-y-7 rounded-2xl p-7 md:p-8"
 			aria-label="Verdict"
 		>
+			<p className="eyebrow">Counterclaim recommends</p>
 			{a.degraded && (
-				<div className="flex items-start gap-2 rounded-md bg-deadline-soft px-3 py-2 text-xs text-deadline">
+				<div className="flex items-start gap-2 rounded-lg bg-deadline-soft px-3 py-2 text-xs text-deadline">
 					<AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
 					AI assessment unavailable; showing the rule-based score.
 				</div>
 			)}
 			<div className="flex items-start justify-between gap-2">
-				<h2 className="font-display text-2xl font-medium leading-snug">
+				<h2 className="-mt-3 font-display text-[34px] leading-[1.08]">
 					{a.headline}
 				</h2>
 				{detail.assessmentRunning && (
@@ -102,7 +103,7 @@ export function VerdictCard({
 				llm={a.llmScore}
 			/>
 			{primary?.type === "accept_claim" && (
-				<p className="rounded-md bg-muted px-3 py-2 text-sm">
+				<p className="text-sm leading-relaxed text-muted-foreground">
 					Fighting would likely still lose{" "}
 					{formatMoney(detail.dispute.amountMinor, cur)} plus a{" "}
 					{formatMoney(detail.fees.disputeFeeMinor, cur)} dispute fee. Accepting
@@ -113,7 +114,7 @@ export function VerdictCard({
 			{detail.order?.protectionStatus === "not_eligible" && (
 				<Link
 					to="/app/orders"
-					className="flex items-center gap-2 rounded-md border border-lost/30 bg-lost-soft px-3 py-2 text-sm text-lost hover:underline"
+					className="flex items-center gap-2 rounded-lg bg-lost-soft px-3.5 py-2.5 text-sm text-lost hover:underline"
 				>
 					<ShieldX className="size-4 shrink-0" />
 					Order #{detail.order.number} was never protected: no tracking reached
@@ -121,15 +122,15 @@ export function VerdictCard({
 				</Link>
 			)}
 			{primary ? (
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap gap-2.5">
 					<Button
 						size="lg"
-						className="flex-1 justify-center"
+						className="flex-1 justify-center hover:bg-primary/90"
 						onClick={() => onPrimary(primary)}
 						disabled={detail.assessmentRunning}
 					>
 						{primaryLabel(primary, cur)}
-						<kbd className="ml-2 hidden rounded border border-primary-foreground/30 px-1 font-mono text-[10px] sm:inline">
+						<kbd className="ml-2 hidden rounded-md bg-primary-foreground/10 px-1.5 font-mono text-[10px] sm:inline">
 							A
 						</kbd>
 					</Button>
@@ -158,7 +159,7 @@ export function VerdictCard({
 						: "No action needed from you right now. PayPal has the next move."}
 				</p>
 			)}
-			<p className="text-xs text-muted-foreground">
+			<p className="text-xs text-muted-foreground/90">
 				{a.confidence
 					? `${a.confidence[0].toUpperCase()}${a.confidence.slice(1)} confidence · `
 					: ""}
@@ -209,9 +210,8 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 	return (
 		<section
 			className={cn(
-				"relative overflow-hidden rounded-lg border bg-card p-5",
-				won && "border-won/40",
-				lost && "border-lost/40",
+				"relative overflow-hidden rounded-2xl p-7 md:p-8",
+				won ? "on-forest" : "bg-card",
 			)}
 			aria-label="Outcome"
 		>
@@ -232,8 +232,8 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 			</div>
 			<p
 				className={cn(
-					"mt-2 font-display text-4xl font-medium tabular",
-					won ? "text-won" : lost ? "text-lost" : "",
+					"mt-4 font-display text-[44px] leading-none tabular",
+					lost ? "text-lost" : "",
 				)}
 			>
 				{won
@@ -242,7 +242,7 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 						? `${formatMoney(d.amountMinor, d.currency)} refunded`
 						: formatMoney(d.amountMinor, d.currency)}
 			</p>
-			<dl className="mt-3 grid grid-cols-2 gap-2 text-sm">
+			<dl className="mt-7 grid grid-cols-2 gap-4 text-sm">
 				<div>
 					<dt className="text-xs text-muted-foreground">
 						Time from dispute to response

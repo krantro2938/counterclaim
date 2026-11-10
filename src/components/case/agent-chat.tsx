@@ -49,12 +49,8 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 		ask.mutate(t);
 	};
 	return (
-		<Collapsible
-			open={open}
-			onOpenChange={setOpen}
-			className="rounded-lg border bg-card"
-		>
-			<CollapsibleTrigger className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-medium">
+		<Collapsible open={open} onOpenChange={setOpen} className="field">
+			<CollapsibleTrigger className="flex w-full items-center gap-2 px-6 py-5 text-left text-sm font-medium">
 				<Sparkle className="size-4 text-primary" /> Ask Counterclaim about this
 				case
 				<ChevronDown
@@ -64,7 +60,7 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 					)}
 				/>
 			</CollapsibleTrigger>
-			<CollapsibleContent className="space-y-3 px-4 pb-4">
+			<CollapsibleContent className="space-y-4 px-6 pb-6">
 				{msgs.length === 0 && (
 					<div className="flex flex-wrap gap-1.5">
 						{SUGGESTIONS.map((s) => (
@@ -72,7 +68,7 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 								key={s}
 								type="button"
 								onClick={() => send(s)}
-								className="rounded-full border px-2.5 py-1 text-xs text-muted-foreground hover:border-primary hover:text-foreground"
+								className="rounded-full bg-background px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
 							>
 								{s}
 							</button>
@@ -85,17 +81,17 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 						<li
 							key={i}
 							className={cn(
-								"rounded-md px-3 py-2 text-sm whitespace-pre-wrap",
+								"rounded-xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap",
 								m.role === "user"
 									? "ml-8 bg-accent text-accent-foreground"
-									: "mr-4 bg-muted",
+									: "mr-4 bg-background",
 							)}
 						>
 							{m.content}
 						</li>
 					))}
 					{ask.isPending && (
-						<li className="mr-4 animate-pulse rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+						<li className="mr-4 animate-pulse rounded-xl bg-background px-4 py-2.5 text-sm text-muted-foreground">
 							Thinking…
 						</li>
 					)}
@@ -118,7 +114,7 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 						}}
 						rows={2}
 						placeholder="Ask why, or ask for a change…"
-						className="min-h-0 text-sm"
+						className="min-h-0 bg-background text-sm"
 						aria-label="Message Counterclaim"
 					/>
 					<Button

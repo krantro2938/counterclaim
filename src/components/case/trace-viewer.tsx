@@ -34,7 +34,7 @@ export function TraceViewer({ detail }: { detail: DisputeDetail }) {
 	).length;
 	return (
 		<div className="space-y-3">
-			<div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+			<div className="field flex flex-wrap gap-x-5 gap-y-1 px-4 py-3 text-xs text-muted-foreground">
 				<span>
 					Model{" "}
 					<span className="font-mono text-foreground">
@@ -135,7 +135,7 @@ function StepRow({ step }: { step: StepDto }) {
 	return (
 		<li
 			className={cn(
-				"rounded-md border",
+				"rounded-lg",
 				step.kind === "tool_call" || step.kind === "model"
 					? "bg-card"
 					: "bg-transparent",
@@ -144,7 +144,7 @@ function StepRow({ step }: { step: StepDto }) {
 			<button
 				type="button"
 				className={cn(
-					"flex w-full items-start gap-2 px-3 py-2 text-left text-sm",
+					"flex w-full items-start gap-2.5 px-4 py-2.5 text-left text-sm",
 					!expandable && "cursor-default",
 				)}
 				onClick={() => expandable && setOpen((o) => !o)}
@@ -162,7 +162,7 @@ function StepRow({ step }: { step: StepDto }) {
 				)}
 			</button>
 			{open && body && (
-				<pre className="mx-3 mb-3 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-muted p-2 font-mono text-[11px] leading-relaxed">
+				<pre className="mx-4 mb-4 max-h-64 overflow-auto whitespace-pre-wrap rounded-md bg-background p-3 font-mono text-[11px] leading-relaxed">
 					{body}
 				</pre>
 			)}

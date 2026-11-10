@@ -26,10 +26,10 @@ import type {
 } from "#/components/case/types";
 import { OutcomeCard, VerdictCard } from "#/components/case/verdict";
 import { Money } from "#/components/money";
+import { Page } from "#/components/page";
 import {
 	DeadlineChip,
 	ProtectionBadge,
-	ReasonLabel,
 	SimulatedTag,
 	StatusBadge,
 } from "#/components/status";
@@ -51,7 +51,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { useFallbackInterval } from "#/hooks/use-live";
 import { ApiError, api, post, qk } from "#/lib/api";
 import { formatDateTime, stripFactRefs } from "#/lib/format";
-import { normRel, REL_TO_ACTION, stageLabel } from "#/lib/labels";
+import { normRel, REL_TO_ACTION, reasonLabel, stageLabel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
 import { cn } from "#/lib/utils";
 import { ErrorBox } from "./disputes.index";
@@ -217,30 +217,43 @@ function CasePage() {
 	const busy = approve.isPending;
 
 	return (
-		<div className="mx-auto flex max-w-[1400px] flex-col gap-5 p-4 md:p-6">
-			{/* Header strip */}
-			<div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b pb-4">
-				<CopyId id={dispute.id} />
-				<StatusBadge status={dispute.status} outcome={dispute.outcome} />
-				<span className="text-xs text-muted-foreground">
-					{stageLabel(dispute.stage)}
-				</span>
-				<ReasonLabel reason={dispute.reason} className="text-sm" />
-				<Money
-					amountMinor={dispute.amountMinor}
-					currency={dispute.currency}
-					emphasis
-				/>
-				<DeadlineChip
-					dueAt={
-						dispute.sellerResponseDueAt
-							? String(dispute.sellerResponseDueAt)
-							: null
-					}
-					resolved={resolved}
-				/>
-				<div className="ml-auto flex items-center gap-1">
-					<Button variant="ghost" size="sm" asChild>
+		<Page wide className="md:gap-12">
+			{/* Header: eyebrow (ID, stage) · serif title (reason) · amount · meta */}
+			<header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
+				<div className="min-w-0 space-y-4">
+					<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+						<span className="eyebrow">Dispute</span>
+						<CopyId id={dispute.id} />
+						<span className="text-muted-foreground/50">·</span>
+						<span className="eyebrow">{stageLabel(dispute.stage)}</span>
+					</div>
+					<h1 className="font-display text-[44px] leading-[1.02] md:text-[56px]">
+						{reasonLabel(dispute.reason)}
+						<span className="text-muted-foreground">
+							{" "}
+							· {formatMoney(dispute.amountMinor, dispute.currency)}
+						</span>
+					</h1>
+					<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+						<StatusBadge status={dispute.status} outcome={dispute.outcome} />
+						<DeadlineChip
+							dueAt={
+								dispute.sellerResponseDueAt
+									? String(dispute.sellerResponseDueAt)
+									: null
+							}
+							resolved={resolved}
+							className="text-[13px]"
+						/>
+						{d.order && (
+							<span className="text-muted-foreground">
+								{d.order.buyerName ?? "Buyer"} · Order #{d.order.number}
+							</span>
+						)}
+					</div>
+				</div>
+				<div className="flex items-center gap-2">
+					<Button variant="outline" size="sm" asChild>
 						<a
 							href="https://www.sandbox.paypal.com/resolutioncenter"
 							target="_blank"
@@ -274,11 +287,11 @@ function CasePage() {
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
-			</div>
+			</header>
 
-			<div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(360px,2fr)]">
+			<div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(0,3fr)_minmax(400px,2fr)] xl:gap-14">
 				{/* Right column first in DOM order on small screens: verdict stays on top */}
-				<aside className="order-first space-y-4 xl:sticky xl:top-16 xl:order-last xl:self-start">
+				<aside className="order-first space-y-4 xl:sticky xl:top-20 xl:order-last xl:self-start">
 					{resolved ? (
 						<OutcomeCard detail={d} />
 					) : (
@@ -296,8 +309,8 @@ function CasePage() {
 						/>
 					)}
 					{visibleActions.length > 0 && (
-						<div className="space-y-3">
-							<h3 className="eyebrow">Proposed actions</h3>
+						<div className="space-y-3 pt-6">
+							<h3 className="eyebrow mb-4">Proposed actions</h3>
 							{visibleActions.map((a) => (
 								<div key={a.id} id={`action-${a.id}`}>
 									<ActionProposal
@@ -319,29 +332,38 @@ function CasePage() {
 
 				<div className="min-w-0">
 					<Tabs defaultValue="timeline">
-						<TabsList className="w-full justify-start overflow-x-auto">
-							<TabsTrigger value="timeline">Timeline</TabsTrigger>
-							<TabsTrigger value="reasoning">Reasoning</TabsTrigger>
-							<TabsTrigger value="order">Order</TabsTrigger>
-							<TabsTrigger value="trace">Trace</TabsTrigger>
-							<TabsTrigger value="paypal">PayPal</TabsTrigger>
+						<TabsList
+							variant="line"
+							className="h-auto w-full justify-start gap-7 overflow-x-auto overflow-y-hidden p-0 pb-1.5"
+						>
+							{["Timeline", "Reasoning", "Order", "Trace", "PayPal"].map(
+								(t) => (
+									<TabsTrigger
+										key={t}
+										value={t.toLowerCase()}
+										className="flex-none px-0 pb-2 text-[15px]"
+									>
+										{t}
+									</TabsTrigger>
+								),
+							)}
 						</TabsList>
-						<TabsContent value="timeline" className="pt-4">
+						<TabsContent value="timeline" className="pt-8">
 							<CaseTimeline detail={d} />
 						</TabsContent>
-						<TabsContent value="reasoning" className="pt-4">
+						<TabsContent value="reasoning" className="pt-8">
 							<Reasoning detail={d} facts={facts} />
 						</TabsContent>
-						<TabsContent value="order" className="pt-4">
+						<TabsContent value="order" className="pt-8">
 							<OrderTab detail={d} />
 						</TabsContent>
-						<TabsContent value="trace" className="pt-4">
-							<h3 className="mb-3 font-display text-xl">
+						<TabsContent value="trace" className="pt-8">
+							<h3 className="mb-5 font-display text-[28px]">
 								How Counterclaim reached this
 							</h3>
 							<TraceViewer detail={d} />
 						</TabsContent>
-						<TabsContent value="paypal" className="pt-4">
+						<TabsContent value="paypal" className="pt-8">
 							<PayPalLinks detail={d} />
 						</TabsContent>
 					</Tabs>
@@ -362,12 +384,12 @@ function CasePage() {
 					<DialogHeader>
 						<DialogTitle>Raw PayPal dispute</DialogTitle>
 					</DialogHeader>
-					<pre className="max-h-[70vh] overflow-auto rounded bg-muted p-3 font-mono text-[11px]">
+					<pre className="max-h-[70vh] overflow-auto rounded-lg bg-muted p-4 font-mono text-[11px]">
 						{JSON.stringify(dispute.raw, null, 2)}
 					</pre>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</Page>
 	);
 }
 
@@ -376,7 +398,7 @@ function CopyId({ id }: { id: string }) {
 	return (
 		<button
 			type="button"
-			className="group inline-flex items-center gap-1.5 font-mono text-sm"
+			className="group inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-foreground"
 			onClick={() =>
 				navigator.clipboard?.writeText(id).then(() => {
 					setDone(true);
@@ -418,14 +440,14 @@ function Reasoning({
 			  }[]
 			| null) ?? [];
 	return (
-		<div className="space-y-6">
-			<ol className="space-y-3">
+		<div className="space-y-12">
+			<ol className="space-y-5">
 				{(a.reasoning ?? []).map((r, i) => (
-					<li key={r.point} className="flex gap-3">
-						<span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent font-mono text-xs text-accent-foreground">
+					<li key={r.point} className="flex gap-4">
+						<span className="w-6 shrink-0 pt-0.5 font-display text-[22px] leading-none text-muted-foreground">
 							{i + 1}
 						</span>
-						<p className="text-sm leading-relaxed">
+						<p className="text-[15px] leading-relaxed">
 							{stripFactRefs(r.point)}{" "}
 							<span className="inline-flex flex-wrap gap-1 align-middle">
 								{r.factIds.map((id) => (
@@ -438,8 +460,8 @@ function Reasoning({
 			</ol>
 			{(a.risks?.length ?? 0) > 0 && (
 				<div>
-					<h4 className="eyebrow mb-2">Risks</h4>
-					<ul className="space-y-1.5 text-sm text-muted-foreground">
+					<h4 className="eyebrow mb-4">Risks</h4>
+					<ul className="space-y-2.5 text-sm text-muted-foreground">
 						{a.risks?.map((r) => (
 							<li key={r} className="flex gap-2">
 								<AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-deadline" />
@@ -451,8 +473,8 @@ function Reasoning({
 			)}
 			{(a.missing?.length ?? 0) > 0 && (
 				<div>
-					<h4 className="eyebrow mb-2">Missing evidence</h4>
-					<ul className="list-inside list-disc text-sm text-muted-foreground">
+					<h4 className="eyebrow mb-4">Missing evidence</h4>
+					<ul className="list-inside list-disc space-y-1.5 text-sm text-muted-foreground">
 						{a.missing?.map((m) => (
 							<li key={m}>{m}</li>
 						))}
@@ -460,13 +482,13 @@ function Reasoning({
 				</div>
 			)}
 			<div>
-				<h4 className="eyebrow mb-2">Rule score · {a.rubricScore}/100</h4>
-				<ul className="divide-y rounded-md border text-sm">
+				<h4 className="eyebrow mb-4">Rule score · {a.rubricScore}/100</h4>
+				<ul className="field py-2 text-sm">
 					{rubric.map((r) => (
-						<li key={r.label} className="flex items-center gap-3 px-3 py-2">
+						<li key={r.label} className="flex items-center gap-4 px-5 py-2.5">
 							<span
 								className={cn(
-									"font-mono text-xs tabular",
+									"w-8 font-mono text-xs tabular",
 									r.earned > 0
 										? "text-won"
 										: r.earned < 0
@@ -490,10 +512,10 @@ function Reasoning({
 				</ul>
 			</div>
 			<div>
-				<h4 className="eyebrow mb-2">Case file facts</h4>
-				<ul className="space-y-1.5 text-sm">
+				<h4 className="eyebrow mb-4">Case file facts</h4>
+				<ul className="space-y-2.5 text-sm">
 					{facts.map((f) => (
-						<li key={f.id} className="flex gap-2">
+						<li key={f.id} className="flex gap-4">
 							<span className="w-8 shrink-0 font-mono text-xs text-muted-foreground">
 								{f.id}
 							</span>
@@ -543,9 +565,9 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 		JSON.stringify(o.shippingAddress ?? {}) ===
 			JSON.stringify(o.paypalShippingAddress ?? {}) || !o.shippingAddress;
 	return (
-		<div className="space-y-6 text-sm">
+		<div className="space-y-10 text-sm">
 			<div className="flex flex-wrap items-center gap-3">
-				<span className="font-display text-xl">Order #{o.number}</span>
+				<span className="font-display text-[28px]">Order #{o.number}</span>
 				<ProtectionBadge
 					status={o.protectionStatus}
 					reasons={o.protectionReasons}
@@ -562,15 +584,15 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 			</div>
 			<table className="w-full">
 				<thead>
-					<tr className="border-b text-left text-xs text-muted-foreground">
-						<th className="py-2 font-medium">Item</th>
-						<th className="py-2 text-right font-medium">Qty</th>
-						<th className="py-2 text-right font-medium">Price</th>
+					<tr className="text-left">
+						<th className="eyebrow pb-3 font-medium">Item</th>
+						<th className="eyebrow pb-3 text-right font-medium">Qty</th>
+						<th className="eyebrow pb-3 text-right font-medium">Price</th>
 					</tr>
 				</thead>
 				<tbody>
 					{o.items.map((i) => (
-						<tr key={i.title} className="border-b">
+						<tr key={i.title}>
 							<td className="py-2">{i.title}</td>
 							<td className="py-2 text-right font-mono tabular">
 								{i.quantity}
@@ -580,22 +602,22 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 							</td>
 						</tr>
 					))}
-					<tr>
-						<td className="py-2 font-medium">Total</td>
+					<tr className="border-t border-border/70">
+						<td className="pt-3 font-medium">Total</td>
 						<td />
-						<td className="py-2 text-right font-medium">
+						<td className="pt-3 text-right font-medium">
 							<Money amountMinor={o.amountMinor} currency={o.currency} />
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<div className="grid gap-6 sm:grid-cols-2">
+			<div className="grid gap-8 sm:grid-cols-2">
 				<div>
-					<h4 className="eyebrow mb-1">Ship-to address</h4>
+					<h4 className="eyebrow mb-3">Ship-to address</h4>
 					<p className="whitespace-pre-line">{addrLines(o.shippingAddress)}</p>
 				</div>
 				<div>
-					<h4 className="eyebrow mb-1">PayPal-confirmed address</h4>
+					<h4 className="eyebrow mb-3">PayPal-confirmed address</h4>
 					<p className="whitespace-pre-line">
 						{addrLines(o.paypalShippingAddress)}
 					</p>
@@ -615,7 +637,7 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 					</p>
 				</div>
 			</div>
-			<dl className="grid gap-x-6 gap-y-2 sm:grid-cols-[180px_1fr]">
+			<dl className="grid gap-x-8 gap-y-3 sm:grid-cols-[180px_1fr]">
 				<dt className="text-muted-foreground">Buyer</dt>
 				<dd>{o.buyerName ?? "—"}</dd>
 				<dt className="text-muted-foreground">Paid</dt>
@@ -651,8 +673,8 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 function PayPalLinks({ detail }: { detail: DisputeDetail }) {
 	const links = detail.dispute.links ?? [];
 	return (
-		<div className="space-y-4">
-			<p className="text-sm text-muted-foreground">
+		<div className="space-y-6">
+			<p className="max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
 				PayPal's API returns the actions it allows right now as HATEOAS links.
 				Counterclaim's agent can only propose actions from this list, and the
 				executor checks it again before sending anything.
@@ -665,12 +687,12 @@ function PayPalLinks({ detail }: { detail: DisputeDetail }) {
 						<li
 							key={l.rel + l.href}
 							className={cn(
-								"inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs",
+								"inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-mono text-xs",
 								action
-									? "border-primary/40 bg-accent text-accent-foreground"
+									? "bg-accent text-accent-foreground"
 									: sandbox
-										? "border-simulated/40 bg-simulated-soft text-simulated"
-										: "text-muted-foreground",
+										? "bg-simulated-soft text-simulated"
+										: "bg-muted text-muted-foreground",
 							)}
 						>
 							{l.method && <span className="opacity-60">{l.method}</span>}
@@ -704,15 +726,15 @@ function PayPalLinks({ detail }: { detail: DisputeDetail }) {
 
 function CaseSkeleton() {
 	return (
-		<div className="mx-auto grid max-w-[1400px] gap-6 p-6 xl:grid-cols-[3fr_2fr]">
-			<div className="space-y-3">
-				<Skeleton className="h-8 w-2/3" />
-				<Skeleton className="h-64" />
+		<Page wide>
+			<div className="space-y-4">
+				<Skeleton className="h-4 w-48" />
+				<Skeleton className="h-14 w-2/3 rounded-xl" />
 			</div>
-			<div className="space-y-3">
-				<Skeleton className="h-56" />
-				<Skeleton className="h-40" />
+			<div className="grid gap-14 xl:grid-cols-[3fr_2fr]">
+				<Skeleton className="h-80 rounded-xl" />
+				<Skeleton className="h-72 rounded-2xl" />
 			</div>
-		</div>
+		</Page>
 	);
 }

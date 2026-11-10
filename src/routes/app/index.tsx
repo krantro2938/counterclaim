@@ -3,11 +3,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { KpiTile } from "#/components/kpi-tile";
 import { Money } from "#/components/money";
-import { ACTOR_LABEL, ActorDot, SectionHeading } from "#/components/page";
+import {
+	ACTOR_LABEL,
+	ActorDot,
+	Page,
+	PageHeader,
+	SectionHeading,
+} from "#/components/page";
 import { MiniScore } from "#/components/score-meter";
 import {
 	DeadlineChip,
-	LiveIndicator,
 	ProtectionBadge,
 	ReasonLabel,
 } from "#/components/status";
@@ -48,18 +53,18 @@ function Overview() {
 		.slice(0, 3);
 
 	return (
-		<div className="mx-auto flex max-w-[1400px] flex-col gap-8 p-4 md:p-6">
-			<div className="flex flex-wrap items-end justify-between gap-3">
-				<div>
-					<h1 className="font-display text-[32px] font-medium leading-tight">
-						{greeting()}, {d?.ownerName ?? "Maya"}
-					</h1>
-					<p className="mt-1 text-muted-foreground">
-						{formatDate(new Date())} · {d?.storeName ?? "Kiln & Thread"}
-					</p>
-				</div>
-				<LiveIndicator />
-			</div>
+		<Page>
+			<PageHeader
+				eyebrow={`${formatDate(new Date())} · ${d?.storeName ?? "Kiln & Thread"}`}
+				title={`${greeting()}, ${d?.ownerName ?? "Maya"}.`}
+				subtitle={
+					d
+						? d.needsDecision
+							? `${d.needsDecision} case${d.needsDecision === 1 ? "" : "s"} waiting for your decision. Everything else is handled.`
+							: "Nothing needs you right now. Counterclaim is watching."
+						: undefined
+				}
+			/>
 
 			{q.isError && (
 				<ErrorBox
@@ -70,11 +75,11 @@ function Overview() {
 
 			<section
 				aria-label="Key numbers"
-				className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4"
+				className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4"
 			>
 				{!d ? (
 					Array.from({ length: 4 }, (_, i) => (
-						<Skeleton key={i} className="h-24" />
+						<Skeleton key={i} className="h-28 rounded-xl" />
 					))
 				) : (
 					<>
@@ -117,13 +122,13 @@ function Overview() {
 				)}
 			</section>
 
-			<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+			<div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-10">
 				<section className="min-w-0 lg:col-span-2" aria-labelledby="needs">
 					<SectionHeading
 						action={
 							<Link
 								to="/app/disputes"
-								className="text-xs text-muted-foreground hover:text-foreground"
+								className="text-[13px] text-muted-foreground hover:text-foreground"
 							>
 								All disputes →
 							</Link>
@@ -132,27 +137,24 @@ function Overview() {
 						<span id="needs">Needs your decision</span>
 					</SectionHeading>
 					{!d ? (
-						<div className="space-y-3 pt-3">
-							<Skeleton className="h-20" />
-							<Skeleton className="h-20" />
+						<div className="space-y-3">
+							<Skeleton className="h-28 rounded-xl" />
+							<Skeleton className="h-28 rounded-xl" />
 						</div>
 					) : d.needsList.length === 0 ? (
 						<EmptyDesk />
 					) : (
-						<ul className="divide-y">
+						<ul className="space-y-3">
 							{d.needsList.map((r) => (
 								<li
 									key={r.id}
-									className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center"
+									className="field flex flex-col gap-5 p-6 sm:flex-row sm:items-center"
 								>
-									<div className="min-w-0 flex-1 space-y-1">
-										<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+									<div className="min-w-0 flex-1 space-y-2.5">
+										<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px]">
 											<ReasonLabel reason={r.reason} className="font-medium" />
 											<span className="text-muted-foreground">
-												{r.buyer ?? "Buyer"}
-											</span>
-											<span className="font-mono text-xs text-muted-foreground">
-												#{r.orderNumber ?? "—"}
+												{r.buyer ?? "Buyer"} · #{r.orderNumber ?? "—"}
 											</span>
 											<Money
 												amountMinor={r.amountMinor}
@@ -160,13 +162,13 @@ function Overview() {
 											/>
 											<DeadlineChip dueAt={r.dueAt} />
 										</div>
-										<p className="font-display text-lg sm:truncate">
+										<p className="font-display text-[26px] leading-tight">
 											{r.headline ?? "Assessment in progress"}
 										</p>
 									</div>
-									<div className="flex items-center gap-4">
+									<div className="flex items-center gap-5">
 										<MiniScore value={r.finalScore} className="w-32" />
-										<Button asChild size="sm">
+										<Button asChild>
 											<Link
 												to="/app/disputes/$disputeId"
 												params={{ disputeId: r.id }}
@@ -181,12 +183,12 @@ function Overview() {
 					)}
 				</section>
 
-				<section aria-labelledby="prot">
+				<section aria-labelledby="prot" className="min-w-0">
 					<SectionHeading
 						action={
 							<Link
 								to="/app/orders"
-								className="text-xs text-muted-foreground hover:text-foreground"
+								className="text-[13px] text-muted-foreground hover:text-foreground"
 							>
 								Orders →
 							</Link>
@@ -194,39 +196,44 @@ function Overview() {
 					>
 						<span id="prot">Protection</span>
 					</SectionHeading>
-					{d ? (
-						<ProtectionBar p={d.protection} />
-					) : (
-						<Skeleton className="mt-3 h-10" />
-					)}
-					<ul className="mt-4 space-y-3">
-						{atRiskOrders.map((o) => (
-							<li
-								key={o.id}
-								className="flex items-center justify-between gap-2 text-sm"
-							>
-								<div className="min-w-0">
-									<div className="flex items-center gap-2">
-										<span className="font-mono text-xs">#{o.number}</span>
-										<ProtectionBadge
-											status={o.protectionStatus}
-											reasons={o.reasons}
-										/>
-									</div>
-									<p className="truncate text-xs text-muted-foreground">
-										{o.buyer ?? "—"} ·{" "}
-										<Money amountMinor={o.amountMinor} currency={o.currency} />
-									</p>
-								</div>
-								<ShipButton order={o} size="sm" />
-							</li>
-						))}
-						{d && atRiskOrders.length === 0 && (
-							<li className="text-sm text-muted-foreground">
-								Every shipped order has tracking on file with PayPal.
-							</li>
+					<div className="field p-6">
+						{d ? (
+							<ProtectionBar p={d.protection} />
+						) : (
+							<Skeleton className="h-10" />
 						)}
-					</ul>
+						<ul className="mt-6 space-y-4">
+							{atRiskOrders.map((o) => (
+								<li
+									key={o.id}
+									className="flex items-center justify-between gap-2 text-sm"
+								>
+									<div className="min-w-0">
+										<div className="flex items-center gap-2">
+											<span className="font-mono text-xs">#{o.number}</span>
+											<ProtectionBadge
+												status={o.protectionStatus}
+												reasons={o.reasons}
+											/>
+										</div>
+										<p className="truncate text-xs text-muted-foreground">
+											{o.buyer ?? "—"} ·{" "}
+											<Money
+												amountMinor={o.amountMinor}
+												currency={o.currency}
+											/>
+										</p>
+									</div>
+									<ShipButton order={o} size="sm" />
+								</li>
+							))}
+							{d && atRiskOrders.length === 0 && (
+								<li className="text-sm text-muted-foreground">
+									Every shipped order has tracking on file with PayPal.
+								</li>
+							)}
+						</ul>
+					</div>
 				</section>
 			</div>
 
@@ -235,17 +242,20 @@ function Overview() {
 					<span id="recent">Recent activity</span>
 				</SectionHeading>
 				{!d ? (
-					<Skeleton className="mt-3 h-32" />
+					<Skeleton className="h-32 rounded-xl" />
 				) : d.recentActivity.length === 0 ? (
-					<p className="py-6 text-sm text-muted-foreground">
+					<p className="text-sm text-muted-foreground">
 						No activity yet. Buy something in the demo shop to get started.
 					</p>
 				) : (
-					<ol className="divide-y">
+					<ol className="space-y-1">
 						{d.recentActivity.map((a) => (
-							<li key={a.id} className="flex items-start gap-3 py-2.5 text-sm">
+							<li
+								key={a.id}
+								className="-mx-3 flex items-start gap-4 rounded-lg px-3 py-2.5 text-sm hover:bg-muted/60"
+							>
 								<ActorDot actor={a.actor} />
-								<span className="w-24 shrink-0 text-xs text-muted-foreground">
+								<span className="hidden w-28 shrink-0 text-muted-foreground sm:block">
 									{ACTOR_LABEL[a.actor] ?? a.actor}
 								</span>
 								<span className="min-w-0 flex-1">
@@ -273,7 +283,7 @@ function Overview() {
 					</ol>
 				)}
 			</section>
-		</div>
+		</Page>
 	);
 }
 
@@ -289,9 +299,7 @@ function ProtectionBar({
 }) {
 	const total = p.protected + p.atRisk + p.notEligible + p.awaiting;
 	if (!total)
-		return (
-			<p className="pt-3 text-sm text-muted-foreground">No paid orders yet.</p>
-		);
+		return <p className="text-sm text-muted-foreground">No paid orders yet.</p>;
 	const seg = [
 		{ k: "Protected", v: p.protected, c: "bg-won" },
 		{ k: "Awaiting shipment", v: p.awaiting, c: "bg-muted-foreground/40" },
@@ -299,21 +307,21 @@ function ProtectionBar({
 		{ k: "Not eligible", v: p.notEligible, c: "bg-lost" },
 	].filter((s) => s.v > 0);
 	return (
-		<div className="pt-3">
+		<div>
 			<div
-				className="flex h-2.5 overflow-hidden rounded-full bg-muted"
+				className="flex h-2 gap-0.5 overflow-hidden rounded-full"
 				role="img"
 				aria-label={seg.map((s) => `${s.k} ${s.v}`).join(", ")}
 			>
 				{seg.map((s) => (
 					<span
 						key={s.k}
-						className={s.c}
-						style={{ width: `${(s.v / total) * 100}%` }}
+						className={`rounded-full ${s.c}`}
+						style={{ flexGrow: s.v }}
 					/>
 				))}
 			</div>
-			<ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+			<ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
 				{seg.map((s) => (
 					<li key={s.k} className="flex items-center gap-1.5">
 						<span className={`size-2 rounded-full ${s.c}`} />
@@ -328,7 +336,7 @@ function ProtectionBar({
 
 function EmptyDesk() {
 	return (
-		<div className="flex flex-col items-center gap-3 py-10 text-center">
+		<div className="field flex flex-col items-center gap-3 px-6 py-14 text-center">
 			<svg
 				viewBox="0 0 120 64"
 				className="h-16 w-32 text-muted-foreground/60"
@@ -344,7 +352,7 @@ function EmptyDesk() {
 				<path d="M84 52V30c0-4 6-6 8-2l4 10" />
 				<circle cx="92" cy="20" r="5" />
 			</svg>
-			<p className="font-display text-xl">Nothing needs you right now.</p>
+			<p className="font-display text-[28px]">Nothing needs you right now.</p>
 			<p className="text-sm text-muted-foreground">
 				New disputes are assessed automatically and land here.
 			</p>

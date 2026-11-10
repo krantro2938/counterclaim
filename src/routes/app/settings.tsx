@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, CircleAlert, CircleDashed } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PageHeader, SectionHeading } from "#/components/page";
+import { Page, PageHeader } from "#/components/page";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
@@ -70,28 +70,32 @@ function SettingsPage() {
 		);
 	if (!q.data || !auto)
 		return (
-			<div className="mx-auto max-w-3xl space-y-4 p-6">
-				<Skeleton className="h-10 w-48" />
-				<Skeleton className="h-64" />
-			</div>
+			<Page className="max-w-[1120px]">
+				<Skeleton className="h-14 w-64 rounded-xl" />
+				<Skeleton className="h-72 rounded-xl" />
+			</Page>
 		);
 	const c = q.data.connection;
 
 	return (
-		<div className="mx-auto flex max-w-3xl flex-col gap-10 p-4 md:p-6">
+		<Page className="max-w-[1120px] gap-16 md:gap-20">
 			<PageHeader
+				eyebrow="Setup"
 				title="Settings"
 				subtitle="How much Counterclaim may do on its own, and what it knows about your store."
 			/>
 
-			<section className="space-y-5">
-				<SectionHeading>Autopilot</SectionHeading>
-				<p className="text-sm text-muted-foreground">
-					Off by default: every action waits for your approval. Autopilot
-					actions still appear in the timeline with an "Autopilot" badge and
-					wait {auto.undoWindowSeconds} seconds before they're sent, so you can
-					undo them.
-				</p>
+			<Section
+				title="Autopilot"
+				desc={
+					<>
+						Off by default: every action waits for your approval. Autopilot
+						actions still appear in the timeline with an "Autopilot" badge and
+						wait {auto.undoWindowSeconds} seconds before they're sent, so you
+						can undo them.
+					</>
+				}
+			>
 				<SwitchRow
 					id="ack"
 					label="Acknowledge new inquiries"
@@ -120,7 +124,7 @@ function SettingsPage() {
 							disabled={!auto.autoSubmitFulfillment}
 						/>
 						<Input
-							className="h-8 w-16 font-mono"
+							className="h-9 w-16 bg-background font-mono"
 							inputMode="numeric"
 							value={auto.autoSubmitMinScore}
 							onChange={(e) =>
@@ -145,7 +149,7 @@ function SettingsPage() {
 						<div className="flex items-center gap-2">
 							<Label className="text-xs text-muted-foreground">Up to</Label>
 							<Input
-								className="h-8 w-24 font-mono"
+								className="h-9 w-24 bg-background font-mono"
 								inputMode="decimal"
 								defaultValue={(auto.autoAcceptMaxMinor / 100).toFixed(2)}
 								onBlur={(e) => {
@@ -165,7 +169,7 @@ function SettingsPage() {
 								Likelihood below
 							</Label>
 							<Input
-								className="h-8 w-16 font-mono"
+								className="h-9 w-16 bg-background font-mono"
 								inputMode="numeric"
 								value={auto.autoAcceptMaxLikelihood}
 								onChange={(e) =>
@@ -186,7 +190,7 @@ function SettingsPage() {
 						<Label htmlFor="undo">Undo window (seconds)</Label>
 						<Input
 							id="undo"
-							className="w-28 font-mono"
+							className="w-28 bg-background font-mono"
 							inputMode="numeric"
 							value={auto.undoWindowSeconds}
 							onChange={(e) =>
@@ -201,7 +205,7 @@ function SettingsPage() {
 						<Label htmlFor="risk">Flag unshipped orders after (hours)</Label>
 						<Input
 							id="risk"
-							className="w-28 font-mono"
+							className="w-28 bg-background font-mono"
 							inputMode="numeric"
 							value={hours}
 							onChange={(e) =>
@@ -220,14 +224,17 @@ function SettingsPage() {
 				>
 					Save autopilot
 				</Button>
-			</section>
+			</Section>
 
-			<section className="space-y-5">
-				<SectionHeading>Store policies</SectionHeading>
-				<p className="text-sm text-muted-foreground">
-					Counterclaim quotes these in its reasoning and in evidence packets.
-					Keep them accurate.
-				</p>
+			<Section
+				title="Store policies"
+				desc={
+					<>
+						Counterclaim quotes these in its reasoning and in evidence packets.
+						Keep them accurate.
+					</>
+				}
+			>
 				{q.data.policies.map((p) => (
 					<div key={p.section} className="space-y-1.5">
 						<Label htmlFor={`pol-${p.section}`}>{p.title}</Label>
@@ -255,11 +262,13 @@ function SettingsPage() {
 				>
 					Save policies
 				</Button>
-			</section>
+			</Section>
 
-			<section className="space-y-3">
-				<SectionHeading>Connection</SectionHeading>
-				<dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[200px_1fr]">
+			<Section
+				title="Connection"
+				desc="Live status of the PayPal sandbox link, webhooks, the poller and the AI model."
+			>
+				<dl className="field grid gap-x-6 gap-y-4 p-6 text-sm sm:grid-cols-[180px_1fr]">
 					<dt className="text-muted-foreground">PayPal ({c.paypalEnv})</dt>
 					<dd>
 						<StatusLine
@@ -308,8 +317,31 @@ function SettingsPage() {
 					<dt className="text-muted-foreground">Sandbox controls</dt>
 					<dd>{c.labEnabled ? "Enabled (Lab)" : "Disabled"}</dd>
 				</dl>
-			</section>
-		</div>
+			</Section>
+		</Page>
+	);
+}
+
+/** Settings section: serif title + description on the left, controls on the right (DESIGN §7.5). */
+function Section({
+	title,
+	desc,
+	children,
+}: {
+	title: string;
+	desc: React.ReactNode;
+	children: React.ReactNode;
+}) {
+	return (
+		<section className="grid gap-6 md:grid-cols-[260px_minmax(0,1fr)] md:gap-14">
+			<div>
+				<h2 className="font-display text-[30px] leading-tight">{title}</h2>
+				<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+					{desc}
+				</p>
+			</div>
+			<div className="min-w-0 space-y-3">{children}</div>
+		</section>
 	);
 }
 
@@ -329,13 +361,15 @@ function SwitchRow({
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className="border-b pb-4 last:border-0">
-			<div className="flex items-start justify-between gap-4">
+		<div className="field p-6">
+			<div className="flex items-start justify-between gap-6">
 				<div>
-					<Label htmlFor={id} className="text-sm font-medium">
+					<Label htmlFor={id} className="text-[15px] font-medium">
 						{label}
 					</Label>
-					<p className="mt-0.5 text-sm text-muted-foreground">{desc}</p>
+					<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+						{desc}
+					</p>
 				</div>
 				<Switch id={id} checked={checked} onCheckedChange={onChange} />
 			</div>

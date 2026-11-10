@@ -1,63 +1,72 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
-@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/instrument-serif/400-italic.css";
 @import "@fontsource-variable/fraunces/opsz.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* ── Counterclaim tokens (DESIGN.md §3): paper & ink neutrals, "seal" teal accent ── */
+/* ── Counterclaim tokens (DESIGN.md §3): "Orchard" — cream paper, forest ink, sage fields ── */
 :root {
-	--radius: 0.5rem;
+	--radius: 0.75rem;
 
-	--background: oklch(0.985 0.004 85);
-	--foreground: oklch(0.22 0.012 60);
-	--card: oklch(0.995 0.003 85);
+	--background: oklch(0.99 0.004 95);
+	--foreground: oklch(0.22 0.014 150);
+	--card: oklch(0.966 0.009 100);
 	--card-foreground: var(--foreground);
-	--popover: var(--card);
+	--popover: oklch(0.995 0.003 95);
 	--popover-foreground: var(--foreground);
-	--muted: oklch(0.955 0.006 85);
-	--muted-foreground: oklch(0.5 0.012 60);
-	--border: oklch(0.9 0.008 80);
-	--input: oklch(0.88 0.008 80);
-	--ring: oklch(0.52 0.09 175);
+	--muted: oklch(0.955 0.01 105);
+	--muted-foreground: oklch(0.52 0.014 140);
+	--border: oklch(0.92 0.008 100);
+	--input: oklch(0.89 0.01 100);
+	--ring: oklch(0.5 0.07 155);
 
-	--primary: oklch(0.42 0.075 175);
-	--primary-foreground: oklch(0.985 0.004 85);
-	--secondary: oklch(0.945 0.008 85);
+	--primary: oklch(0.38 0.07 155);
+	--primary-foreground: oklch(0.97 0.012 95);
+	--secondary: oklch(0.95 0.012 105);
 	--secondary-foreground: var(--foreground);
-	--accent: oklch(0.94 0.02 175);
-	--accent-foreground: oklch(0.3 0.06 175);
-	--destructive: oklch(0.55 0.19 28);
-	--destructive-foreground: oklch(0.985 0.004 85);
+	--accent: oklch(0.935 0.02 130);
+	--accent-foreground: oklch(0.3 0.05 150);
+	--destructive: oklch(0.52 0.14 32);
+	--destructive-foreground: oklch(0.97 0.012 95);
 
-	--won: oklch(0.5 0.13 150);
-	--won-soft: oklch(0.95 0.04 150);
-	--lost: oklch(0.53 0.17 28);
-	--lost-soft: oklch(0.95 0.03 28);
-	--deadline: oklch(0.55 0.13 65);
-	--deadline-soft: oklch(0.96 0.05 80);
-	--review: oklch(0.5 0.1 250);
-	--review-soft: oklch(0.95 0.03 250);
-	--simulated: oklch(0.52 0.12 300);
-	--simulated-soft: oklch(0.96 0.03 300);
+	/* brand fields (DESIGN §3.1) */
+	--forest: oklch(0.32 0.055 155);
+	--forest-foreground: oklch(0.95 0.015 95);
+	--forest-muted: oklch(0.79 0.035 135);
+	--sage: oklch(0.87 0.03 125);
+	--sage-foreground: oklch(0.25 0.03 145);
+
+	--won: oklch(0.47 0.11 150);
+	--won-soft: oklch(0.94 0.035 145);
+	--lost: oklch(0.52 0.14 32);
+	--lost-soft: oklch(0.95 0.025 40);
+	--deadline: oklch(0.53 0.11 68);
+	--deadline-soft: oklch(0.95 0.04 85);
+	--review: oklch(0.48 0.06 235);
+	--review-soft: oklch(0.945 0.018 235);
+	--simulated: oklch(0.5 0.09 320);
+	--simulated-soft: oklch(0.95 0.022 320);
 
 	--score-low: var(--lost);
-	--score-mid: oklch(0.7 0.15 70);
+	--score-mid: oklch(0.7 0.12 75);
 	--score-high: var(--won);
 
 	--chart-1: var(--primary);
-	--chart-2: oklch(0.7 0.08 175);
-	--chart-3: oklch(0.7 0.15 70);
+	--chart-2: var(--sage);
+	--chart-3: oklch(0.7 0.12 75);
 	--chart-4: var(--lost);
 	--chart-5: var(--review);
 
-	--sidebar: oklch(0.97 0.006 85);
+	/* the sidebar is the outer canvas; the page sits on it as a paper panel */
+	--sidebar: oklch(0.952 0.012 98);
 	--sidebar-foreground: var(--foreground);
-	--sidebar-border: var(--border);
-	--sidebar-accent: oklch(0.93 0.012 85);
-	--sidebar-accent-foreground: var(--foreground);
+	--sidebar-border: oklch(0.92 0.01 100);
+	--sidebar-accent: oklch(0.915 0.02 125);
+	--sidebar-accent-foreground: oklch(0.24 0.03 150);
 	--sidebar-primary: var(--primary);
 	--sidebar-primary-foreground: var(--primary-foreground);
 	--sidebar-ring: var(--ring);
@@ -73,49 +82,85 @@
 }
 
 .dark {
-	--background: oklch(0.17 0.008 60);
-	--foreground: oklch(0.93 0.006 85);
-	--card: oklch(0.205 0.008 60);
+	--background: oklch(0.195 0.012 150);
+	--foreground: oklch(0.94 0.014 95);
+	--card: oklch(0.228 0.014 150);
 	--card-foreground: var(--foreground);
-	--popover: oklch(0.22 0.008 60);
+	--popover: oklch(0.235 0.014 150);
 	--popover-foreground: var(--foreground);
-	--muted: oklch(0.25 0.008 60);
-	--muted-foreground: oklch(0.68 0.01 80);
-	--border: oklch(0.3 0.008 60);
-	--input: oklch(0.33 0.008 60);
-	--ring: oklch(0.65 0.09 175);
-	--primary: oklch(0.72 0.09 175);
-	--primary-foreground: oklch(0.18 0.02 175);
-	--secondary: oklch(0.25 0.008 60);
+	--muted: oklch(0.25 0.014 150);
+	--muted-foreground: oklch(0.7 0.02 125);
+	--border: oklch(0.29 0.014 150);
+	--input: oklch(0.33 0.014 150);
+	--ring: oklch(0.75 0.06 135);
+	--primary: oklch(0.87 0.045 125);
+	--primary-foreground: oklch(0.2 0.02 150);
+	--secondary: oklch(0.25 0.014 150);
 	--secondary-foreground: var(--foreground);
-	--accent: oklch(0.28 0.03 175);
-	--accent-foreground: oklch(0.88 0.05 175);
-	--destructive: oklch(0.65 0.18 28);
-	--won: oklch(0.74 0.14 150);
-	--won-soft: oklch(0.28 0.05 150);
-	--lost: oklch(0.72 0.16 28);
-	--lost-soft: oklch(0.28 0.05 28);
-	--deadline: oklch(0.8 0.14 75);
-	--deadline-soft: oklch(0.3 0.05 75);
-	--review: oklch(0.74 0.1 250);
-	--review-soft: oklch(0.28 0.04 250);
-	--simulated: oklch(0.77 0.1 300);
-	--simulated-soft: oklch(0.28 0.04 300);
-	--score-mid: oklch(0.8 0.14 75);
-	--sidebar: oklch(0.19 0.008 60);
+	--accent: oklch(0.28 0.028 150);
+	--accent-foreground: oklch(0.89 0.04 128);
+	--destructive: oklch(0.68 0.14 32);
+	--forest: oklch(0.31 0.055 155);
+	--forest-foreground: oklch(0.95 0.015 95);
+	--forest-muted: oklch(0.79 0.035 135);
+	--sage: oklch(0.36 0.03 140);
+	--sage-foreground: oklch(0.92 0.025 125);
+	--won: oklch(0.76 0.12 148);
+	--won-soft: oklch(0.29 0.045 150);
+	--lost: oklch(0.74 0.12 35);
+	--lost-soft: oklch(0.29 0.04 35);
+	--deadline: oklch(0.8 0.11 78);
+	--deadline-soft: oklch(0.3 0.04 78);
+	--review: oklch(0.76 0.06 235);
+	--review-soft: oklch(0.28 0.025 235);
+	--simulated: oklch(0.78 0.08 320);
+	--simulated-soft: oklch(0.28 0.03 320);
+	--score-mid: oklch(0.8 0.11 78);
+	--sidebar: oklch(0.165 0.01 150);
 	--sidebar-foreground: var(--foreground);
-	--sidebar-border: var(--border);
-	--sidebar-accent: oklch(0.25 0.01 60);
+	--sidebar-border: oklch(0.25 0.012 150);
+	--sidebar-accent: oklch(0.25 0.02 150);
 	--sidebar-accent-foreground: var(--foreground);
 	--sidebar-primary: var(--primary);
 	--sidebar-primary-foreground: var(--primary-foreground);
 	--sidebar-ring: var(--ring);
 }
 
+/* The forest field (verdict, won outcome): an inverted scope where tokens re-map to cream-on-green,
+   so buttons, badges and meters inside it just work (DESIGN §3.1). */
+.on-forest {
+	--foreground: var(--forest-foreground);
+	--card-foreground: var(--forest-foreground);
+	--muted: oklch(1 0 0 / 0.1);
+	--muted-foreground: var(--forest-muted);
+	--border: oklch(1 0 0 / 0.14);
+	--input: oklch(1 0 0 / 0.18);
+	--ring: var(--forest-muted);
+	--primary: var(--forest-foreground);
+	--primary-foreground: var(--forest);
+	--secondary: oklch(1 0 0 / 0.1);
+	--secondary-foreground: var(--forest-foreground);
+	--accent: oklch(1 0 0 / 0.1);
+	--accent-foreground: var(--forest-foreground);
+	--won: oklch(0.87 0.1 145);
+	--won-soft: oklch(1 0 0 / 0.1);
+	--lost: oklch(0.83 0.1 38);
+	--lost-soft: oklch(1 0 0 / 0.1);
+	--deadline: oklch(0.88 0.1 85);
+	--deadline-soft: oklch(1 0 0 / 0.1);
+	--review: oklch(0.85 0.05 235);
+	--review-soft: oklch(1 0 0 / 0.1);
+	--score-high: oklch(0.87 0.1 145);
+	--score-mid: oklch(0.88 0.1 85);
+	--score-low: oklch(0.83 0.1 38);
+	background-color: var(--forest);
+	color: var(--forest-foreground);
+}
+
 @theme inline {
 	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
-	--font-display: "Newsreader Variable", Georgia, serif;
+	--font-display: "Instrument Serif", Georgia, serif;
 	--font-shop: "Fraunces Variable", Georgia, serif;
 
 	--color-background: var(--background);
@@ -142,6 +187,11 @@
 	--color-chart-3: var(--chart-3);
 	--color-chart-4: var(--chart-4);
 	--color-chart-5: var(--chart-5);
+	--color-forest: var(--forest);
+	--color-forest-foreground: var(--forest-foreground);
+	--color-forest-muted: var(--forest-muted);
+	--color-sage: var(--sage);
+	--color-sage-foreground: var(--sage-foreground);
 	--color-won: var(--won);
 	--color-won-soft: var(--won-soft);
 	--color-lost: var(--lost);
@@ -182,7 +232,7 @@
 		@apply border-border outline-ring/50;
 	}
 	html {
-		font-size: 14px;
+		font-size: 15px;
 		color-scheme: light;
 	}
 	html.dark {
@@ -190,7 +240,7 @@
 	}
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
-		line-height: 1.45;
+		line-height: 1.55;
 		font-feature-settings: "ss01";
 	}
 	:focus-visible {
@@ -205,12 +255,21 @@
 	}
 	.font-display {
 		font-family: var(--font-display);
-		font-optical-sizing: auto;
-		letter-spacing: -0.01em;
-		line-height: 1.15;
+		font-weight: 400;
+		font-synthesis-weight: none;
+		letter-spacing: -0.012em;
+		line-height: 1.08;
 	}
+	/* Small uppercase label with wide tracking (section eyebrows, the wordmark's voice) */
 	.eyebrow {
-		@apply text-xs font-medium uppercase tracking-wide text-muted-foreground;
+		@apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground;
+	}
+	.wordmark {
+		@apply text-[13px] font-semibold uppercase tracking-[0.24em];
+	}
+	/* A flat colour field: no border, no shadow (DESIGN §4) */
+	.field {
+		@apply rounded-xl bg-card;
 	}
 }
 
@@ -263,4 +322,9 @@
 }
 .ag-row.cursor-pointer {
 	cursor: pointer;
+}
+/* Header labels in the eyebrow voice */
+.ag-header-cell-text {
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
 }

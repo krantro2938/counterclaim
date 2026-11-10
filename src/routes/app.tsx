@@ -40,7 +40,6 @@ import {
 	DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
 import { Kbd } from "#/components/ui/kbd";
-import { Separator } from "#/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
@@ -62,27 +61,36 @@ import { useFallbackInterval, useLiveEvents } from "#/hooks/use-live";
 import { api, qk } from "#/lib/api";
 import { reasonLabel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
+import { cn } from "#/lib/utils";
 import type { DisputeRowDto } from "#/server/queries";
 
 export const Route = createFileRoute("/app")({
 	component: AppShell,
 });
 
+const GROUP_LABEL = "text-[10.5px] font-medium uppercase tracking-[0.14em]";
+const NAV_BUTTON = "h-9 rounded-lg px-2.5 text-[14px]";
+
+/** The mark: an open "C" holding a four-point star (DESIGN §2.1). Inherits the text colour. */
 export function Logo({ className }: { className?: string }) {
 	return (
-		<span className={className}>
-			<svg viewBox="0 0 32 32" className="size-7" aria-hidden>
-				<rect width="32" height="32" rx="8" className="fill-primary" />
-				<path
-					d="M21.5 11.2a7 7 0 1 0 0 9.6"
-					className="stroke-primary-foreground"
-					strokeWidth="3"
-					fill="none"
-					strokeLinecap="round"
-				/>
-				<circle cx="22" cy="16" r="2" className="fill-primary-foreground" />
-			</svg>
-		</span>
+		<svg
+			viewBox="0 0 32 32"
+			className={cn("size-7", className)}
+			aria-hidden
+			fill="none"
+		>
+			<path
+				d="M21.4 9.6A9 9 0 1 0 21.4 22.4"
+				stroke="currentColor"
+				strokeWidth="2.4"
+				strokeLinecap="round"
+			/>
+			<path
+				d="M23 10.5c.5 3.3 1.2 4.9 4.5 5.5-3.3.6-4 2.2-4.5 5.5-.5-3.3-1.2-4.9-4.5-5.5 3.3-.6 4-2.2 4.5-5.5Z"
+				fill="currentColor"
+			/>
+		</svg>
 	);
 }
 
@@ -120,21 +128,21 @@ function AppShell() {
 
 	return (
 		<SidebarProvider>
-			<Sidebar collapsible="icon">
-				<SidebarHeader>
+			<Sidebar collapsible="icon" variant="inset">
+				<SidebarHeader className="pt-4 pb-6">
 					<Link
 						to="/app"
-						className="flex items-center gap-2 rounded-md px-1.5 py-1.5"
+						className="flex items-center gap-2.5 rounded-md px-1 py-1 text-primary"
 					>
-						<Logo />
-						<span className="font-display text-lg font-semibold group-data-[collapsible=icon]:hidden">
+						<Logo className="shrink-0" />
+						<span className="wordmark text-foreground group-data-[collapsible=icon]:hidden">
 							Counterclaim
 						</span>
 					</Link>
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>
-						<SidebarGroupLabel>Work</SidebarGroupLabel>
+						<SidebarGroupLabel className={GROUP_LABEL}>Work</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
 								<NavItem
@@ -154,7 +162,7 @@ function AppShell() {
 						</SidebarGroupContent>
 					</SidebarGroup>
 					<SidebarGroup>
-						<SidebarGroupLabel>Setup</SidebarGroupLabel>
+						<SidebarGroupLabel className={GROUP_LABEL}>Setup</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
 								<NavItem to="/app/settings" icon={Settings} label="Settings" />
@@ -162,12 +170,18 @@ function AppShell() {
 						</SidebarGroupContent>
 					</SidebarGroup>
 					<SidebarGroup>
-						<SidebarGroupLabel>Sandbox</SidebarGroupLabel>
+						<SidebarGroupLabel className={GROUP_LABEL}>
+							Sandbox
+						</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
 								<NavItem to="/app/lab" icon={FlaskConical} label="Lab" dot />
 								<SidebarMenuItem>
-									<SidebarMenuButton asChild tooltip="Kiln & Thread shop">
+									<SidebarMenuButton
+										asChild
+										tooltip="Kiln & Thread shop"
+										className={NAV_BUTTON}
+									>
 										<a href="/shop" target="_blank" rel="noreferrer">
 											<Store />
 											<span>Demo shop</span>
@@ -178,31 +192,38 @@ function AppShell() {
 						</SidebarGroupContent>
 					</SidebarGroup>
 				</SidebarContent>
-				<SidebarFooter>
-					<div className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-						<span className="flex size-6 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+				<SidebarFooter className="pb-4">
+					<div className="flex items-center gap-2.5 px-1.5 py-1 group-data-[collapsible=icon]:hidden">
+						<span className="flex size-8 items-center justify-center rounded-full bg-sage text-xs font-semibold text-sage-foreground">
 							M
 						</span>
-						<span>Maya · Kiln &amp; Thread</span>
+						<span className="leading-tight">
+							<span className="block text-sm">Maya</span>
+							<span className="block text-xs text-muted-foreground">
+								Kiln &amp; Thread
+							</span>
+						</span>
 					</div>
 				</SidebarFooter>
 				<SidebarRail />
 			</Sidebar>
-			<SidebarInset className="min-w-0">
-				<header className="sticky top-0 z-20 flex h-12 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-6">
-					<SidebarTrigger className="-ml-1" aria-label="Toggle sidebar" />
-					<Separator orientation="vertical" className="mx-1 h-4" />
+			<SidebarInset className="min-w-0 md:peer-data-[variant=inset]:shadow-none">
+				<header className="sticky top-0 z-20 flex h-16 items-center gap-3 rounded-t-xl bg-background/85 px-5 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-10">
+					<SidebarTrigger
+						className="-ml-1.5 text-muted-foreground"
+						aria-label="Toggle sidebar"
+					/>
 					<Crumbs />
-					<div className="ml-auto flex items-center gap-2">
+					<div className="ml-auto flex items-center gap-3">
 						<Button
-							variant="outline"
+							variant="secondary"
 							size="sm"
-							className="hidden h-8 gap-2 text-muted-foreground sm:inline-flex"
+							className="hidden h-9 w-56 justify-start gap-2 px-3.5 font-normal text-muted-foreground sm:inline-flex"
 							onClick={() => setCmdOpen(true)}
 						>
 							<Search className="size-3.5" />
 							Search
-							<Kbd>⌘K</Kbd>
+							<Kbd className="ml-auto bg-background">⌘K</Kbd>
 						</Button>
 						<Button
 							variant="ghost"
@@ -253,7 +274,12 @@ function NavItem({
 		: pathname === to || pathname.startsWith(`${to}/`);
 	return (
 		<SidebarMenuItem>
-			<SidebarMenuButton asChild isActive={active} tooltip={label}>
+			<SidebarMenuButton
+				asChild
+				isActive={active}
+				tooltip={label}
+				className={NAV_BUTTON}
+			>
 				<Link to={to}>
 					<Icon />
 					<span>{label}</span>
@@ -266,7 +292,7 @@ function NavItem({
 				</Link>
 			</SidebarMenuButton>
 			{badge ? (
-				<SidebarMenuBadge className="bg-deadline-soft text-deadline">
+				<SidebarMenuBadge className="top-2 rounded-full bg-deadline-soft px-2 text-deadline">
 					{badge}
 				</SidebarMenuBadge>
 			) : null}
@@ -296,11 +322,11 @@ function Crumbs() {
 	return (
 		<nav
 			aria-label="Breadcrumb"
-			className="flex min-w-0 items-center gap-1.5 text-sm"
+			className="flex min-w-0 items-center gap-2 text-sm"
 		>
 			{parts.map((p, i) => (
 				<span key={p.label} className="flex min-w-0 items-center gap-1.5">
-					{i > 0 && <span className="text-muted-foreground">/</span>}
+					{i > 0 && <span className="text-muted-foreground/50">/</span>}
 					{p.to ? (
 						<Link
 							to={p.to}
@@ -310,7 +336,9 @@ function Crumbs() {
 						</Link>
 					) : (
 						<span
-							className={i > 0 ? "truncate font-mono text-xs" : "font-medium"}
+							className={
+								i > 0 ? "truncate font-mono text-xs" : "text-muted-foreground"
+							}
 						>
 							{p.label}
 						</span>
