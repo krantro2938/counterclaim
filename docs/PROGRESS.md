@@ -1,5 +1,19 @@
 # Counterclaim — Progress
 
+## ⏸ Status summary (Wed Nov 11 01:20 MSK) — paused, blocked on Needs Schreuder #1 and #2
+
+**What works now:** the whole product is built and deployed at **https://counterclaim.aansl.com** (repo: https://github.com/krantro2938/counterclaim, public, MIT). Shop (`/shop`), Overview, Disputes inbox (AG Grid, live SSE), Case page (verdict, hybrid score, fact-cited reasoning, editable proposals + approval dialog, timeline, trace, PayPal-links tab, evidence PDF, chat), Orders & Protection, Settings, Lab. Worker: webhooks, 60 s poller, agent, executor. The agent is verified end to end on local fixtures with Inception **Mercury** (tools mode, 4.5–9 s, sensible verdicts for all three storylines). 33 tests, `pnpm check` green. Video: data-independent HyperFrames scenes built (`video/`, 63 s).
+
+**Not done, because no real PayPal call has been possible yet:** G0 sandbox truth, any real purchase/dispute, webhook registration, verifying the dispute action shapes → G1/G2/G3/G4 exit criteria. The code for all of it exists and is tested against mocks.
+
+**What's left for you, in order:**
+1. PayPal sandbox app credentials into `.env` (Needs Schreuder #1, below). I'm watching `.env` and will continue automatically (G0 checks, webhook registration, server deploy).
+2. Log the sandbox **buyer** into the browser connected to the Claude extension (#2), so I can make purchases and open disputes (see `docs/DEMO.md`).
+3. Activate the Mistral workspace plan (#4) for the Voxtral voice-over; or plan to record the VO yourself.
+4. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
+
+**Known issues:** this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com` (public DNS is fine): `sudo systemctl restart systemd-resolved` before recording. Shop checkout shows "unavailable" until creds are deployed. The deployed app is empty until real sandbox data exists.
+
 _Last update: Wed Nov 11 00:45 MSK · Current gate: **G0 (late, blocked on PayPal creds)** · G1/G2 code complete, waiting on real sandbox data_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
