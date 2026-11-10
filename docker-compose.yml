@@ -1,0 +1,21 @@
+# Local Postgres for development. `pnpm db:up`
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: counterclaim-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: counterclaim
+      POSTGRES_PASSWORD: counterclaim
+      POSTGRES_DB: counterclaim
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U counterclaim"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
