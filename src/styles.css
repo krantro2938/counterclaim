@@ -247,3 +247,20 @@
 		transition-duration: 0ms !important;
 	}
 }
+
+/* AG Grid: vertically centre custom cell renderers; keep right-aligned money right-aligned */
+.ag-cell {
+	display: flex;
+	align-items: center;
+}
+.ag-right-aligned-cell {
+	justify-content: flex-end;
+}
+.ag-cell > .ag-cell-wrapper,
+.ag-cell > span,
+.ag-cell > div {
+	min-width: 0;
+}
+.ag-row.cursor-pointer {
+	cursor: pointer;
+}

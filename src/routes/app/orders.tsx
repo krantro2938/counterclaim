@@ -375,7 +375,7 @@ function OrdersGrid({
 	}, [sorted]);
 
 	return (
-		<div className="h-[min(640px,calc(100vh-260px))] min-h-[360px] w-full">
+		<div className="w-full" style={{ height: Math.min(640, Math.max(260, 38 + sorted.length * 44 + 18)) }}>
 			<AgGridReact<OrderRowDto>
 				theme={counterclaimGrid}
 				columnDefs={cols}

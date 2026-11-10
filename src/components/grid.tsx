@@ -27,6 +27,7 @@ export const counterclaimGrid = themeQuartz.withParams({
 	wrapperBorderRadius: "var(--radius)",
 	cellHorizontalPadding: 12,
 	valueChangeValueHighlightBackgroundColor: "var(--accent)",
+	browserColorScheme: "inherit",
 });
 
 /** AG Grid renders client-side only (no SSR markup to hydrate). */

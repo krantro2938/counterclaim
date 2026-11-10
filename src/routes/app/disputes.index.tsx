@@ -355,7 +355,7 @@ function DisputesGrid({
 				headerName: "Status",
 				field: "status" as never,
 				pinned: "left",
-				width: 150,
+				width: 132,
 				cellRenderer: StatusCell,
 				enableCellChangeFlash: true,
 			},
@@ -363,14 +363,14 @@ function DisputesGrid({
 				colId: "id",
 				headerName: "Dispute",
 				field: "id",
-				width: 170,
+				width: 140,
 				cellRenderer: IdCell,
 			},
 			{
 				colId: "orderNumber",
 				headerName: "Order",
 				field: "orderNumber" as never,
-				width: 90,
+				width: 80,
 				valueFormatter: (p) => (p.value ? `#${p.value}` : "—"),
 				cellClass: "font-mono tabular",
 			},
@@ -386,7 +386,7 @@ function DisputesGrid({
 				colId: "reason",
 				headerName: "Reason",
 				field: "reason" as never,
-				width: 180,
+				width: 165,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
 						<ReasonLabel reason={p.data.reason} />
@@ -396,7 +396,7 @@ function DisputesGrid({
 				colId: "amount",
 				headerName: "Amount",
 				field: "amountMinor" as never,
-				width: 110,
+				width: 100,
 				type: "rightAligned",
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
@@ -410,7 +410,7 @@ function DisputesGrid({
 				colId: "due",
 				headerName: "Due",
 				field: "dueAt" as never,
-				width: 130,
+				width: 118,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
 						<DeadlineChip
@@ -423,7 +423,7 @@ function DisputesGrid({
 				colId: "score",
 				headerName: "Win likelihood",
 				field: "finalScore" as never,
-				width: 150,
+				width: 135,
 				enableCellChangeFlash: true,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data && !isGroup(p.data) ? (
@@ -438,7 +438,7 @@ function DisputesGrid({
 				colId: "recommended",
 				headerName: "Recommended",
 				field: "recommendedAction" as never,
-				width: 170,
+				width: 165,
 				enableCellChangeFlash: true,
 				cellRenderer: (p: ICellRendererParams<Row>) =>
 					p.data &&
@@ -465,7 +465,7 @@ function DisputesGrid({
 				colId: "updated",
 				headerName: "Updated",
 				field: "updatedAt" as never,
-				width: 110,
+				width: 96,
 				valueFormatter: (p) => relativeTime(p.value),
 				cellClass: "text-muted-foreground tabular",
 				sort: "desc",
@@ -585,7 +585,7 @@ function DisputesGrid({
 	}, []);
 
 	return (
-		<div className="h-[min(640px,calc(100vh-240px))] min-h-[360px] w-full">
+		<div className="w-full" style={{ height: Math.min(640, Math.max(260, 38 + (rows.length + (grouped ? 6 : 0)) * (dense ? 36 : 44) + 18)) }}>
 			<AgGridReact<Row>
 				theme={counterclaimGrid}
 				columnDefs={columnDefs}
