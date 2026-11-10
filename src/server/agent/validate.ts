@@ -95,14 +95,18 @@ function normalise(
 export function validateAssessment(
 	out: Assessment,
 	cf: CaseFile,
-	calledPayPalTools: Set<string>,
+	paypalOutputs: Map<string, unknown>,
 ): ValidatedAssessment {
 	const log: ValidationEntry[] = [];
 	const factIds = new Set(cf.facts.map((f) => f.id));
 	const citationOk = (id: string) => {
 		if (factIds.has(id)) return true;
-		const m = /^PP:([a-z_]+):/.exec(id);
-		return Boolean(m && calledPayPalTools.has(m[1]));
+		// PP:<tool>:<field> is accepted only if that toolkit tool ran in this assessment
+		// AND the cited field actually appears in what it returned.
+		const m = /^PP:([a-z_]+):(.+)$/.exec(id);
+		if (!m || !paypalOutputs.has(m[1])) return false;
+		const leaf = m[2].split(".").pop() ?? "";
+		return JSON.stringify(paypalOutputs.get(m[1]) ?? {}).includes(`"${leaf}"`);
 	};
 
 	const reasoning: ValidatedAssessment["reasoning"] = [];

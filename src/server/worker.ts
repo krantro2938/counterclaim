@@ -39,16 +39,28 @@ async function handle(job: Job): Promise<void> {
 			return;
 		}
 		case "protection_scan":
-			await refreshProtection();
-			await enqueue("protection_scan", {
-				runAfter: new Date(Date.now() + PROTECTION_EVERY_MS),
-			});
+			try {
+				await refreshProtection();
+			} catch (err) {
+				log.error({ err }, "protection scan failed");
+			} finally {
+				await enqueue("protection_scan", {
+					runAfter: new Date(Date.now() + PROTECTION_EVERY_MS),
+				});
+			}
 			return;
 		case "poll_disputes":
+			// Recurring jobs never rethrow: a retry would enqueue a second chain of polls.
 			try {
 				if (paypalConfigured()) await pollDisputes();
+			} catch (err) {
+				const message = err instanceof Error ? err.message : String(err);
+				log.error({ err }, "dispute poll failed");
+				await kvSet("poller.lastError", {
+					at: new Date().toISOString(),
+					message,
+				}).catch(() => {});
 			} finally {
-				// self-rescheduling every 60 s, even after a failure
 				await enqueue("poll_disputes", {
 					runAfter: new Date(Date.now() + POLL_EVERY_MS),
 				});

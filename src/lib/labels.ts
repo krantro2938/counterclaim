@@ -76,6 +76,19 @@ export function actionLabel(a?: string | null): string {
 	return ACTION_LABELS[a] ?? titleCase(a);
 }
 
+/** PayPal rel spelling is not pinned in the docs (send-message vs send_message): compare normalised. */
+export function normRel(rel: string): string {
+	return rel.trim().toLowerCase().replace(/_/g, "-");
+}
+
+export function hasRel(
+	links: { rel: string }[] | null | undefined,
+	rel: string,
+): boolean {
+	const want = normRel(rel);
+	return (links ?? []).some((l) => normRel(l.rel) === want);
+}
+
 /** HATEOAS rel → our action type */
 export const REL_TO_ACTION: Record<string, string> = {
 	"send-message": "send_message",

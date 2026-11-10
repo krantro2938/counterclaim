@@ -40,7 +40,7 @@ async function runToolMode(
 	cf: CaseFile,
 	rubric: RubricResult,
 	steps: Step[],
-	calledPayPal: Set<string>,
+	calledPayPal: Map<string, unknown>,
 ) {
 	const settings = await getSettings();
 	const timing = new Map<string, number>();
@@ -261,7 +261,7 @@ export async function runAssessment(
 	await publish({ type: "assessment.started", disputeId });
 	const started = Date.now();
 	const steps: Step[] = [];
-	const calledPayPal = new Set<string>();
+	const calledPayPal = new Map<string, unknown>();
 
 	try {
 		const cf = await buildCaseFile(disputeId);

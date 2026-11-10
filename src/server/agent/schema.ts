@@ -29,17 +29,8 @@ export const ProposedActionSchema = z.object({
 			.describe(
 				'make_offer / partial accept_claim: decimal amount, e.g. "15.00"',
 			),
-		offer_type: z
-			.enum([
-				"REFUND",
-				"REFUND_WITH_RETURN",
-				"REFUND_WITH_REPLACEMENT",
-				"REPLACEMENT_WITHOUT_REFUND",
-			])
-			.nullable(),
-		accept_claim_type: z
-			.enum(["REFUND", "PARTIAL_REFUND", "REFUND_WITH_RETURN"])
-			.nullable(),
+		offer_type: z.enum(["REFUND"]).nullable(),
+		accept_claim_type: z.enum(["REFUND", "PARTIAL_REFUND"]).nullable(),
 		evidence_notes: z
 			.string()
 			.nullable()

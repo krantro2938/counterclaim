@@ -1,5 +1,5 @@
 import { asc, desc, sql as dsql, eq } from "drizzle-orm";
-import { REL_TO_ACTION, reasonLabel, stageLabel } from "#/lib/labels";
+import { normRel, REL_TO_ACTION, reasonLabel, stageLabel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
 import { db } from "../db/client";
 import {
@@ -167,7 +167,7 @@ export function assembleCaseFile(input: {
 		product,
 	} = input;
 	const raw = (d.raw ?? {}) as Record<string, unknown>;
-	const rels = (d.links ?? []).map((l) => l.rel);
+	const rels = (d.links ?? []).map((l) => normRel(l.rel));
 	const allowedActions = [
 		...new Set(rels.map((r) => REL_TO_ACTION[r]).filter(Boolean)),
 	] as string[];

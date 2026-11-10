@@ -41,6 +41,7 @@ import { Route as ApiActionsIdApproveRouteImport } from './routes/api/actions.$i
 import { Route as ApiActionsIdCancelRouteImport } from './routes/api/actions.$id.cancel'
 import { Route as ApiActionsIdRejectRouteImport } from './routes/api/actions.$id.reject'
 import { Route as ApiDisputesIdAssessRouteImport } from './routes/api/disputes.$id.assess'
+import { Route as ApiDisputesIdChatRouteImport } from './routes/api/disputes.$id.chat'
 import { Route as ApiDisputesIdEvidencePreviewRouteImport } from './routes/api/disputes.$id.evidence-preview'
 import { Route as ApiDisputesIdTraceRouteImport } from './routes/api/disputes.$id.trace'
 import { Route as ApiOrdersIdShipRouteImport } from './routes/api/orders.$id.ship'
@@ -212,6 +213,11 @@ const ApiDisputesIdAssessRoute = ApiDisputesIdAssessRouteImport.update({
   path: '/assess',
   getParentRoute: () => ApiDisputesIdRoute,
 } as any)
+const ApiDisputesIdChatRoute = ApiDisputesIdChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => ApiDisputesIdRoute,
+} as any)
 const ApiDisputesIdEvidencePreviewRoute =
   ApiDisputesIdEvidencePreviewRouteImport.update({
     id: '/evidence-preview',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
   '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
   '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
   '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
   '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
@@ -389,6 +397,7 @@ export interface FileRoutesById {
   '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
   '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
   '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
@@ -435,6 +444,7 @@ export interface FileRouteTypes {
     | '/api/actions/$id/cancel'
     | '/api/actions/$id/reject'
     | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
     | '/api/orders/$id/ship'
@@ -477,6 +487,7 @@ export interface FileRouteTypes {
     | '/api/actions/$id/cancel'
     | '/api/actions/$id/reject'
     | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
     | '/api/orders/$id/ship'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/api/actions/$id/cancel'
     | '/api/actions/$id/reject'
     | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
     | '/api/orders/$id/ship'
@@ -789,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDisputesIdAssessRouteImport
       parentRoute: typeof ApiDisputesIdRoute
     }
+    '/api/disputes/$id/chat': {
+      id: '/api/disputes/$id/chat'
+      path: '/chat'
+      fullPath: '/api/disputes/$id/chat'
+      preLoaderRoute: typeof ApiDisputesIdChatRouteImport
+      parentRoute: typeof ApiDisputesIdRoute
+    }
     '/api/disputes/$id/evidence-preview': {
       id: '/api/disputes/$id/evidence-preview'
       path: '/evidence-preview'
@@ -898,12 +917,14 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 interface ApiDisputesIdRouteChildren {
   ApiDisputesIdAssessRoute: typeof ApiDisputesIdAssessRoute
+  ApiDisputesIdChatRoute: typeof ApiDisputesIdChatRoute
   ApiDisputesIdEvidencePreviewRoute: typeof ApiDisputesIdEvidencePreviewRoute
   ApiDisputesIdTraceRoute: typeof ApiDisputesIdTraceRoute
 }
 
 const ApiDisputesIdRouteChildren: ApiDisputesIdRouteChildren = {
   ApiDisputesIdAssessRoute: ApiDisputesIdAssessRoute,
+  ApiDisputesIdChatRoute: ApiDisputesIdChatRoute,
   ApiDisputesIdEvidencePreviewRoute: ApiDisputesIdEvidencePreviewRoute,
   ApiDisputesIdTraceRoute: ApiDisputesIdTraceRoute,
 }

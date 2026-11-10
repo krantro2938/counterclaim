@@ -33,7 +33,7 @@ export function buildAgentTools(
 	cf: CaseFile,
 	fees: FeeConstants,
 	record: Recorder,
-	calledPayPal: Set<string>,
+	calledPayPal: Map<string, unknown>,
 ) {
 	const wrap = <I, O>(
 		name: string,
@@ -75,7 +75,7 @@ export function buildAgentTools(
 	) => {
 		if (!paypalConfigured()) throw new Error("PayPal sandbox not configured");
 		const r = await runToolkitTool(readToolkit(), name, args);
-		calledPayPal.add(name);
+		calledPayPal.set(name, r.data);
 		return r.data;
 	};
 
@@ -189,56 +189,49 @@ export function buildAgentTools(
 			),
 		}),
 
-		// ── PayPal Agent Toolkit (live sandbox reads) ──
+		// ── PayPal Agent Toolkit (live sandbox reads), pinned to THIS case's IDs ──
 		get_dispute: tool({
 			description:
-				"PayPal Agent Toolkit: fetch the live dispute from PayPal (status, links, messages).",
-			inputSchema: z.object({ dispute_id: z.string() }),
-			execute: wrap(
-				"get_dispute",
-				"paypal_agent_toolkit",
-				({ dispute_id }: { dispute_id: string }) =>
-					paypal("get_dispute", { dispute_id: dispute_id || cf.disputeId }),
+				"PayPal Agent Toolkit: fetch this dispute live from PayPal (status, links, messages, evidence requests).",
+			inputSchema: z.object({}),
+			execute: wrap("get_dispute", "paypal_agent_toolkit", () =>
+				paypal("get_dispute", { dispute_id: cf.disputeId }),
 			),
 		}),
 		get_order: tool({
 			description:
-				"PayPal Agent Toolkit: fetch the PayPal order (payer, shipping address, captures).",
-			inputSchema: z.object({ id: z.string() }),
-			execute: wrap(
-				"get_order",
-				"paypal_agent_toolkit",
-				({ id }: { id: string }) =>
-					paypal("get_order", { id: id || cf.order?.paypalOrderId }),
-			),
+				"PayPal Agent Toolkit: fetch this case's PayPal order (payer, shipping address, captures).",
+			inputSchema: z.object({}),
+			execute: wrap("get_order", "paypal_agent_toolkit", () => {
+				if (!cf.order?.paypalOrderId)
+					throw new Error("No PayPal order linked to this dispute");
+				return paypal("get_order", { id: cf.order.paypalOrderId });
+			}),
 		}),
 		get_shipment_tracking: tool({
 			description:
-				"PayPal Agent Toolkit: tracking PayPal has on file for the order's capture.",
-			inputSchema: z.object({ transaction_id: z.string().nullable() }),
-			execute: wrap(
-				"get_shipment_tracking",
-				"paypal_agent_toolkit",
-				({ transaction_id }: { transaction_id: string | null }) =>
-					paypal("get_shipment_tracking", {
-						transaction_id: transaction_id || cf.order?.captureId,
-						order_id: cf.order?.paypalOrderId,
-					}),
-			),
+				"PayPal Agent Toolkit: tracking PayPal has on file for this order's capture.",
+			inputSchema: z.object({}),
+			execute: wrap("get_shipment_tracking", "paypal_agent_toolkit", () => {
+				if (!cf.order?.captureId)
+					throw new Error("No capture linked to this dispute");
+				return paypal("get_shipment_tracking", {
+					transaction_id: cf.order.captureId,
+				});
+			}),
 		}),
 		list_transactions: tool({
 			description:
-				"PayPal Agent Toolkit: look up a transaction in the merchant's PayPal history (e.g. the disputed capture).",
-			inputSchema: z.object({ transaction_id: z.string().nullable() }),
-			execute: wrap(
-				"list_transactions",
-				"paypal_agent_toolkit",
-				({ transaction_id }: { transaction_id: string | null }) =>
-					paypal("list_transactions", {
-						transaction_id: transaction_id || cf.order?.captureId,
-						search_months: 1,
-					}),
-			),
+				"PayPal Agent Toolkit: look up this case's capture in the merchant's PayPal transaction history.",
+			inputSchema: z.object({}),
+			execute: wrap("list_transactions", "paypal_agent_toolkit", () => {
+				if (!cf.order?.captureId)
+					throw new Error("No capture linked to this dispute");
+				return paypal("list_transactions", {
+					transaction_id: cf.order.captureId,
+					search_months: 1,
+				});
+			}),
 		}),
 
 		submit_assessment: tool({

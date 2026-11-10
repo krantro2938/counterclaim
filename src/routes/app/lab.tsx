@@ -34,7 +34,7 @@ import {
 } from "#/components/ui/table";
 import { ApiError, api, post, qk } from "#/lib/api";
 import { relativeTime } from "#/lib/format";
-import { reasonLabel, stageLabel } from "#/lib/labels";
+import { hasRel, reasonLabel, stageLabel } from "#/lib/labels";
 import type { OrderRowDto } from "#/server/queries";
 import { ErrorBox } from "./disputes.index";
 
@@ -107,7 +107,9 @@ function LabPage() {
 	const run = (path: string, label: string, body?: unknown) =>
 		act.mutate({ path, label, body });
 	const has = (d: LabDto["disputes"][number], rel: string) =>
-		d.links.some((l) => l.rel === rel);
+		hasRel(d.links, rel) ||
+		((rel === "require-evidence" || rel === "adjudicate") &&
+			d.status === "UNDER_REVIEW");
 
 	return (
 		<div className="mx-auto flex max-w-[1200px] flex-col gap-8 p-4 md:p-6">

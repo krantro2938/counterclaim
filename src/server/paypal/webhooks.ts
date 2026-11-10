@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../db/client";
 import { orders, webhookEvents } from "../db/schema";
 import { env, paypalConfigured } from "../env";
@@ -89,8 +89,26 @@ export async function ingestWebhook(
 		type: event.event_type,
 		verified: v.verified,
 	});
-	if (!inserted.length)
+	if (!inserted.length) {
+		// A PayPal retry of an event we stored unverified (e.g. transient verify failure): upgrade it.
+		if (v.verified) {
+			const upgraded = await db()
+				.update(webhookEvents)
+				.set({ verified: true, verifyDetail: v.detail })
+				.where(
+					and(
+						eq(webhookEvents.id, event.id),
+						eq(webhookEvents.verified, false),
+					),
+				)
+				.returning({ id: webhookEvents.id });
+			if (upgraded.length) {
+				await enqueue("process_webhook", { refId: event.id });
+				return { stored: true, verified: true, id: event.id };
+			}
+		}
 		return { stored: false, verified: v.verified, id: event.id };
+	}
 	log.info(
 		{
 			webhook: {

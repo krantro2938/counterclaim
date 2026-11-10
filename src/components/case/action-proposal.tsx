@@ -256,6 +256,18 @@ export function ActionProposal({
 					)}
 				</div>
 			) : null}
+			{(status === "executing" || status === "approved") &&
+				action.decidedAt &&
+				Date.now() - new Date(action.decidedAt).getTime() > 120_000 && (
+					<p
+						role="status"
+						className="rounded-md bg-deadline-soft px-3 py-2 text-sm text-deadline"
+					>
+						Outcome unknown: PayPal hasn't confirmed this yet. Check the dispute
+						in PayPal before trying again; Counterclaim never re-sends
+						automatically.
+					</p>
+				)}
 			{status === "succeeded" && (
 				<p className="flex items-center gap-1.5 text-sm text-won">
 					<CheckCircle2 className="size-4" /> Accepted by PayPal

@@ -14,6 +14,7 @@ import {
 	ActionProposal,
 	ApproveDialog,
 } from "#/components/case/action-proposal";
+import { AgentChat } from "#/components/case/agent-chat";
 import { EvidencePreview } from "#/components/case/evidence-preview";
 import { FactChip } from "#/components/case/fact-chip";
 import { CaseTimeline } from "#/components/case/timeline";
@@ -50,7 +51,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { useFallbackInterval } from "#/hooks/use-live";
 import { ApiError, api, post, qk } from "#/lib/api";
 import { formatDateTime } from "#/lib/format";
-import { REL_TO_ACTION, stageLabel } from "#/lib/labels";
+import { normRel, REL_TO_ACTION, stageLabel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
 import { cn } from "#/lib/utils";
 import { ErrorBox } from "./disputes.index";
@@ -313,6 +314,7 @@ function CasePage() {
 						</div>
 					)}
 					<EvidencePreview detail={d} />
+					{!resolved && <AgentChat disputeId={dispute.id} />}
 				</aside>
 
 				<div className="min-w-0">
@@ -657,8 +659,8 @@ function PayPalLinks({ detail }: { detail: DisputeDetail }) {
 			</p>
 			<ul className="flex flex-wrap gap-2">
 				{links.map((l) => {
-					const action = REL_TO_ACTION[l.rel];
-					const sandbox = SANDBOX_REL.has(l.rel);
+					const action = REL_TO_ACTION[normRel(l.rel)];
+					const sandbox = SANDBOX_REL.has(normRel(l.rel));
 					return (
 						<li
 							key={l.rel + l.href}

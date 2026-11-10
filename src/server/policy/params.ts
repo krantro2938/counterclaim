@@ -13,22 +13,13 @@ export const ProvideEvidenceParams = z.object({
 	includePdf: z.boolean().default(true),
 });
 export const MakeOfferParams = z.object({
-	offerType: z
-		.enum([
-			"REFUND",
-			"REFUND_WITH_RETURN",
-			"REFUND_WITH_REPLACEMENT",
-			"REPLACEMENT_WITHOUT_REFUND",
-		])
-		.default("REFUND"),
+	offerType: z.enum(["REFUND"]).default("REFUND"),
 	amountMinor: z.number().int().positive(),
 	note: z.string().trim().min(1).max(2000),
 });
 export const AcceptClaimParams = z.object({
 	note: z.string().trim().min(1).max(2000),
-	acceptClaimType: z
-		.enum(["REFUND", "PARTIAL_REFUND", "REFUND_WITH_RETURN"])
-		.default("REFUND"),
+	acceptClaimType: z.enum(["REFUND", "PARTIAL_REFUND"]).default("REFUND"),
 	amountMinor: z.number().int().positive().optional(),
 });
 export const EscalateParams = z.object({

@@ -585,7 +585,18 @@ function DisputesGrid({
 	}, []);
 
 	return (
-		<div className="w-full" style={{ height: Math.min(640, Math.max(260, 38 + (rows.length + (grouped ? 6 : 0)) * (dense ? 36 : 44) + 18)) }}>
+		<div
+			className="w-full"
+			style={{
+				height: Math.min(
+					640,
+					Math.max(
+						260,
+						38 + (rows.length + (grouped ? 6 : 0)) * (dense ? 36 : 44) + 18,
+					),
+				),
+			}}
+		>
 			<AgGridReact<Row>
 				theme={counterclaimGrid}
 				columnDefs={columnDefs}

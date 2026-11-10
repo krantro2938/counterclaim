@@ -146,6 +146,7 @@ export function createOrder(input: CreateOrderInput, requestId: string) {
 			purchase_units: [
 				{
 					reference_id: input.referenceId,
+					custom_id: input.referenceId,
 					invoice_id: input.invoiceId,
 					description: input.description,
 					amount: {

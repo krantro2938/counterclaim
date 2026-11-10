@@ -1,5 +1,5 @@
-import { desc, eq } from "drizzle-orm";
-import { ACTION_TO_REL, actionLabel } from "#/lib/labels";
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { ACTION_TO_REL, actionLabel, hasRel } from "#/lib/labels";
 import { formatMoney, minorToPaypalMoney } from "#/lib/money";
 import { buildCaseFile } from "../casefile";
 import { db } from "../db/client";
@@ -39,14 +39,21 @@ export async function executeAction(actionId: string): Promise<void> {
 		await enqueue("execute_action", { refId: a.id, runAfter: a.executeAfter });
 		return;
 	}
-	if (a.status !== "approved" && a.status !== "auto_scheduled") {
+	// Atomic claim: only one executor wins, and an undo/cancel racing us loses cleanly.
+	const claimed = await db()
+		.update(actions)
+		.set({ status: "executing" })
+		.where(
+			and(
+				eq(actions.id, a.id),
+				inArray(actions.status, ["approved", "auto_scheduled"]),
+			),
+		)
+		.returning({ id: actions.id });
+	if (!claimed.length) {
 		log.info({ actionId, status: a.status }, "action not executable; skipping");
 		return;
 	}
-	await db()
-		.update(actions)
-		.set({ status: "executing" })
-		.where(eq(actions.id, a.id));
 	await publish({
 		type: "action.updated",
 		disputeId: a.disputeId,
@@ -63,7 +70,7 @@ export async function executeAction(actionId: string): Promise<void> {
 			.where(eq(disputes.id, a.disputeId))
 			.limit(1);
 		const rel = ACTION_TO_REL[a.type];
-		if (!d?.links.some((l) => l.rel === rel)) {
+		if (!d || !hasRel(d.links, rel)) {
 			throw Object.assign(
 				new Error(
 					`PayPal no longer allows "${rel}" on this dispute (status ${d?.status ?? "?"})`,

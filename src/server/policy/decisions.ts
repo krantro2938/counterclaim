@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { ACTION_TO_REL, actionLabel } from "#/lib/labels";
+import { ACTION_TO_REL, actionLabel, hasRel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
 import { db } from "../db/client";
 import { actions, disputes } from "../db/schema";
@@ -34,7 +34,7 @@ export async function approveAction(
 	if (!d) throw httpError(404, "Dispute not found");
 	const rel = ACTION_TO_REL[a.type];
 	// HATEOAS gate, checked again at approval time against the latest snapshot.
-	if (!d.links.some((l) => l.rel === rel)) {
+	if (!hasRel(d.links, rel)) {
 		throw httpError(
 			409,
 			`PayPal no longer allows "${rel}" on this dispute (status ${d.status}). Re-assess to get a valid proposal.`,

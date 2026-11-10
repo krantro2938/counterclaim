@@ -1,5 +1,5 @@
 import { and, eq, inArray, or } from "drizzle-orm";
-import { reasonLabel } from "#/lib/labels";
+import { normRel, reasonLabel } from "#/lib/labels";
 import { formatMoney, paypalMoneyToMinor } from "#/lib/money";
 import { db } from "../db/client";
 import { actions, disputes, orders } from "../db/schema";
@@ -49,14 +49,19 @@ export async function syncDispute(
 	const tx = d.disputed_transactions?.[0];
 	const sellerTx = tx?.seller_transaction_id;
 	let orderId: string | null = prev?.orderId ?? null;
-	if (!orderId && (sellerTx || tx?.invoice_number)) {
+	if (!orderId && (sellerTx || tx?.invoice_number || tx?.custom)) {
 		const conds = [];
 		if (sellerTx) conds.push(eq(orders.captureId, sellerTx));
-		const [o] = await db()
-			.select({ id: orders.id })
-			.from(orders)
-			.where(conds.length ? or(...conds) : undefined)
-			.limit(1);
+		const inv = /^KT-(\d+)-/.exec(tx?.invoice_number ?? "");
+		if (inv) conds.push(eq(orders.number, Number(inv[1])));
+		if (tx?.custom) conds.push(eq(orders.id, tx.custom));
+		const [o] = conds.length
+			? await db()
+					.select({ id: orders.id })
+					.from(orders)
+					.where(or(...conds))
+					.limit(1)
+			: [];
 		orderId = o?.id ?? null;
 	}
 	const outcomeCode = d.dispute_outcome?.outcome_code;
@@ -73,7 +78,7 @@ export async function syncDispute(
 		sellerResponseDueAt: d.seller_response_due_date
 			? new Date(d.seller_response_due_date)
 			: null,
-		links: d.links,
+		links: d.links.map((l) => ({ ...l, rel: normRel(l.rel) })),
 		raw: res.data as Record<string, unknown>,
 		outcome,
 		outcomeCode: outcomeCode ?? null,
