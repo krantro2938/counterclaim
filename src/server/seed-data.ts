@@ -43,7 +43,8 @@ export const PRODUCTS = [
 	{
 		slug: "ash-glaze-tea-cup",
 		title: "Tea Cup, Ash Glaze",
-		description: "A small handleless tea cup that sits warm in the palm. 180 ml.",
+		description:
+			"A small handleless tea cup that sits warm in the palm. 180 ml.",
 		priceMinor: 1150,
 		imageUrl: "/products/cup.svg",
 		sortOrder: 5,

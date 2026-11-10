@@ -13,7 +13,12 @@ export default defineConfig({
 	server: { port: 3000 },
 	ssr: {
 		// keep heavy server-only deps out of the SSR bundle; they are resolved from node_modules at runtime
-		external: ["@react-pdf/renderer", "postgres", "pino", "@paypal/agent-toolkit"],
+		external: [
+			"@react-pdf/renderer",
+			"postgres",
+			"pino",
+			"@paypal/agent-toolkit",
+		],
 	},
 	plugins: [nitro(), tailwindcss(), tanstackStart(), viteReact()],
 });

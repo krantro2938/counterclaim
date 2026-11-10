@@ -21,7 +21,9 @@ const Body = z.object({
 		.partial()
 		.optional(),
 	atRiskAfterHours: z.number().int().min(0).max(240).optional(),
-	policies: z.array(z.object({ section: z.string(), body: z.string().min(1).max(4000) })).optional(),
+	policies: z
+		.array(z.object({ section: z.string(), body: z.string().min(1).max(4000) }))
+		.optional(),
 });
 
 export const Route = createFileRoute("/api/settings")({
@@ -40,7 +42,10 @@ export const Route = createFileRoute("/api/settings")({
 					})
 					.where(eq(merchantSettings.id, 1));
 				for (const p of body.policies ?? []) {
-					await db().update(storePolicies).set({ body: p.body }).where(eq(storePolicies.section, p.section));
+					await db()
+						.update(storePolicies)
+						.set({ body: p.body })
+						.where(eq(storePolicies.section, p.section));
 				}
 				if (body.atRiskAfterHours !== undefined) {
 					const { refreshProtection } = await import("#/server/protection");

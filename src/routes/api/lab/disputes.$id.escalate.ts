@@ -5,7 +5,10 @@ import { labEscalate } from "#/server/lab";
 export const Route = createFileRoute("/api/lab/disputes/$id/escalate")({
 	server: {
 		handlers: {
-			POST: handle(async ({ params }: { params: { id: string } }) => labGuard() ?? json(await labEscalate(params.id))),
+			POST: handle(
+				async ({ params }: { params: { id: string } }) =>
+					labGuard() ?? json(await labEscalate(params.id)),
+			),
 		},
 	},
 });

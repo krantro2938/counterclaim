@@ -1,5 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+	Scripts,
+} from "@tanstack/react-router";
 import { ThemeProvider, themeScript } from "#/components/theme";
 import { Toaster } from "#/components/ui/sonner";
 import { TooltipProvider } from "#/components/ui/tooltip";
@@ -15,7 +20,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ title: "Counterclaim — AI dispute agent for PayPal merchants" },
-			{ name: "description", content: "Counterclaim defends small PayPal merchants against disputes, and prevents them before they happen." },
+			{
+				name: "description",
+				content:
+					"Counterclaim defends small PayPal merchants against disputes, and prevents them before they happen.",
+			},
 			{ name: "theme-color", content: "#f8f6f2" },
 		],
 		links: [

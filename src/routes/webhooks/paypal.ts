@@ -9,7 +9,11 @@ export const Route = createFileRoute("/webhooks/paypal")({
 			POST: handle(async ({ request }: { request: Request }) => {
 				const raw = await request.text();
 				const r = await ingestWebhook(raw, request.headers);
-				return json({ received: true, duplicate: !r.stored, verified: r.verified });
+				return json({
+					received: true,
+					duplicate: !r.stored,
+					verified: r.verified,
+				});
 			}),
 		},
 	},

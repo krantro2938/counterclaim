@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 const money = z.object({ currency_code: z.string(), value: z.string() });
-const link = z.object({ href: z.string(), rel: z.string(), method: z.string().optional() });
+const link = z.object({
+	href: z.string(),
+	rel: z.string(),
+	method: z.string().optional(),
+});
 
 /** Lenient schema for GET /v1/customer/disputes/{id}. Unknown fields pass through. */
 export const DisputeSchema = z
@@ -18,7 +22,10 @@ export const DisputeSchema = z
 		seller_response_due_date: z.string().optional(),
 		buyer_response_due_date: z.string().optional(),
 		dispute_outcome: z
-			.object({ outcome_code: z.string().optional(), amount_refunded: money.optional() })
+			.object({
+				outcome_code: z.string().optional(),
+				amount_refunded: money.optional(),
+			})
 			.passthrough()
 			.optional(),
 		disputed_transactions: z
@@ -32,8 +39,20 @@ export const DisputeSchema = z
 						gross_amount: money.optional(),
 						invoice_number: z.string().optional(),
 						custom: z.string().optional(),
-						buyer: z.object({ name: z.string().optional(), email: z.string().optional() }).passthrough().optional(),
-						seller: z.object({ merchant_id: z.string().optional(), name: z.string().optional() }).passthrough().optional(),
+						buyer: z
+							.object({
+								name: z.string().optional(),
+								email: z.string().optional(),
+							})
+							.passthrough()
+							.optional(),
+						seller: z
+							.object({
+								merchant_id: z.string().optional(),
+								name: z.string().optional(),
+							})
+							.passthrough()
+							.optional(),
 					})
 					.passthrough(),
 			)

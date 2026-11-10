@@ -2,7 +2,14 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db, sql } from "./db/client";
 import { jobs } from "./db/schema";
 import { paypalConfigured } from "./env";
-import { claimJob, completeJob, enqueue, failJob, type Job, pruneJobs } from "./jobs/queue";
+import {
+	claimJob,
+	completeJob,
+	enqueue,
+	failJob,
+	type Job,
+	pruneJobs,
+} from "./jobs/queue";
 import { kvSet } from "./kv";
 import { log } from "./log";
 import { processWebhook } from "./paypal/webhooks";
@@ -17,7 +24,9 @@ async function handle(job: Job): Promise<void> {
 		case "process_webhook":
 			return processWebhook(job.refId as string);
 		case "sync_dispute":
-			await syncDispute(job.refId as string, { reason: job.payload?.reason as string | undefined });
+			await syncDispute(job.refId as string, {
+				reason: job.payload?.reason as string | undefined,
+			});
 			return;
 		case "assess": {
 			const { runAssessment } = await import("./agent/assess");
@@ -31,14 +40,18 @@ async function handle(job: Job): Promise<void> {
 		}
 		case "protection_scan":
 			await refreshProtection();
-			await enqueue("protection_scan", { runAfter: new Date(Date.now() + PROTECTION_EVERY_MS) });
+			await enqueue("protection_scan", {
+				runAfter: new Date(Date.now() + PROTECTION_EVERY_MS),
+			});
 			return;
 		case "poll_disputes":
 			try {
 				if (paypalConfigured()) await pollDisputes();
 			} finally {
 				// self-rescheduling every 60 s, even after a failure
-				await enqueue("poll_disputes", { runAfter: new Date(Date.now() + POLL_EVERY_MS) });
+				await enqueue("poll_disputes", {
+					runAfter: new Date(Date.now() + POLL_EVERY_MS),
+				});
 			}
 			return;
 		default:
@@ -82,9 +95,30 @@ export async function startWorker(): Promise<void> {
 			try {
 				await handle(job);
 				await completeJob(job.id);
-				log.info({ job: { id: job.id, kind: job.kind, ref: job.refId, ms: Date.now() - started } }, "job done");
+				log.info(
+					{
+						job: {
+							id: job.id,
+							kind: job.kind,
+							ref: job.refId,
+							ms: Date.now() - started,
+						},
+					},
+					"job done",
+				);
 			} catch (err) {
-				log.error({ job: { id: job.id, kind: job.kind, ref: job.refId, attempt: job.attempts }, err }, "job failed");
+				log.error(
+					{
+						job: {
+							id: job.id,
+							kind: job.kind,
+							ref: job.refId,
+							attempt: job.attempts,
+						},
+						err,
+					},
+					"job failed",
+				);
 				await failJob(job, err).catch(() => {});
 			}
 			continue;
@@ -92,7 +126,9 @@ export async function startWorker(): Promise<void> {
 		if (Date.now() - lastPrune > 3_600_000) {
 			lastPrune = Date.now();
 			await pruneJobs().catch(() => {});
-			await kvSet("worker.heartbeat", { at: new Date().toISOString() }).catch(() => {});
+			await kvSet("worker.heartbeat", { at: new Date().toISOString() }).catch(
+				() => {},
+			);
 		}
 		await new Promise<void>((resolve) => {
 			const t = setTimeout(resolve, 500);

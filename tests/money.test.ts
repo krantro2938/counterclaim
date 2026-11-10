@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { formatMoney, paypalMoneyToMinor, toDecimalString, toMinor } from "../src/lib/money";
+import {
+	formatMoney,
+	paypalMoneyToMinor,
+	toDecimalString,
+	toMinor,
+} from "../src/lib/money";
 
 describe("money", () => {
 	it("parses PayPal decimal strings without floats", () => {
@@ -32,7 +37,9 @@ describe("money", () => {
 		expect(formatMoney(-1500)).toBe("−$15.00");
 	});
 	it("round-trips PayPal money objects", () => {
-		expect(paypalMoneyToMinor({ value: "11.50", currency_code: "USD" })).toEqual({
+		expect(
+			paypalMoneyToMinor({ value: "11.50", currency_code: "USD" }),
+		).toEqual({
 			amountMinor: 1150,
 			currency: "USD",
 		});

@@ -14,7 +14,9 @@ const EnvSchema = z.object({
 	NODE_ENV: z.string().default("development"),
 	DATABASE_URL: z
 		.string()
-		.default("postgres://counterclaim:counterclaim@localhost:5433/counterclaim"),
+		.default(
+			"postgres://counterclaim:counterclaim@localhost:5433/counterclaim",
+		),
 
 	PAYPAL_CLIENT_ID: optionalString,
 	PAYPAL_CLIENT_SECRET: optionalString,

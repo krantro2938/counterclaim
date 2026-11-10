@@ -15,9 +15,16 @@ export function Money({
 	emphasis?: boolean;
 	className?: string;
 }) {
-	if (amountMinor == null) return <span className={cn("text-muted-foreground", className)}>—</span>;
+	if (amountMinor == null)
+		return <span className={cn("text-muted-foreground", className)}>—</span>;
 	return (
-		<span className={cn("tabular whitespace-nowrap", emphasis ? "font-display text-2xl font-medium" : "font-mono", className)}>
+		<span
+			className={cn(
+				"tabular whitespace-nowrap",
+				emphasis ? "font-display text-2xl font-medium" : "font-mono",
+				className,
+			)}
+		>
 			{formatMoney(amountMinor, currency, { signed })}
 		</span>
 	);

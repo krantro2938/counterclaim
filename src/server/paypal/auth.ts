@@ -6,7 +6,9 @@ let inflight: Promise<string> | undefined;
 
 export class PayPalNotConfiguredError extends Error {
 	constructor() {
-		super("PayPal sandbox credentials are not configured (PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET)");
+		super(
+			"PayPal sandbox credentials are not configured (PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET)",
+		);
 		this.name = "PayPalNotConfigured";
 	}
 }
@@ -18,7 +20,9 @@ export async function getAccessToken(): Promise<string> {
 	if (inflight) return inflight;
 	inflight = (async () => {
 		const e = env();
-		const basic = Buffer.from(`${e.PAYPAL_CLIENT_ID}:${e.PAYPAL_CLIENT_SECRET}`).toString("base64");
+		const basic = Buffer.from(
+			`${e.PAYPAL_CLIENT_ID}:${e.PAYPAL_CLIENT_SECRET}`,
+		).toString("base64");
 		const res = await fetch(`${e.PAYPAL_API_BASE}/v1/oauth2/token`, {
 			method: "POST",
 			headers: {
@@ -28,13 +32,32 @@ export async function getAccessToken(): Promise<string> {
 			body: "grant_type=client_credentials",
 		});
 		const debugId = res.headers.get("paypal-debug-id");
-		log.info({ paypal: { method: "POST", path: "/v1/oauth2/token", status: res.status, debugId } }, "paypal call");
+		log.info(
+			{
+				paypal: {
+					method: "POST",
+					path: "/v1/oauth2/token",
+					status: res.status,
+					debugId,
+				},
+			},
+			"paypal call",
+		);
 		if (!res.ok) {
 			const text = await res.text();
-			throw new Error(`PayPal token request failed (${res.status}): ${text.slice(0, 300)}`);
+			throw new Error(
+				`PayPal token request failed (${res.status}): ${text.slice(0, 300)}`,
+			);
 		}
-		const json = (await res.json()) as { access_token: string; expires_in: number; scope?: string };
-		cached = { token: json.access_token, expiresAt: Date.now() + (json.expires_in - 60) * 1000 };
+		const json = (await res.json()) as {
+			access_token: string;
+			expires_in: number;
+			scope?: string;
+		};
+		cached = {
+			token: json.access_token,
+			expiresAt: Date.now() + (json.expires_in - 60) * 1000,
+		};
 		return json.access_token;
 	})();
 	try {

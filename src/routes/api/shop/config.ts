@@ -9,7 +9,9 @@ export const Route = createFileRoute("/api/shop/config")({
 			GET: async () =>
 				json({
 					paypalClientId: env().PAYPAL_CLIENT_ID ?? null,
-					environment: env().PAYPAL_API_BASE.includes("sandbox") ? "sandbox" : "production",
+					environment: env().PAYPAL_API_BASE.includes("sandbox")
+						? "sandbox"
+						: "production",
 				}),
 		},
 	},

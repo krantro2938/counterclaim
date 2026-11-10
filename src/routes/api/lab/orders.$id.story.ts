@@ -8,12 +8,20 @@ const Body = z.object({ story: z.enum(STORIES) });
 export const Route = createFileRoute("/api/lab/orders/$id/story")({
 	server: {
 		handlers: {
-			POST: handle(async ({ params, request }: { params: { id: string }; request: Request }) => {
-				const g = labGuard();
-				if (g) return g;
-				const body = await readJson(request, Body);
-				return json(await labAttachStory(params.id, body.story));
-			}),
+			POST: handle(
+				async ({
+					params,
+					request,
+				}: {
+					params: { id: string };
+					request: Request;
+				}) => {
+					const g = labGuard();
+					if (g) return g;
+					const body = await readJson(request, Body);
+					return json(await labAttachStory(params.id, body.story));
+				},
+			),
 		},
 	},
 });

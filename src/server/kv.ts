@@ -12,10 +12,19 @@ export async function kvSet(key: string, value: unknown): Promise<void> {
 	await db()
 		.insert(kv)
 		.values({ key, value, updatedAt: new Date() })
-		.onConflictDoUpdate({ target: kv.key, set: { value, updatedAt: new Date() } });
+		.onConflictDoUpdate({
+			target: kv.key,
+			set: { value, updatedAt: new Date() },
+		});
 }
 
-export type Actor = "buyer" | "merchant" | "paypal" | "agent" | "simulated" | "system";
+export type Actor =
+	| "buyer"
+	| "merchant"
+	| "paypal"
+	| "agent"
+	| "simulated"
+	| "system";
 
 /** Append to the activity feed (Overview "Recent activity" + case timelines). */
 export async function recordActivity(a: {
@@ -38,5 +47,9 @@ export async function recordActivity(a: {
 			meta: a.meta ?? null,
 			at: a.at ?? new Date(),
 		});
-	await publish({ type: "activity", text: a.text, disputeId: a.disputeId ?? undefined });
+	await publish({
+		type: "activity",
+		text: a.text,
+		disputeId: a.disputeId ?? undefined,
+	});
 }

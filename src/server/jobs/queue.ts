@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql as dsql } from "drizzle-orm";
+import { and, sql as dsql, eq, isNull } from "drizzle-orm";
 import { db, sql } from "../db/client";
 import { jobs } from "../db/schema";
 
@@ -18,7 +18,12 @@ export type Job = typeof jobs.$inferSelect;
  */
 export async function enqueue(
 	kind: JobKind,
-	opts: { refId?: string; payload?: Record<string, unknown>; runAfter?: Date; dedupe?: boolean } = {},
+	opts: {
+		refId?: string;
+		payload?: Record<string, unknown>;
+		runAfter?: Date;
+		dedupe?: boolean;
+	} = {},
 ): Promise<number> {
 	if (opts.dedupe && opts.refId) {
 		const existing = await db()
@@ -69,11 +74,19 @@ export async function claimJob(): Promise<Job | null> {
 }
 
 export async function completeJob(id: number): Promise<void> {
-	await db().update(jobs).set({ doneAt: new Date(), lockedAt: null }).where(eq(jobs.id, id));
+	await db()
+		.update(jobs)
+		.set({ doneAt: new Date(), lockedAt: null })
+		.where(eq(jobs.id, id));
 }
 
-export async function failJob(job: Job, error: unknown, retryInMs = 10_000): Promise<void> {
-	const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+export async function failJob(
+	job: Job,
+	error: unknown,
+	retryInMs = 10_000,
+): Promise<void> {
+	const message =
+		error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 	const final = job.attempts >= job.maxAttempts;
 	await db()
 		.update(jobs)
@@ -81,7 +94,9 @@ export async function failJob(job: Job, error: unknown, retryInMs = 10_000): Pro
 			lastError: message.slice(0, 2000),
 			lockedAt: null,
 			doneAt: final ? new Date() : null,
-			runAfter: final ? job.runAfter : new Date(Date.now() + retryInMs * job.attempts),
+			runAfter: final
+				? job.runAfter
+				: new Date(Date.now() + retryInMs * job.attempts),
 		})
 		.where(eq(jobs.id, job.id));
 }

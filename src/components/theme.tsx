@@ -1,9 +1,23 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 export type Theme = "light" | "dark" | "system";
-type Ctx = { theme: Theme; resolved: "light" | "dark"; setTheme: (t: Theme) => void };
+type Ctx = {
+	theme: Theme;
+	resolved: "light" | "dark";
+	setTheme: (t: Theme) => void;
+};
 
-const ThemeContext = createContext<Ctx>({ theme: "system", resolved: "light", setTheme: () => {} });
+const ThemeContext = createContext<Ctx>({
+	theme: "system",
+	resolved: "light",
+	setTheme: () => {},
+});
 const KEY = "cc-theme";
 
 /** Inline script for <head>: applies the theme class before first paint (no flash). */
@@ -18,7 +32,13 @@ function readStored(): Theme {
 	}
 }
 
-export function ThemeProvider({ children, forceLight = false }: { children: React.ReactNode; forceLight?: boolean }) {
+export function ThemeProvider({
+	children,
+	forceLight = false,
+}: {
+	children: React.ReactNode;
+	forceLight?: boolean;
+}) {
 	const [theme, setThemeState] = useState<Theme>("system");
 	const [systemDark, setSystemDark] = useState(false);
 
@@ -31,7 +51,13 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
 		return () => mq.removeEventListener("change", on);
 	}, []);
 
-	const resolved: "light" | "dark" = forceLight ? "light" : theme === "system" ? (systemDark ? "dark" : "light") : theme;
+	const resolved: "light" | "dark" = forceLight
+		? "light"
+		: theme === "system"
+			? systemDark
+				? "dark"
+				: "light"
+			: theme;
 
 	useEffect(() => {
 		document.documentElement.classList.toggle("dark", resolved === "dark");
@@ -44,7 +70,11 @@ export function ThemeProvider({ children, forceLight = false }: { children: Reac
 		} catch {}
 	}, []);
 
-	return <ThemeContext.Provider value={{ theme, resolved, setTheme }}>{children}</ThemeContext.Provider>;
+	return (
+		<ThemeContext.Provider value={{ theme, resolved, setTheme }}>
+			{children}
+		</ThemeContext.Provider>
+	);
 }
 
 export const useTheme = () => useContext(ThemeContext);

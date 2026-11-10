@@ -17,9 +17,16 @@ export const Route = createFileRoute("/api/events")({
 								cleanup();
 							}
 						};
-						write(`retry: 3000\nevent: hello\ndata: ${JSON.stringify({ at: new Date().toISOString() })}\n\n`);
-						const unsub = subscribe((e) => write(`event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`));
-						const hb = setInterval(() => write(`: ping ${Date.now()}\n\n`), 15_000);
+						write(
+							`retry: 3000\nevent: hello\ndata: ${JSON.stringify({ at: new Date().toISOString() })}\n\n`,
+						);
+						const unsub = subscribe((e) =>
+							write(`event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`),
+						);
+						const hb = setInterval(
+							() => write(`: ping ${Date.now()}\n\n`),
+							15_000,
+						);
 						cleanup = () => {
 							unsub();
 							clearInterval(hb);

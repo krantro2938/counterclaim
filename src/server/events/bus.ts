@@ -2,10 +2,20 @@ import { sql } from "../db/client";
 import { log } from "../log";
 
 export type CcEvent =
-	| { type: "dispute.updated"; disputeId: string; status?: string; isNew?: boolean }
+	| {
+			type: "dispute.updated";
+			disputeId: string;
+			status?: string;
+			isNew?: boolean;
+	  }
 	| { type: "assessment.ready"; disputeId: string; assessmentId: number }
 	| { type: "assessment.started"; disputeId: string }
-	| { type: "action.updated"; disputeId: string; actionId: string; status: string }
+	| {
+			type: "action.updated";
+			disputeId: string;
+			actionId: string;
+			status: string;
+	  }
 	| { type: "order.updated"; orderId: string; number?: number }
 	| { type: "kpi.updated" }
 	| { type: "activity"; text: string; disputeId?: string };
@@ -22,7 +32,10 @@ export async function publish(event: CcEvent): Promise<void> {
 }
 
 type Listener = (e: CcEvent) => void;
-const g = globalThis as unknown as { __ccListeners?: Set<Listener>; __ccListening?: Promise<void> };
+const g = globalThis as unknown as {
+	__ccListeners?: Set<Listener>;
+	__ccListening?: Promise<void>;
+};
 
 /** Subscribe in-process to cc_events (one LISTEN connection per process, fanned out). */
 export function subscribe(fn: Listener): () => void {

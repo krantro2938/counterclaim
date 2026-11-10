@@ -1,36 +1,33 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
-	"vcs": {
-		"enabled": false,
-		"clientKind": "git",
-		"useIgnoreFile": false
-	},
+	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
 	"files": {
-		"ignoreUnknown": false,
+		"ignoreUnknown": true,
 		"includes": [
-			"**/src/**/*",
-			"**/.vscode/**/*",
-			"**/index.html",
-			"**/vite.config.ts",
-			"!**/src/routeTree.gen.ts",
-			"!**/src/styles.css"
+			"src/**",
+			"scripts/**",
+			"tests/**",
+			"vite.config.ts",
+			"!src/routeTree.gen.ts",
+			"!src/components/ui",
+			"!src/styles.css"
 		]
 	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
+	"formatter": { "enabled": true, "indentStyle": "tab" },
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"correctness": { "useExhaustiveDependencies": "warn" },
+			"suspicious": { "noArrayIndexKey": "warn" },
+			"complexity": { "noUselessFragments": "warn" },
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useSemanticElements": "warn",
+				"useAriaPropsSupportedByRole": "warn"
+			}
 		}
 	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double"
-		}
-	}
+	"javascript": { "formatter": { "quoteStyle": "double" } }
 }
-

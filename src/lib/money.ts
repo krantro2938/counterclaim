@@ -11,7 +11,10 @@ export function decimalsFor(currency: string): number {
 
 /** "20.00" → 2000. Accepts "20", "20.5", "-3.10". Throws on garbage. */
 export function toMinor(value: string | number, currency = "USD"): number {
-	const s = typeof value === "number" ? value.toFixed(decimalsFor(currency)) : value.trim();
+	const s =
+		typeof value === "number"
+			? value.toFixed(decimalsFor(currency))
+			: value.trim();
 	const m = /^(-)?(\d+)(?:\.(\d+))?$/.exec(s);
 	if (!m) throw new Error(`Invalid money value: ${JSON.stringify(value)}`);
 	const [, neg, whole, frac = ""] = m;
@@ -21,7 +24,8 @@ export function toMinor(value: string | number, currency = "USD"): number {
 	}
 	const fracPadded = (frac + "0".repeat(d)).slice(0, d);
 	const minor = Number(whole) * 10 ** d + (d ? Number(fracPadded) : 0);
-	if (!Number.isSafeInteger(minor)) throw new Error(`Amount out of range: ${s}`);
+	if (!Number.isSafeInteger(minor))
+		throw new Error(`Amount out of range: ${s}`);
 	return neg ? -minor : minor;
 }
 
@@ -56,12 +60,17 @@ export function formatMoney(
 }
 
 /** PayPal money object → minor units. */
-export function paypalMoneyToMinor(m: { value: string; currency_code: string } | undefined | null): {
+export function paypalMoneyToMinor(
+	m: { value: string; currency_code: string } | undefined | null,
+): {
 	amountMinor: number;
 	currency: string;
 } {
 	if (!m) return { amountMinor: 0, currency: "USD" };
-	return { amountMinor: toMinor(m.value, m.currency_code), currency: m.currency_code };
+	return {
+		amountMinor: toMinor(m.value, m.currency_code),
+		currency: m.currency_code,
+	};
 }
 
 export function minorToPaypalMoney(minor: number, currency = "USD") {

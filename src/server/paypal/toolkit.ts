@@ -25,14 +25,22 @@ export const READ_TOOL_NAMES = [
 ] as const;
 export type ReadToolName = (typeof READ_TOOL_NAMES)[number];
 
-export const ACTION_TOOL_NAMES = ["accept_dispute_claim", "create_shipment_tracking", "create_refund"] as const;
+export const ACTION_TOOL_NAMES = [
+	"accept_dispute_claim",
+	"create_shipment_tracking",
+	"create_refund",
+] as const;
 export type ActionToolName = (typeof ACTION_TOOL_NAMES)[number];
 
-type ToolLike = { description?: string; execute?: (args: unknown, opts?: unknown) => Promise<unknown> };
+type ToolLike = {
+	description?: string;
+	execute?: (args: unknown, opts?: unknown) => Promise<unknown>;
+};
 
 function creds() {
 	const e = env();
-	if (!e.PAYPAL_CLIENT_ID || !e.PAYPAL_CLIENT_SECRET) throw new PayPalNotConfiguredError();
+	if (!e.PAYPAL_CLIENT_ID || !e.PAYPAL_CLIENT_SECRET)
+		throw new PayPalNotConfiguredError();
 	return { clientId: e.PAYPAL_CLIENT_ID, clientSecret: e.PAYPAL_CLIENT_SECRET };
 }
 
@@ -71,7 +79,12 @@ export function actionToolkit(requestId: string): PayPalAgentToolkit {
 	});
 }
 
-export type ToolkitResult = { ok: boolean; data: unknown; raw: string; ms: number };
+export type ToolkitResult = {
+	ok: boolean;
+	data: unknown;
+	raw: string;
+	ms: number;
+};
 
 /** Run a toolkit tool's execute() and normalise the result (the toolkit returns JSON strings, errors as {error}). */
 export async function runToolkitTool(
@@ -85,12 +98,20 @@ export async function runToolkitTool(
 	const started = Date.now();
 	let out: unknown;
 	try {
-		out = await t.execute(args, { toolCallId: `cc-${Date.now()}`, messages: [] });
+		out = await t.execute(args, {
+			toolCallId: `cc-${Date.now()}`,
+			messages: [],
+		});
 	} catch (err) {
 		const ms = Date.now() - started;
 		log.warn({ toolkit: { name, ms }, err }, "toolkit tool threw");
 		const message = err instanceof Error ? err.message : String(err);
-		return { ok: false, data: { error: { message } }, raw: JSON.stringify({ error: { message } }), ms };
+		return {
+			ok: false,
+			data: { error: { message } },
+			raw: JSON.stringify({ error: { message } }),
+			ms,
+		};
 	}
 	const ms = Date.now() - started;
 	const raw = typeof out === "string" ? out : JSON.stringify(out);
@@ -113,7 +134,10 @@ export async function runToolkitTool(
 
 export function readToolDescription(name: ReadToolName): string {
 	try {
-		const tools = readToolkit().getTools() as unknown as Record<string, ToolLike>;
+		const tools = readToolkit().getTools() as unknown as Record<
+			string,
+			ToolLike
+		>;
 		return tools[name]?.description ?? name;
 	} catch {
 		return name;

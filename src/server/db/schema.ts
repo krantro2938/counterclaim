@@ -22,7 +22,9 @@ const bytea = customType<{ data: Buffer; driverData: Buffer }>({
 });
 
 const ts = (name?: string) =>
-	name ? timestamp(name, { withTimezone: true }) : timestamp({ withTimezone: true });
+	name
+		? timestamp(name, { withTimezone: true })
+		: timestamp({ withTimezone: true });
 
 export type Address = {
 	name?: string;
@@ -164,7 +166,10 @@ export const disputes = pgTable(
 		amountMinor: bigint({ mode: "number" }).notNull(),
 		currency: varchar({ length: 3 }).notNull().default("USD"),
 		sellerResponseDueAt: ts(),
-		links: jsonb().$type<{ rel: string; href: string; method?: string }[]>().notNull().default([]),
+		links: jsonb()
+			.$type<{ rel: string; href: string; method?: string }[]>()
+			.notNull()
+			.default([]),
 		raw: jsonb().notNull(),
 		/** won | lost | other (derived from dispute_outcome) */
 		outcome: text(),
@@ -214,7 +219,9 @@ export const assessments = pgTable(
 		statusAtAssessment: text(),
 		createdAt: ts().notNull().defaultNow(),
 	},
-	(t) => [uniqueIndex("assessments_dispute_version_idx").on(t.disputeId, t.version)],
+	(t) => [
+		uniqueIndex("assessments_dispute_version_idx").on(t.disputeId, t.version),
+	],
 );
 
 export type ActionStatus =
@@ -236,7 +243,9 @@ export const actions = pgTable(
 		disputeId: text()
 			.notNull()
 			.references(() => disputes.id, { onDelete: "cascade" }),
-		assessmentId: integer().references(() => assessments.id, { onDelete: "set null" }),
+		assessmentId: integer().references(() => assessments.id, {
+			onDelete: "set null",
+		}),
 		/** send_message | provide_evidence | make_offer | accept_claim | escalate */
 		type: text().notNull(),
 		params: jsonb().$type<Record<string, unknown>>().notNull().default({}),
@@ -312,11 +321,7 @@ export const jobs = pgTable(
 		lastError: text(),
 		createdAt: ts().notNull().defaultNow(),
 	},
-	(t) => [
-		index("jobs_pending_idx")
-			.on(t.runAfter)
-			.where(sql`done_at is null`),
-	],
+	(t) => [index("jobs_pending_idx").on(t.runAfter).where(sql`done_at is null`)],
 );
 
 /** Activity feed: one row per notable thing that happened (timeline + Overview feed). */
@@ -333,7 +338,10 @@ export const activity = pgTable(
 		meta: jsonb(),
 		at: ts().notNull().defaultNow(),
 	},
-	(t) => [index("activity_at_idx").on(t.at), index("activity_dispute_idx").on(t.disputeId)],
+	(t) => [
+		index("activity_at_idx").on(t.at),
+		index("activity_dispute_idx").on(t.disputeId),
+	],
 );
 
 /** Small key/value store for runtime state (poller cursor, last webhook, etc.) */

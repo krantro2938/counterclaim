@@ -42,7 +42,15 @@ export function useLiveEvents(navigateToDispute?: (id: string) => void) {
 		let es: EventSource | null = null;
 		let retry: ReturnType<typeof setTimeout> | undefined;
 		let closed = false;
-		const types = ["dispute.updated", "assessment.ready", "assessment.started", "action.updated", "order.updated", "kpi.updated", "activity"];
+		const types = [
+			"dispute.updated",
+			"assessment.ready",
+			"assessment.started",
+			"action.updated",
+			"order.updated",
+			"kpi.updated",
+			"activity",
+		];
 		const connect = () => {
 			es = new EventSource("/api/events");
 			es.addEventListener("hello", () => setStatus("live"));
@@ -65,11 +73,17 @@ export function useLiveEvents(navigateToDispute?: (id: string) => void) {
 		};
 		const handle = (t: string, d: Record<string, unknown>) => {
 			const disputeId = d.disputeId as string | undefined;
-			if (t === "dispute.updated" || t === "assessment.ready" || t === "assessment.started" || t === "action.updated") {
+			if (
+				t === "dispute.updated" ||
+				t === "assessment.ready" ||
+				t === "assessment.started" ||
+				t === "action.updated"
+			) {
 				qc.invalidateQueries({ queryKey: qk.disputes });
 				qc.invalidateQueries({ queryKey: qk.overview });
 				qc.invalidateQueries({ queryKey: qk.lab });
-				if (disputeId) qc.invalidateQueries({ queryKey: qk.dispute(disputeId) });
+				if (disputeId)
+					qc.invalidateQueries({ queryKey: qk.dispute(disputeId) });
 			}
 			if (t === "order.updated") {
 				qc.invalidateQueries({ queryKey: qk.orders });
@@ -79,18 +93,24 @@ export function useLiveEvents(navigateToDispute?: (id: string) => void) {
 			}
 			if (t === "kpi.updated" || t === "activity") {
 				qc.invalidateQueries({ queryKey: qk.overview });
-				if (disputeId) qc.invalidateQueries({ queryKey: qk.dispute(disputeId) });
+				if (disputeId)
+					qc.invalidateQueries({ queryKey: qk.dispute(disputeId) });
 			}
 			if (t === "dispute.updated" && d.isNew && disputeId) {
 				toast("New dispute", {
-					description: "A buyer opened a dispute. Counterclaim is building the case.",
-					action: navigateToDispute ? { label: "Open", onClick: () => navigateToDispute(disputeId) } : undefined,
+					description:
+						"A buyer opened a dispute. Counterclaim is building the case.",
+					action: navigateToDispute
+						? { label: "Open", onClick: () => navigateToDispute(disputeId) }
+						: undefined,
 				});
 			}
 			if (t === "assessment.ready" && disputeId) {
 				toast.success("Assessment ready", {
 					description: "Counterclaim has a recommendation.",
-					action: navigateToDispute ? { label: "Review", onClick: () => navigateToDispute(disputeId) } : undefined,
+					action: navigateToDispute
+						? { label: "Review", onClick: () => navigateToDispute(disputeId) }
+						: undefined,
 				});
 			}
 		};

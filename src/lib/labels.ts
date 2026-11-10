@@ -38,7 +38,10 @@ export function stageLabel(stage?: string | null): string {
 export type StatusTone = "review" | "deadline" | "won" | "lost" | "muted";
 
 /** Status label + tone. `outcome` wins for resolved disputes. */
-export function statusInfo(status?: string | null, outcome?: string | null): { label: string; tone: StatusTone } {
+export function statusInfo(
+	status?: string | null,
+	outcome?: string | null,
+): { label: string; tone: StatusTone } {
 	switch (status) {
 		case "WAITING_FOR_SELLER_RESPONSE":
 			return { label: "Your move", tone: "deadline" };

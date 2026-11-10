@@ -6,7 +6,11 @@ export const Route = createFileRoute("/api/disputes/$id/assess")({
 	server: {
 		handlers: {
 			POST: handle(async ({ params }: { params: { id: string } }) => {
-				const jobId = await enqueue("assess", { refId: params.id, payload: { force: true }, dedupe: true });
+				const jobId = await enqueue("assess", {
+					refId: params.id,
+					payload: { force: true },
+					dedupe: true,
+				});
 				return json({ queued: true, jobId }, 202);
 			}),
 		},

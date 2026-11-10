@@ -1,20 +1,25 @@
 import {
 	BadgeHelp,
+	Clock,
 	CreditCard,
 	FlaskConical,
+	Hourglass,
 	PackageX,
 	Repeat,
 	ShieldAlert,
 	ShieldCheck,
 	ShieldX,
 	Shirt,
-	Clock,
-	Hourglass,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLiveStatus } from "#/hooks/use-live";
 import { formatExact, timeLeft } from "#/lib/format";
-import { PROTECTION_LABELS, reasonLabel, type StatusTone, statusInfo } from "#/lib/labels";
+import {
+	PROTECTION_LABELS,
+	reasonLabel,
+	type StatusTone,
+	statusInfo,
+} from "#/lib/labels";
 import { cn } from "#/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
@@ -28,16 +33,40 @@ const TONE: Record<StatusTone | "simulated" | "primary", string> = {
 	primary: "bg-accent text-accent-foreground",
 };
 
-export function Pill({ tone, children, className, dot = true }: { tone: keyof typeof TONE; children: React.ReactNode; className?: string; dot?: boolean }) {
+export function Pill({
+	tone,
+	children,
+	className,
+	dot = true,
+}: {
+	tone: keyof typeof TONE;
+	children: React.ReactNode;
+	className?: string;
+	dot?: boolean;
+}) {
 	return (
-		<span className={cn("inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium whitespace-nowrap", TONE[tone], className)}>
+		<span
+			className={cn(
+				"inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium whitespace-nowrap",
+				TONE[tone],
+				className,
+			)}
+		>
 			{dot && <span aria-hidden className="size-1.5 rounded-full bg-current" />}
 			{children}
 		</span>
 	);
 }
 
-export function StatusBadge({ status, outcome, className }: { status?: string | null; outcome?: string | null; className?: string }) {
+export function StatusBadge({
+	status,
+	outcome,
+	className,
+}: {
+	status?: string | null;
+	outcome?: string | null;
+	className?: string;
+}) {
 	const s = statusInfo(status, outcome);
 	return (
 		<Pill tone={s.tone} className={className}>
@@ -46,17 +75,31 @@ export function StatusBadge({ status, outcome, className }: { status?: string | 
 	);
 }
 
-const REASON_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+const REASON_ICON: Record<
+	string,
+	React.ComponentType<{ className?: string }>
+> = {
 	MERCHANDISE_OR_SERVICE_NOT_RECEIVED: PackageX,
 	MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED: Shirt,
 	UNAUTHORISED: CreditCard,
 	DUPLICATE_TRANSACTION: Repeat,
 };
 
-export function ReasonLabel({ reason, className }: { reason?: string | null; className?: string }) {
+export function ReasonLabel({
+	reason,
+	className,
+}: {
+	reason?: string | null;
+	className?: string;
+}) {
 	const Icon = (reason && REASON_ICON[reason]) || BadgeHelp;
 	return (
-		<span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap", className)}>
+		<span
+			className={cn(
+				"inline-flex items-center gap-1.5 whitespace-nowrap",
+				className,
+			)}
+		>
 			<Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
 			{reasonLabel(reason)}
 		</span>
@@ -72,16 +115,36 @@ function useNow(ms = 30_000) {
 	return now;
 }
 
-export function DeadlineChip({ dueAt, resolved, className }: { dueAt?: string | null; resolved?: boolean; className?: string }) {
+export function DeadlineChip({
+	dueAt,
+	resolved,
+	className,
+}: {
+	dueAt?: string | null;
+	resolved?: boolean;
+	className?: string;
+}) {
 	const now = useNow();
-	if (resolved || !dueAt) return <span className={cn("text-muted-foreground", className)}>—</span>;
+	if (resolved || !dueAt)
+		return <span className={cn("text-muted-foreground", className)}>—</span>;
 	const left = timeLeft(dueAt, now);
 	if (!left) return null;
-	const tone = left.hours < 24 ? "text-lost" : left.hours < 72 ? "text-deadline" : "text-muted-foreground";
+	const tone =
+		left.hours < 24
+			? "text-lost"
+			: left.hours < 72
+				? "text-deadline"
+				: "text-muted-foreground";
 	return (
 		<Tooltip>
 			<TooltipTrigger asChild>
-				<span className={cn("inline-flex items-center gap-1 tabular text-xs font-medium whitespace-nowrap", tone, className)}>
+				<span
+					className={cn(
+						"inline-flex items-center gap-1 tabular text-xs font-medium whitespace-nowrap",
+						tone,
+						className,
+					)}
+				>
 					<Clock className="size-3.5" aria-hidden />
 					{left.text}
 				</span>
@@ -91,8 +154,22 @@ export function DeadlineChip({ dueAt, resolved, className }: { dueAt?: string | 
 	);
 }
 
-export function ProtectionBadge({ status, reasons, className }: { status: string; reasons?: string[]; className?: string }) {
-	const map: Record<string, { tone: keyof typeof TONE; Icon: React.ComponentType<{ className?: string }> }> = {
+export function ProtectionBadge({
+	status,
+	reasons,
+	className,
+}: {
+	status: string;
+	reasons?: string[];
+	className?: string;
+}) {
+	const map: Record<
+		string,
+		{
+			tone: keyof typeof TONE;
+			Icon: React.ComponentType<{ className?: string }>;
+		}
+	> = {
 		protected: { tone: "won", Icon: ShieldCheck },
 		at_risk: { tone: "deadline", Icon: ShieldAlert },
 		not_eligible: { tone: "lost", Icon: ShieldX },
@@ -101,7 +178,13 @@ export function ProtectionBadge({ status, reasons, className }: { status: string
 	};
 	const m = map[status] ?? map.pending;
 	const badge = (
-		<span className={cn("inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium whitespace-nowrap", TONE[m.tone], className)}>
+		<span
+			className={cn(
+				"inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium whitespace-nowrap",
+				TONE[m.tone],
+				className,
+			)}
+		>
 			<m.Icon className="size-3.5" aria-hidden />
 			{PROTECTION_LABELS[status] ?? status}
 		</span>
@@ -122,16 +205,32 @@ export function ProtectionBadge({ status, reasons, className }: { status: string
 }
 
 /** Honesty is part of the design: anything from CarrierSim or sandbox-only endpoints carries this tag. */
-export function SimulatedTag({ label = "Simulated", className, title }: { label?: string; className?: string; title?: string }) {
+export function SimulatedTag({
+	label = "Simulated",
+	className,
+	title,
+}: {
+	label?: string;
+	className?: string;
+	title?: string;
+}) {
 	return (
 		<Tooltip>
 			<TooltipTrigger asChild>
-				<span className={cn("inline-flex h-5 items-center gap-1 rounded-full bg-simulated-soft px-2 text-[11px] font-medium text-simulated whitespace-nowrap", className)}>
+				<span
+					className={cn(
+						"inline-flex h-5 items-center gap-1 rounded-full bg-simulated-soft px-2 text-[11px] font-medium text-simulated whitespace-nowrap",
+						className,
+					)}
+				>
 					<FlaskConical className="size-3" aria-hidden />
 					{label}
 				</span>
 			</TooltipTrigger>
-			<TooltipContent>{title ?? "Generated by the sandbox simulator, not a real carrier or buyer."}</TooltipContent>
+			<TooltipContent>
+				{title ??
+					"Generated by the sandbox simulator, not a real carrier or buyer."}
+			</TooltipContent>
 		</Tooltip>
 	);
 }
@@ -140,9 +239,22 @@ export function LiveIndicator({ className }: { className?: string }) {
 	const s = useLiveStatus();
 	const live = s === "live";
 	return (
-		<span className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)} aria-live="polite">
-			<span className={cn("relative inline-flex size-2 rounded-full", live ? "bg-won" : "bg-deadline")}>
-				{live && <span className="absolute inset-0 animate-ping rounded-full bg-won opacity-40 motion-reduce:hidden" />}
+		<span
+			className={cn(
+				"inline-flex items-center gap-1.5 text-xs text-muted-foreground",
+				className,
+			)}
+			aria-live="polite"
+		>
+			<span
+				className={cn(
+					"relative inline-flex size-2 rounded-full",
+					live ? "bg-won" : "bg-deadline",
+				)}
+			>
+				{live && (
+					<span className="absolute inset-0 animate-ping rounded-full bg-won opacity-40 motion-reduce:hidden" />
+				)}
 			</span>
 			{live ? "Live" : s === "connecting" ? "Connecting…" : "Reconnecting…"}
 		</span>

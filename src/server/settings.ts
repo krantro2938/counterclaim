@@ -27,8 +27,13 @@ export const DEFAULT_FEES: FeeConstants = {
 export type MerchantSettings = typeof merchantSettings.$inferSelect;
 
 export async function getSettings(): Promise<MerchantSettings> {
-	const [row] = await db().select().from(merchantSettings).where(eq(merchantSettings.id, 1)).limit(1);
-	if (row) return { ...row, autopilot: { ...DEFAULT_AUTOPILOT, ...row.autopilot } };
+	const [row] = await db()
+		.select()
+		.from(merchantSettings)
+		.where(eq(merchantSettings.id, 1))
+		.limit(1);
+	if (row)
+		return { ...row, autopilot: { ...DEFAULT_AUTOPILOT, ...row.autopilot } };
 	const [created] = await db()
 		.insert(merchantSettings)
 		.values({ id: 1, autopilot: DEFAULT_AUTOPILOT, feeConstants: DEFAULT_FEES })

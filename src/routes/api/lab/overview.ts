@@ -12,12 +12,36 @@ export const Route = createFileRoute("/api/lab/overview")({
 			GET: handle(async () => {
 				const g = labGuard();
 				if (g) return g;
-				const ds = await db().select({ id: disputes.id, status: disputes.status, stage: disputes.stage, reason: disputes.reason, amountMinor: disputes.amountMinor, currency: disputes.currency, links: disputes.links, outcome: disputes.outcome, orderId: disputes.orderId }).from(disputes).orderBy(desc(disputes.updatedAt));
-				const ships = await db().select().from(shipments).orderBy(desc(shipments.shippedAt));
-				const evs = await db().select({ shipmentId: carrierEvents.shipmentId, code: carrierEvents.code }).from(carrierEvents);
+				const ds = await db()
+					.select({
+						id: disputes.id,
+						status: disputes.status,
+						stage: disputes.stage,
+						reason: disputes.reason,
+						amountMinor: disputes.amountMinor,
+						currency: disputes.currency,
+						links: disputes.links,
+						outcome: disputes.outcome,
+						orderId: disputes.orderId,
+					})
+					.from(disputes)
+					.orderBy(desc(disputes.updatedAt));
+				const ships = await db()
+					.select()
+					.from(shipments)
+					.orderBy(desc(shipments.shippedAt));
+				const evs = await db()
+					.select({
+						shipmentId: carrierEvents.shipmentId,
+						code: carrierEvents.code,
+					})
+					.from(carrierEvents);
 				return json({
 					disputes: ds,
-					shipments: ships.map((s) => ({ ...s, events: evs.filter((e) => e.shipmentId === s.id).map((e) => e.code) })),
+					shipments: ships.map((s) => ({
+						...s,
+						events: evs.filter((e) => e.shipmentId === s.id).map((e) => e.code),
+					})),
 					orders: await listOrderRows(),
 					webhooks: await recentWebhooks(),
 				});

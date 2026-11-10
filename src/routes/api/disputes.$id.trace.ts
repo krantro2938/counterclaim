@@ -7,7 +7,12 @@ export const Route = createFileRoute("/api/disputes/$id/trace")({
 		handlers: {
 			GET: handle(async ({ request }: { request: Request }) => {
 				const n = Number(new URL(request.url).searchParams.get("assessment"));
-				if (!Number.isInteger(n) || n <= 0) return apiError("BAD_REQUEST", "assessment query param required", 400);
+				if (!Number.isInteger(n) || n <= 0)
+					return apiError(
+						"BAD_REQUEST",
+						"assessment query param required",
+						400,
+					);
 				return json({ steps: await getTrace(n) });
 			}),
 		},

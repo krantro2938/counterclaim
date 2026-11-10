@@ -1,6 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, Outlet, useMatches, useNavigate } from "@tanstack/react-router";
-import { FlaskConical, Gavel, LayoutDashboard, Monitor, Moon, Package, Search, Settings, Store, Sun } from "lucide-react";
+import {
+	createFileRoute,
+	Link,
+	Outlet,
+	useMatches,
+	useNavigate,
+	useRouterState,
+} from "@tanstack/react-router";
+import {
+	FlaskConical,
+	Gavel,
+	LayoutDashboard,
+	Monitor,
+	Moon,
+	Package,
+	Search,
+	Settings,
+	Store,
+	Sun,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { LiveIndicator } from "#/components/status";
 import { useTheme } from "#/components/theme";
@@ -42,8 +60,8 @@ import {
 } from "#/components/ui/sidebar";
 import { useFallbackInterval, useLiveEvents } from "#/hooks/use-live";
 import { api, qk } from "#/lib/api";
-import { formatMoney } from "#/lib/money";
 import { reasonLabel } from "#/lib/labels";
+import { formatMoney } from "#/lib/money";
 import type { DisputeRowDto } from "#/server/queries";
 
 export const Route = createFileRoute("/app")({
@@ -55,7 +73,13 @@ export function Logo({ className }: { className?: string }) {
 		<span className={className}>
 			<svg viewBox="0 0 32 32" className="size-7" aria-hidden>
 				<rect width="32" height="32" rx="8" className="fill-primary" />
-				<path d="M21.5 11.2a7 7 0 1 0 0 9.6" className="stroke-primary-foreground" strokeWidth="3" fill="none" strokeLinecap="round" />
+				<path
+					d="M21.5 11.2a7 7 0 1 0 0 9.6"
+					className="stroke-primary-foreground"
+					strokeWidth="3"
+					fill="none"
+					strokeLinecap="round"
+				/>
 				<circle cx="22" cy="16" r="2" className="fill-primary-foreground" />
 			</svg>
 		</span>
@@ -73,7 +97,11 @@ function useDisputeRows() {
 
 function AppShell() {
 	const navigate = useNavigate();
-	const goDispute = useCallback((id: string) => navigate({ to: "/app/disputes/$disputeId", params: { disputeId: id } }), [navigate]);
+	const goDispute = useCallback(
+		(id: string) =>
+			navigate({ to: "/app/disputes/$disputeId", params: { disputeId: id } }),
+		[navigate],
+	);
 	useLiveEvents(goDispute);
 	const disputes = useDisputeRows();
 	const needs = disputes.data?.rows.filter((r) => r.needsDecision).length ?? 0;
@@ -94,9 +122,14 @@ function AppShell() {
 		<SidebarProvider>
 			<Sidebar collapsible="icon">
 				<SidebarHeader>
-					<Link to="/app" className="flex items-center gap-2 rounded-md px-1.5 py-1.5">
+					<Link
+						to="/app"
+						className="flex items-center gap-2 rounded-md px-1.5 py-1.5"
+					>
 						<Logo />
-						<span className="font-display text-lg font-semibold group-data-[collapsible=icon]:hidden">Counterclaim</span>
+						<span className="font-display text-lg font-semibold group-data-[collapsible=icon]:hidden">
+							Counterclaim
+						</span>
 					</Link>
 				</SidebarHeader>
 				<SidebarContent>
@@ -104,8 +137,18 @@ function AppShell() {
 						<SidebarGroupLabel>Work</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								<NavItem to="/app" exact icon={LayoutDashboard} label="Overview" />
-								<NavItem to="/app/disputes" icon={Gavel} label="Disputes" badge={needs || undefined} />
+								<NavItem
+									to="/app"
+									exact
+									icon={LayoutDashboard}
+									label="Overview"
+								/>
+								<NavItem
+									to="/app/disputes"
+									icon={Gavel}
+									label="Disputes"
+									badge={needs || undefined}
+								/>
 								<NavItem to="/app/orders" icon={Package} label="Orders" />
 							</SidebarMenu>
 						</SidebarGroupContent>
@@ -137,7 +180,9 @@ function AppShell() {
 				</SidebarContent>
 				<SidebarFooter>
 					<div className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-						<span className="flex size-6 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">M</span>
+						<span className="flex size-6 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+							M
+						</span>
 						<span>Maya · Kiln &amp; Thread</span>
 					</div>
 				</SidebarFooter>
@@ -149,12 +194,23 @@ function AppShell() {
 					<Separator orientation="vertical" className="mx-1 h-4" />
 					<Crumbs />
 					<div className="ml-auto flex items-center gap-2">
-						<Button variant="outline" size="sm" className="hidden h-8 gap-2 text-muted-foreground sm:inline-flex" onClick={() => setCmdOpen(true)}>
+						<Button
+							variant="outline"
+							size="sm"
+							className="hidden h-8 gap-2 text-muted-foreground sm:inline-flex"
+							onClick={() => setCmdOpen(true)}
+						>
 							<Search className="size-3.5" />
 							Search
 							<Kbd>⌘K</Kbd>
 						</Button>
-						<Button variant="ghost" size="icon" className="size-8 sm:hidden" aria-label="Search" onClick={() => setCmdOpen(true)}>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="size-8 sm:hidden"
+							aria-label="Search"
+							onClick={() => setCmdOpen(true)}
+						>
 							<Search className="size-4" />
 						</Button>
 						<LiveIndicator className="hidden sm:inline-flex" />
@@ -165,7 +221,11 @@ function AppShell() {
 					<Outlet />
 				</div>
 			</SidebarInset>
-			<CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} rows={disputes.data?.rows ?? []} />
+			<CommandPalette
+				open={cmdOpen}
+				onOpenChange={setCmdOpen}
+				rows={disputes.data?.rows ?? []}
+			/>
 		</SidebarProvider>
 	);
 }
@@ -185,18 +245,31 @@ function NavItem({
 	exact?: boolean;
 	dot?: boolean;
 }) {
-	const matches = useMatches();
-	const active = matches.some((m) => (exact ? m.pathname === to || m.pathname === `${to}/` : m.pathname.startsWith(to)));
+	const pathname = useRouterState({
+		select: (s) => s.location.pathname,
+	}).replace(/\/$/, "");
+	const active = exact
+		? pathname === to
+		: pathname === to || pathname.startsWith(`${to}/`);
 	return (
 		<SidebarMenuItem>
 			<SidebarMenuButton asChild isActive={active} tooltip={label}>
 				<Link to={to}>
 					<Icon />
 					<span>{label}</span>
-					{dot && <span aria-hidden className="ml-auto size-1.5 rounded-full bg-simulated" />}
+					{dot && (
+						<span
+							aria-hidden
+							className="ml-auto size-1.5 rounded-full bg-simulated"
+						/>
+					)}
 				</Link>
 			</SidebarMenuButton>
-			{badge ? <SidebarMenuBadge className="bg-deadline-soft text-deadline">{badge}</SidebarMenuBadge> : null}
+			{badge ? (
+				<SidebarMenuBadge className="bg-deadline-soft text-deadline">
+					{badge}
+				</SidebarMenuBadge>
+			) : null}
 		</SidebarMenuItem>
 	);
 }
@@ -221,16 +294,26 @@ function Crumbs() {
 		parts.push({ label: CRUMB[path] ?? "Counterclaim" });
 	}
 	return (
-		<nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm">
+		<nav
+			aria-label="Breadcrumb"
+			className="flex min-w-0 items-center gap-1.5 text-sm"
+		>
 			{parts.map((p, i) => (
 				<span key={p.label} className="flex min-w-0 items-center gap-1.5">
 					{i > 0 && <span className="text-muted-foreground">/</span>}
 					{p.to ? (
-						<Link to={p.to} className="text-muted-foreground hover:text-foreground">
+						<Link
+							to={p.to}
+							className="text-muted-foreground hover:text-foreground"
+						>
 							{p.label}
 						</Link>
 					) : (
-						<span className={i > 0 ? "truncate font-mono text-xs" : "font-medium"}>{p.label}</span>
+						<span
+							className={i > 0 ? "truncate font-mono text-xs" : "font-medium"}
+						>
+							{p.label}
+						</span>
 					)}
 				</span>
 			))}
@@ -243,13 +326,25 @@ function ThemeMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon" className="size-8" aria-label="Theme">
-					{resolved === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+				<Button
+					variant="ghost"
+					size="icon"
+					className="size-8"
+					aria-label="Theme"
+				>
+					{resolved === "dark" ? (
+						<Moon className="size-4" />
+					) : (
+						<Sun className="size-4" />
+					)}
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-40">
 				<DropdownMenuLabel>Theme</DropdownMenuLabel>
-				<DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as "light" | "dark" | "system")}>
+				<DropdownMenuRadioGroup
+					value={theme}
+					onValueChange={(v) => setTheme(v as "light" | "dark" | "system")}
+				>
 					<DropdownMenuRadioItem value="light">
 						<Sun className="size-4" /> Light
 					</DropdownMenuRadioItem>
@@ -265,23 +360,44 @@ function ThemeMenu() {
 	);
 }
 
-function CommandPalette({ open, onOpenChange, rows }: { open: boolean; onOpenChange: (v: boolean) => void; rows: DisputeRowDto[] }) {
+function CommandPalette({
+	open,
+	onOpenChange,
+	rows,
+}: {
+	open: boolean;
+	onOpenChange: (v: boolean) => void;
+	rows: DisputeRowDto[];
+}) {
 	const navigate = useNavigate();
 	const go = (to: string, params?: Record<string, string>) => {
 		onOpenChange(false);
 		navigate({ to, params } as never);
 	};
 	return (
-		<CommandDialog open={open} onOpenChange={onOpenChange} title="Search Counterclaim" description="Jump to a page or a dispute">
+		<CommandDialog
+			open={open}
+			onOpenChange={onOpenChange}
+			title="Search Counterclaim"
+			description="Jump to a page or a dispute"
+		>
 			<CommandInput placeholder="Search disputes, orders, pages…" />
 			<CommandList>
 				<CommandEmpty>No results.</CommandEmpty>
 				<CommandGroup heading="Pages">
 					<CommandItem onSelect={() => go("/app")}>Overview</CommandItem>
-					<CommandItem onSelect={() => go("/app/disputes")}>Disputes</CommandItem>
-					<CommandItem onSelect={() => go("/app/orders")}>Orders &amp; Protection</CommandItem>
-					<CommandItem onSelect={() => go("/app/settings")}>Settings</CommandItem>
-					<CommandItem onSelect={() => go("/app/lab")}>Lab (sandbox controls)</CommandItem>
+					<CommandItem onSelect={() => go("/app/disputes")}>
+						Disputes
+					</CommandItem>
+					<CommandItem onSelect={() => go("/app/orders")}>
+						Orders &amp; Protection
+					</CommandItem>
+					<CommandItem onSelect={() => go("/app/settings")}>
+						Settings
+					</CommandItem>
+					<CommandItem onSelect={() => go("/app/lab")}>
+						Lab (sandbox controls)
+					</CommandItem>
 				</CommandGroup>
 				{rows.length > 0 && (
 					<CommandGroup heading="Disputes">
@@ -289,11 +405,14 @@ function CommandPalette({ open, onOpenChange, rows }: { open: boolean; onOpenCha
 							<CommandItem
 								key={r.id}
 								value={`${r.id} ${r.orderNumber ?? ""} ${r.buyer ?? ""} ${reasonLabel(r.reason)}`}
-								onSelect={() => go("/app/disputes/$disputeId", { disputeId: r.id })}
+								onSelect={() =>
+									go("/app/disputes/$disputeId", { disputeId: r.id })
+								}
 							>
 								<span className="font-mono text-xs">{r.id}</span>
 								<span className="text-muted-foreground">
-									#{r.orderNumber ?? "—"} · {reasonLabel(r.reason)} · {formatMoney(r.amountMinor, r.currency)}
+									#{r.orderNumber ?? "—"} · {reasonLabel(r.reason)} ·{" "}
+									{formatMoney(r.amountMinor, r.currency)}
 								</span>
 							</CommandItem>
 						))}

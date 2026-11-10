@@ -1,4 +1,8 @@
-import { AllCommunityModule, ModuleRegistry, themeQuartz } from "ag-grid-community";
+import {
+	AllCommunityModule,
+	ModuleRegistry,
+	themeQuartz,
+} from "ag-grid-community";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -26,7 +30,13 @@ export const counterclaimGrid = themeQuartz.withParams({
 });
 
 /** AG Grid renders client-side only (no SSR markup to hydrate). */
-export function ClientOnly({ children, fallback = null }: { children: React.ReactNode; fallback?: React.ReactNode }) {
+export function ClientOnly({
+	children,
+	fallback = null,
+}: {
+	children: React.ReactNode;
+	fallback?: React.ReactNode;
+}) {
 	const [mounted, setMounted] = useState(false);
 	useEffect(() => setMounted(true), []);
 	return mounted ? <>{children}</> : <>{fallback}</>;
@@ -44,7 +54,11 @@ export function GridSkeleton({ rows = 6 }: { rows?: number }) {
 }
 
 export function GridEmpty({ text }: { text: string }) {
-	return <div className="max-w-sm px-6 text-center text-sm text-muted-foreground">{text}</div>;
+	return (
+		<div className="max-w-sm px-6 text-center text-sm text-muted-foreground">
+			{text}
+		</div>
+	);
 }
 
 const COL_STATE_PREFIX = "cc-grid-cols:";
