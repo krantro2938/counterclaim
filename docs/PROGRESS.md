@@ -22,10 +22,14 @@ _Last update: Wed Nov 11 00:45 MSK · Current gate: **G0 (late, blocked on PayPa
 - **UI:** app shell (sidebar, ⌘K, theme toggle, live indicator), Overview, Disputes inbox (AG Grid: custom renderers, pinned status, full-width status group rows, persisted column state, quick filter, transaction-API live updates with cell flash, j/k/Enter, mobile card list), Case page (verdict, hybrid ScoreMeter, proposals with edit + confirm dialog, timeline, reasoning with fact chips, order, trace, PayPal links tab, outcome count-up, evidence sheet), Orders & Protection (AG Grid + Mark shipped popover), Settings, Lab, shop.
 - **Tests:** 25 passing (money, case file, rubric, validator, policy, protection). `pnpm check` clean (warnings only).
 
+## Expert interim review (Wed 00:45): safety model holds
+Verdict: model only gets a read-only toolkit; action space checked 3× (validator, approve, execute). Fixed since: rel normalisation (`send-message` vs `send_message`), pinned toolkit read IDs, `PP:` citations must name a field the tool returned, poller/protection jobs never rethrow (no job fan-out), webhook re-verify on PayPal retry, atomic executor claim + "outcome unknown" UI, invoice/custom_id order matching, offer/accept types limited to REFUND/PARTIAL_REFUND, `pnpm check` green.
+Verify-first list when creds arrive (in order): token → `GET disputes?page_size=1` (403 = Disputes feature off) → purchase stores capture → Mark shipped (trackers-batch `errors[]` empty) → open INR dispute, dump raw `links` + `seller_transaction_id` into SPEC §6.5 → send-message (JSON vs multipart) → escalate → require-evidence → provide-evidence (+PDF, confirms `evidence-file`) → adjudicate SELLER_FAVOR → spare disputes: accept-claim (toolkit) + make-offer → register webhook, see `SUCCESS`.
+
 ## In progress / next
 - [ ] G0 sandbox truth (blocked #1): run `scripts/paypal-check.ts`, one purchase + one dispute, fill SPEC §6.5, mark ✅ in SPEC §6.3.
-- [ ] Expert interim review (running).
-- [ ] README draft; webhook + executor tests with mocked fetch.
+- [x] README draft · webhook/REST tests with mocked fetch (30 tests) · agent chat (F15) · mobile QA of Overview/Inbox/Case (fixed overflow).
+- [ ] While blocked: video assets that don't depend on demo data (HyperFrames scenes 1–3, chapter cards, 11, 12; TTS tool). Script numbers wait for real data.
 
 ## Decisions
 - **Deploy target: aeza-de** (docker compose + existing Caddy) per Schreuder's brief instead of Render. Same image runs web (`node .output/server/index.mjs`) and worker (`tsx src/worker/index.ts`), `WORKER_MODE=separate`.
@@ -36,5 +40,8 @@ _Last update: Wed Nov 11 00:45 MSK · Current gate: **G0 (late, blocked on PayPa
 - **PayPal client ID exposed at runtime** via `/api/shop/config` (from `PAYPAL_CLIENT_ID`) instead of a build-time `VITE_PAYPAL_CLIENT_ID`, so one Docker image works everywhere. Still the only PayPal value sent to browsers.
 - **Light-mode semantic colours** (`--won`, `--lost`, `--deadline`, `--review`, `--simulated`) darkened slightly vs DESIGN §3 for AA text contrast on the soft backgrounds (DESIGN asks to verify/adjust).
 - **Demo inbox messages** (support emails for the SNAD/INR stories) are seeded per order from the Lab ("Seed messages"), labelled as demo data. Carrier events are CarrierSim, always tagged "Simulated".
+- **F15 agent chat kept**: Expert said cut unless G2 passes, but it was already built and tested (revisions create a new proposal that still needs approval; nothing executes from chat). Low risk, so it stays.
+- **Render sponsor prize dropped** (Expert): deployed on aeza-de; a `render.yaml` would be a bolted-on claim.
+- **Video prep started before G4** because every G0–G2 exit criterion is blocked on PayPal credentials; only data-independent scenes are built now; `video/script.md` numbers are filled from real demo data after G4.
 - Postgres locally on host port **5433** (5432 is taken on this machine).
 - Local DNS on this machine returns NXDOMAIN for the new subdomain (port-53 interception); public resolvers and the server resolve it fine. Use `curl --resolve` locally.

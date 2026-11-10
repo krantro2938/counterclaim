@@ -124,9 +124,9 @@ Record each take at least twice. Keep the cleaner one. Capture at 1080p or highe
 YouTube: **Public**. Title: "Counterclaim — AI dispute agent for PayPal merchants (PayPal AI Hackathon)". Description: one-paragraph pitch, live URL, GitHub URL, tools used (Claude via the Vercel AI SDK, PayPal Agent Toolkit, PayPal REST APIs, HyperFrames for motion graphics, Mistral Voxtral TTS for voice-over), and any music licence.
 
 ## 9. Open questions for `researcher` (answer before Thursday 15:00)
-- [ ] Voxtral TTS: endpoint, model ID, request/response format, preset voices, output formats.
-- [ ] Voxtral TTS: terms for using API-generated audio in a public video.
-- [ ] HyperFrames: install + render CLI, how to include a video file as a layer, recommended way to drive it from Claude Code.
+- [x] Voxtral TTS (researched Wed 00:50): `POST https://api.mistral.ai/v1/audio/speech`, `Authorization: Bearer $MISTRAL_API_KEY`, JSON `{ model: "voxtral-mini-tts-3-0", input, voice_id, response_format: "wav" }` → JSON `{ audio_data: <base64> }`. WAV is 24 kHz (resample to 48 kHz in post). No speed/sample-rate fields. Preset voices (v3): e.g. `voice_478` Sheila (en-US F), `voice_485` Rob (en-US M), `voice_3150` James (en-US M), `voice_590` Harriet (en-GB F), `voice_591` Fred (en-GB M); list via `GET /v2/audio/voices?type=preset&language=en`. Sources: docs.mistral.ai/api/endpoint/audio/speech, docs.mistral.ai/studio/audio/text-to-speech/voices.
+- [x] Voxtral terms: Mistral Commercial Terms §3.1, customer "owns all Output"; Additional Product Terms §11 requires disclosing AI-generated content → **say "Voice-over generated with Mistral Voxtral TTS" in the YouTube description and the outro.** Use the hosted API (open weights are CC BY-NC).
+- [x] HyperFrames: available as Claude Code skills in this environment (`hyperframes`, `hyperframes-core`, `hyperframes-cli`).
 
 ## 10. Time budget (Thu, MSK)
 
