@@ -91,7 +91,13 @@ export function shortId(id: string | null | undefined, n = 10): string {
 
 export function greeting(d = new Date()): string {
 	const h = d.getHours();
-	return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+	return h < 5
+		? "Good evening"
+		: h < 12
+			? "Good morning"
+			: h < 18
+				? "Good afternoon"
+				: "Good evening";
 }
 
 /** Inline "(F3, F5)" refs are shown as fact chips instead. */

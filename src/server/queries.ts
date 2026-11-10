@@ -214,6 +214,7 @@ export async function getDisputeDetail(id: string) {
 		actions: acts,
 		evidenceFiles: files,
 		activity: acts2,
+		fees: (await getSettings()).feeConstants,
 	};
 }
 

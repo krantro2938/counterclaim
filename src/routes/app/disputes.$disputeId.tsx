@@ -276,7 +276,7 @@ function CasePage() {
 				</div>
 			</div>
 
-			<div className="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(360px,2fr)]">
+			<div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(360px,2fr)]">
 				{/* Right column first in DOM order on small screens: verdict stays on top */}
 				<aside className="order-first space-y-4 xl:sticky xl:top-16 xl:order-last xl:self-start">
 					{resolved ? (

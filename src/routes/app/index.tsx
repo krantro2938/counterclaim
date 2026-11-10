@@ -117,8 +117,8 @@ function Overview() {
 				)}
 			</section>
 
-			<div className="grid gap-8 lg:grid-cols-3">
-				<section className="lg:col-span-2" aria-labelledby="needs">
+			<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+				<section className="min-w-0 lg:col-span-2" aria-labelledby="needs">
 					<SectionHeading
 						action={
 							<Link
@@ -160,7 +160,7 @@ function Overview() {
 											/>
 											<DeadlineChip dueAt={r.dueAt} />
 										</div>
-										<p className="truncate font-display text-lg">
+										<p className="font-display text-lg sm:truncate">
 											{r.headline ?? "Assessment in progress"}
 										</p>
 									</div>

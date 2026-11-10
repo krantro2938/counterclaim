@@ -1,4 +1,11 @@
-import { AlertTriangle, ChevronDown, Loader2, Trophy } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import {
+	AlertTriangle,
+	ChevronDown,
+	Loader2,
+	ShieldX,
+	Trophy,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatDuration } from "#/lib/format";
 import { actionLabel, OUTCOME_CODE_LABELS } from "#/lib/labels";
@@ -94,6 +101,25 @@ export function VerdictCard({
 				rubric={a.rubricScore}
 				llm={a.llmScore}
 			/>
+			{primary?.type === "accept_claim" && (
+				<p className="rounded-md bg-muted px-3 py-2 text-sm">
+					Fighting would likely still lose{" "}
+					{formatMoney(detail.dispute.amountMinor, cur)} plus a{" "}
+					{formatMoney(detail.fees.disputeFeeMinor, cur)} dispute fee. Accepting
+					now takes about a minute instead of ~
+					{detail.fees.minutesPerManualCase} minutes of evidence gathering.
+				</p>
+			)}
+			{detail.order?.protectionStatus === "not_eligible" && (
+				<Link
+					to="/app/orders"
+					className="flex items-center gap-2 rounded-md border border-lost/30 bg-lost-soft px-3 py-2 text-sm text-lost hover:underline"
+				>
+					<ShieldX className="size-4 shrink-0" />
+					Order #{detail.order.number} was never protected: no tracking reached
+					PayPal before the dispute. See Orders &amp; Protection →
+				</Link>
+			)}
 			{primary ? (
 				<div className="flex flex-wrap gap-2">
 					<Button
