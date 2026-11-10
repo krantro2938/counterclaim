@@ -50,7 +50,7 @@ import { Skeleton } from "#/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { useFallbackInterval } from "#/hooks/use-live";
 import { ApiError, api, post, qk } from "#/lib/api";
-import { formatDateTime } from "#/lib/format";
+import { formatDateTime, stripFactRefs } from "#/lib/format";
 import { normRel, REL_TO_ACTION, stageLabel } from "#/lib/labels";
 import { formatMoney } from "#/lib/money";
 import { cn } from "#/lib/utils";
@@ -426,7 +426,7 @@ function Reasoning({
 							{i + 1}
 						</span>
 						<p className="text-sm leading-relaxed">
-							{r.point}{" "}
+							{stripFactRefs(r.point)}{" "}
 							<span className="inline-flex flex-wrap gap-1 align-middle">
 								{r.factIds.map((id) => (
 									<FactChip key={id} id={id} facts={facts} />

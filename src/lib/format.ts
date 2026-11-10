@@ -93,3 +93,10 @@ export function greeting(d = new Date()): string {
 	const h = d.getHours();
 	return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
 }
+
+/** Inline "(F3, F5)" refs are shown as fact chips instead. */
+export function stripFactRefs(t: string): string {
+	return t
+		.replace(/\s*\((?:(?:F\d+|PP:[^)]+)(?:,\s*|\s+and\s+)?)+\)/g, "")
+		.replace(/\s+([.,;])/g, "$1");
+}
