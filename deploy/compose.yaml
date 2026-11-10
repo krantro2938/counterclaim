@@ -1,0 +1,68 @@
+# Production on aeza-de, behind the shared Caddy (caddy-net) at https://counterclaim.aansl.com
+#   cd ~/counterclaim && docker compose -f deploy/compose.yaml --env-file .env up -d --build
+name: counterclaim
+
+x-app: &app
+  build: ..
+  image: counterclaim:latest
+  restart: unless-stopped
+  env_file: ../.env
+  environment:
+    DATABASE_URL: postgres://counterclaim:${POSTGRES_PASSWORD:-counterclaim}@db:5432/counterclaim
+    NODE_ENV: production
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: counterclaim-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: counterclaim
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-counterclaim}
+      POSTGRES_DB: counterclaim
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U counterclaim"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+    networks: [default]
+
+  web:
+    <<: *app
+    container_name: counterclaim-web
+    mem_limit: 768m
+    networks: [default, caddy-net]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    <<: *app
+    container_name: counterclaim-worker
+    command: ["node_modules/.bin/tsx", "src/worker/index.ts"]
+    environment:
+      DATABASE_URL: postgres://counterclaim:${POSTGRES_PASSWORD:-counterclaim}@db:5432/counterclaim
+      NODE_ENV: production
+      CC_PROCESS: worker
+    mem_limit: 512m
+    depends_on:
+      db:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks: [default]
+
+volumes:
+  pgdata:
+
+networks:
+  caddy-net:
+    external: true

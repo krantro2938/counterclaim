@@ -10,33 +10,544 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ApiDisputesRouteImport } from './routes/api/disputes'
+import { Route as ApiEventsRouteImport } from './routes/api/events'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiOrdersRouteImport } from './routes/api/orders'
+import { Route as ApiOverviewRouteImport } from './routes/api/overview'
+import { Route as ApiSettingsRouteImport } from './routes/api/settings'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppLabRouteImport } from './routes/app/lab'
+import { Route as AppOrdersRouteImport } from './routes/app/orders'
+import { Route as AppSettingsRouteImport } from './routes/app/settings'
+import { Route as ShopIndexRouteImport } from './routes/shop/index'
+import { Route as WebhooksPaypalRouteImport } from './routes/webhooks/paypal'
+import { Route as ApiDebugWebhooksRouteImport } from './routes/api/debug/webhooks'
+import { Route as ApiDisputesIdRouteImport } from './routes/api/disputes.$id'
+import { Route as ApiEvidenceIdRouteImport } from './routes/api/evidence.$id'
+import { Route as ApiLabOverviewRouteImport } from './routes/api/lab/overview'
+import { Route as ApiLabResetRouteImport } from './routes/api/lab/reset'
+import { Route as ApiLabSyncRouteImport } from './routes/api/lab/sync'
+import { Route as ApiShopConfigRouteImport } from './routes/api/shop/config'
+import { Route as ApiShopOrdersRouteImport } from './routes/api/shop/orders'
+import { Route as ApiShopProductsRouteImport } from './routes/api/shop/products'
+import { Route as AppDisputesIndexRouteImport } from './routes/app/disputes.index'
+import { Route as AppDisputesDisputeIdRouteImport } from './routes/app/disputes.$disputeId'
+import { Route as ShopCheckoutSuccessRouteImport } from './routes/shop/checkout.success'
+import { Route as ShopPSlugRouteImport } from './routes/shop/p.$slug'
+import { Route as ApiActionsIdApproveRouteImport } from './routes/api/actions.$id.approve'
+import { Route as ApiActionsIdCancelRouteImport } from './routes/api/actions.$id.cancel'
+import { Route as ApiActionsIdRejectRouteImport } from './routes/api/actions.$id.reject'
+import { Route as ApiDisputesIdAssessRouteImport } from './routes/api/disputes.$id.assess'
+import { Route as ApiDisputesIdTraceRouteImport } from './routes/api/disputes.$id.trace'
+import { Route as ApiOrdersIdShipRouteImport } from './routes/api/orders.$id.ship'
+import { Route as ApiLabCarrierShipmentIdAdvanceRouteImport } from './routes/api/lab/carrier.$shipmentId.advance'
+import { Route as ApiLabDisputesIdAdjudicateRouteImport } from './routes/api/lab/disputes.$id.adjudicate'
+import { Route as ApiLabDisputesIdEscalateRouteImport } from './routes/api/lab/disputes.$id.escalate'
+import { Route as ApiLabDisputesIdRequireEvidenceRouteImport } from './routes/api/lab/disputes.$id.require-evidence'
+import { Route as ApiLabDisputesIdSyncRouteImport } from './routes/api/lab/disputes.$id.sync'
+import { Route as ApiLabOrdersIdStoryRouteImport } from './routes/api/lab/orders.$id.story'
+import { Route as ApiShopOrdersPaypalOrderIdCaptureRouteImport } from './routes/api/shop/orders.$paypalOrderId.capture'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDisputesRoute = ApiDisputesRouteImport.update({
+  id: '/api/disputes',
+  path: '/api/disputes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEventsRoute = ApiEventsRouteImport.update({
+  id: '/api/events',
+  path: '/api/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrdersRoute = ApiOrdersRouteImport.update({
+  id: '/api/orders',
+  path: '/api/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOverviewRoute = ApiOverviewRouteImport.update({
+  id: '/api/overview',
+  path: '/api/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSettingsRoute = ApiSettingsRouteImport.update({
+  id: '/api/settings',
+  path: '/api/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLabRoute = AppLabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrdersRoute = AppOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const WebhooksPaypalRoute = WebhooksPaypalRouteImport.update({
+  id: '/webhooks/paypal',
+  path: '/webhooks/paypal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDebugWebhooksRoute = ApiDebugWebhooksRouteImport.update({
+  id: '/api/debug/webhooks',
+  path: '/api/debug/webhooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDisputesIdRoute = ApiDisputesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiDisputesRoute,
+} as any)
+const ApiEvidenceIdRoute = ApiEvidenceIdRouteImport.update({
+  id: '/api/evidence/$id',
+  path: '/api/evidence/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabOverviewRoute = ApiLabOverviewRouteImport.update({
+  id: '/api/lab/overview',
+  path: '/api/lab/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabResetRoute = ApiLabResetRouteImport.update({
+  id: '/api/lab/reset',
+  path: '/api/lab/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabSyncRoute = ApiLabSyncRouteImport.update({
+  id: '/api/lab/sync',
+  path: '/api/lab/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShopConfigRoute = ApiShopConfigRouteImport.update({
+  id: '/api/shop/config',
+  path: '/api/shop/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShopOrdersRoute = ApiShopOrdersRouteImport.update({
+  id: '/api/shop/orders',
+  path: '/api/shop/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShopProductsRoute = ApiShopProductsRouteImport.update({
+  id: '/api/shop/products',
+  path: '/api/shop/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppDisputesIndexRoute = AppDisputesIndexRouteImport.update({
+  id: '/disputes/',
+  path: '/disputes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDisputesDisputeIdRoute = AppDisputesDisputeIdRouteImport.update({
+  id: '/disputes/$disputeId',
+  path: '/disputes/$disputeId',
+  getParentRoute: () => AppRoute,
+} as any)
+const ShopCheckoutSuccessRoute = ShopCheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopPSlugRoute = ShopPSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ApiActionsIdApproveRoute = ApiActionsIdApproveRouteImport.update({
+  id: '/api/actions/$id/approve',
+  path: '/api/actions/$id/approve',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiActionsIdCancelRoute = ApiActionsIdCancelRouteImport.update({
+  id: '/api/actions/$id/cancel',
+  path: '/api/actions/$id/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiActionsIdRejectRoute = ApiActionsIdRejectRouteImport.update({
+  id: '/api/actions/$id/reject',
+  path: '/api/actions/$id/reject',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDisputesIdAssessRoute = ApiDisputesIdAssessRouteImport.update({
+  id: '/assess',
+  path: '/assess',
+  getParentRoute: () => ApiDisputesIdRoute,
+} as any)
+const ApiDisputesIdTraceRoute = ApiDisputesIdTraceRouteImport.update({
+  id: '/trace',
+  path: '/trace',
+  getParentRoute: () => ApiDisputesIdRoute,
+} as any)
+const ApiOrdersIdShipRoute = ApiOrdersIdShipRouteImport.update({
+  id: '/$id/ship',
+  path: '/$id/ship',
+  getParentRoute: () => ApiOrdersRoute,
+} as any)
+const ApiLabCarrierShipmentIdAdvanceRoute =
+  ApiLabCarrierShipmentIdAdvanceRouteImport.update({
+    id: '/api/lab/carrier/$shipmentId/advance',
+    path: '/api/lab/carrier/$shipmentId/advance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiLabDisputesIdAdjudicateRoute =
+  ApiLabDisputesIdAdjudicateRouteImport.update({
+    id: '/api/lab/disputes/$id/adjudicate',
+    path: '/api/lab/disputes/$id/adjudicate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiLabDisputesIdEscalateRoute =
+  ApiLabDisputesIdEscalateRouteImport.update({
+    id: '/api/lab/disputes/$id/escalate',
+    path: '/api/lab/disputes/$id/escalate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiLabDisputesIdRequireEvidenceRoute =
+  ApiLabDisputesIdRequireEvidenceRouteImport.update({
+    id: '/api/lab/disputes/$id/require-evidence',
+    path: '/api/lab/disputes/$id/require-evidence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiLabDisputesIdSyncRoute = ApiLabDisputesIdSyncRouteImport.update({
+  id: '/api/lab/disputes/$id/sync',
+  path: '/api/lab/disputes/$id/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabOrdersIdStoryRoute = ApiLabOrdersIdStoryRouteImport.update({
+  id: '/api/lab/orders/$id/story',
+  path: '/api/lab/orders/$id/story',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShopOrdersPaypalOrderIdCaptureRoute =
+  ApiShopOrdersPaypalOrderIdCaptureRouteImport.update({
+    id: '/$paypalOrderId/capture',
+    path: '/$paypalOrderId/capture',
+    getParentRoute: () => ApiShopOrdersRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/shop': typeof ShopRouteWithChildren
+  '/api/disputes': typeof ApiDisputesRouteWithChildren
+  '/api/events': typeof ApiEventsRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/orders': typeof ApiOrdersRouteWithChildren
+  '/api/overview': typeof ApiOverviewRoute
+  '/api/settings': typeof ApiSettingsRoute
+  '/app/lab': typeof AppLabRoute
+  '/app/orders': typeof AppOrdersRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/webhooks/paypal': typeof WebhooksPaypalRoute
+  '/app/': typeof AppIndexRoute
+  '/shop/': typeof ShopIndexRoute
+  '/api/debug/webhooks': typeof ApiDebugWebhooksRoute
+  '/api/disputes/$id': typeof ApiDisputesIdRouteWithChildren
+  '/api/evidence/$id': typeof ApiEvidenceIdRoute
+  '/api/lab/overview': typeof ApiLabOverviewRoute
+  '/api/lab/reset': typeof ApiLabResetRoute
+  '/api/lab/sync': typeof ApiLabSyncRoute
+  '/api/shop/config': typeof ApiShopConfigRoute
+  '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
+  '/api/shop/products': typeof ApiShopProductsRoute
+  '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/shop/p/$slug': typeof ShopPSlugRoute
+  '/app/disputes/': typeof AppDisputesIndexRoute
+  '/api/actions/$id/approve': typeof ApiActionsIdApproveRoute
+  '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
+  '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
+  '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
+  '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
+  '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
+  '/api/lab/disputes/$id/escalate': typeof ApiLabDisputesIdEscalateRoute
+  '/api/lab/disputes/$id/require-evidence': typeof ApiLabDisputesIdRequireEvidenceRoute
+  '/api/lab/disputes/$id/sync': typeof ApiLabDisputesIdSyncRoute
+  '/api/lab/orders/$id/story': typeof ApiLabOrdersIdStoryRoute
+  '/api/shop/orders/$paypalOrderId/capture': typeof ApiShopOrdersPaypalOrderIdCaptureRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/disputes': typeof ApiDisputesRouteWithChildren
+  '/api/events': typeof ApiEventsRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/orders': typeof ApiOrdersRouteWithChildren
+  '/api/overview': typeof ApiOverviewRoute
+  '/api/settings': typeof ApiSettingsRoute
+  '/app/lab': typeof AppLabRoute
+  '/app/orders': typeof AppOrdersRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/webhooks/paypal': typeof WebhooksPaypalRoute
+  '/app': typeof AppIndexRoute
+  '/shop': typeof ShopIndexRoute
+  '/api/debug/webhooks': typeof ApiDebugWebhooksRoute
+  '/api/disputes/$id': typeof ApiDisputesIdRouteWithChildren
+  '/api/evidence/$id': typeof ApiEvidenceIdRoute
+  '/api/lab/overview': typeof ApiLabOverviewRoute
+  '/api/lab/reset': typeof ApiLabResetRoute
+  '/api/lab/sync': typeof ApiLabSyncRoute
+  '/api/shop/config': typeof ApiShopConfigRoute
+  '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
+  '/api/shop/products': typeof ApiShopProductsRoute
+  '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/shop/p/$slug': typeof ShopPSlugRoute
+  '/app/disputes': typeof AppDisputesIndexRoute
+  '/api/actions/$id/approve': typeof ApiActionsIdApproveRoute
+  '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
+  '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
+  '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
+  '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
+  '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
+  '/api/lab/disputes/$id/escalate': typeof ApiLabDisputesIdEscalateRoute
+  '/api/lab/disputes/$id/require-evidence': typeof ApiLabDisputesIdRequireEvidenceRoute
+  '/api/lab/disputes/$id/sync': typeof ApiLabDisputesIdSyncRoute
+  '/api/lab/orders/$id/story': typeof ApiLabOrdersIdStoryRoute
+  '/api/shop/orders/$paypalOrderId/capture': typeof ApiShopOrdersPaypalOrderIdCaptureRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/shop': typeof ShopRouteWithChildren
+  '/api/disputes': typeof ApiDisputesRouteWithChildren
+  '/api/events': typeof ApiEventsRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/orders': typeof ApiOrdersRouteWithChildren
+  '/api/overview': typeof ApiOverviewRoute
+  '/api/settings': typeof ApiSettingsRoute
+  '/app/lab': typeof AppLabRoute
+  '/app/orders': typeof AppOrdersRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/webhooks/paypal': typeof WebhooksPaypalRoute
+  '/app/': typeof AppIndexRoute
+  '/shop/': typeof ShopIndexRoute
+  '/api/debug/webhooks': typeof ApiDebugWebhooksRoute
+  '/api/disputes/$id': typeof ApiDisputesIdRouteWithChildren
+  '/api/evidence/$id': typeof ApiEvidenceIdRoute
+  '/api/lab/overview': typeof ApiLabOverviewRoute
+  '/api/lab/reset': typeof ApiLabResetRoute
+  '/api/lab/sync': typeof ApiLabSyncRoute
+  '/api/shop/config': typeof ApiShopConfigRoute
+  '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
+  '/api/shop/products': typeof ApiShopProductsRoute
+  '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/shop/p/$slug': typeof ShopPSlugRoute
+  '/app/disputes/': typeof AppDisputesIndexRoute
+  '/api/actions/$id/approve': typeof ApiActionsIdApproveRoute
+  '/api/actions/$id/cancel': typeof ApiActionsIdCancelRoute
+  '/api/actions/$id/reject': typeof ApiActionsIdRejectRoute
+  '/api/disputes/$id/assess': typeof ApiDisputesIdAssessRoute
+  '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
+  '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
+  '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
+  '/api/lab/disputes/$id/escalate': typeof ApiLabDisputesIdEscalateRoute
+  '/api/lab/disputes/$id/require-evidence': typeof ApiLabDisputesIdRequireEvidenceRoute
+  '/api/lab/disputes/$id/sync': typeof ApiLabDisputesIdSyncRoute
+  '/api/lab/orders/$id/story': typeof ApiLabOrdersIdStoryRoute
+  '/api/shop/orders/$paypalOrderId/capture': typeof ApiShopOrdersPaypalOrderIdCaptureRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/shop'
+    | '/api/disputes'
+    | '/api/events'
+    | '/api/health'
+    | '/api/orders'
+    | '/api/overview'
+    | '/api/settings'
+    | '/app/lab'
+    | '/app/orders'
+    | '/app/settings'
+    | '/webhooks/paypal'
+    | '/app/'
+    | '/shop/'
+    | '/api/debug/webhooks'
+    | '/api/disputes/$id'
+    | '/api/evidence/$id'
+    | '/api/lab/overview'
+    | '/api/lab/reset'
+    | '/api/lab/sync'
+    | '/api/shop/config'
+    | '/api/shop/orders'
+    | '/api/shop/products'
+    | '/app/disputes/$disputeId'
+    | '/shop/checkout/success'
+    | '/shop/p/$slug'
+    | '/app/disputes/'
+    | '/api/actions/$id/approve'
+    | '/api/actions/$id/cancel'
+    | '/api/actions/$id/reject'
+    | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/trace'
+    | '/api/orders/$id/ship'
+    | '/api/lab/carrier/$shipmentId/advance'
+    | '/api/lab/disputes/$id/adjudicate'
+    | '/api/lab/disputes/$id/escalate'
+    | '/api/lab/disputes/$id/require-evidence'
+    | '/api/lab/disputes/$id/sync'
+    | '/api/lab/orders/$id/story'
+    | '/api/shop/orders/$paypalOrderId/capture'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/api/disputes'
+    | '/api/events'
+    | '/api/health'
+    | '/api/orders'
+    | '/api/overview'
+    | '/api/settings'
+    | '/app/lab'
+    | '/app/orders'
+    | '/app/settings'
+    | '/webhooks/paypal'
+    | '/app'
+    | '/shop'
+    | '/api/debug/webhooks'
+    | '/api/disputes/$id'
+    | '/api/evidence/$id'
+    | '/api/lab/overview'
+    | '/api/lab/reset'
+    | '/api/lab/sync'
+    | '/api/shop/config'
+    | '/api/shop/orders'
+    | '/api/shop/products'
+    | '/app/disputes/$disputeId'
+    | '/shop/checkout/success'
+    | '/shop/p/$slug'
+    | '/app/disputes'
+    | '/api/actions/$id/approve'
+    | '/api/actions/$id/cancel'
+    | '/api/actions/$id/reject'
+    | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/trace'
+    | '/api/orders/$id/ship'
+    | '/api/lab/carrier/$shipmentId/advance'
+    | '/api/lab/disputes/$id/adjudicate'
+    | '/api/lab/disputes/$id/escalate'
+    | '/api/lab/disputes/$id/require-evidence'
+    | '/api/lab/disputes/$id/sync'
+    | '/api/lab/orders/$id/story'
+    | '/api/shop/orders/$paypalOrderId/capture'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/shop'
+    | '/api/disputes'
+    | '/api/events'
+    | '/api/health'
+    | '/api/orders'
+    | '/api/overview'
+    | '/api/settings'
+    | '/app/lab'
+    | '/app/orders'
+    | '/app/settings'
+    | '/webhooks/paypal'
+    | '/app/'
+    | '/shop/'
+    | '/api/debug/webhooks'
+    | '/api/disputes/$id'
+    | '/api/evidence/$id'
+    | '/api/lab/overview'
+    | '/api/lab/reset'
+    | '/api/lab/sync'
+    | '/api/shop/config'
+    | '/api/shop/orders'
+    | '/api/shop/products'
+    | '/app/disputes/$disputeId'
+    | '/shop/checkout/success'
+    | '/shop/p/$slug'
+    | '/app/disputes/'
+    | '/api/actions/$id/approve'
+    | '/api/actions/$id/cancel'
+    | '/api/actions/$id/reject'
+    | '/api/disputes/$id/assess'
+    | '/api/disputes/$id/trace'
+    | '/api/orders/$id/ship'
+    | '/api/lab/carrier/$shipmentId/advance'
+    | '/api/lab/disputes/$id/adjudicate'
+    | '/api/lab/disputes/$id/escalate'
+    | '/api/lab/disputes/$id/require-evidence'
+    | '/api/lab/disputes/$id/sync'
+    | '/api/lab/orders/$id/story'
+    | '/api/shop/orders/$paypalOrderId/capture'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  ShopRoute: typeof ShopRouteWithChildren
+  ApiDisputesRoute: typeof ApiDisputesRouteWithChildren
+  ApiEventsRoute: typeof ApiEventsRoute
+  ApiHealthRoute: typeof ApiHealthRoute
+  ApiOrdersRoute: typeof ApiOrdersRouteWithChildren
+  ApiOverviewRoute: typeof ApiOverviewRoute
+  ApiSettingsRoute: typeof ApiSettingsRoute
+  WebhooksPaypalRoute: typeof WebhooksPaypalRoute
+  ApiDebugWebhooksRoute: typeof ApiDebugWebhooksRoute
+  ApiEvidenceIdRoute: typeof ApiEvidenceIdRoute
+  ApiLabOverviewRoute: typeof ApiLabOverviewRoute
+  ApiLabResetRoute: typeof ApiLabResetRoute
+  ApiLabSyncRoute: typeof ApiLabSyncRoute
+  ApiShopConfigRoute: typeof ApiShopConfigRoute
+  ApiShopOrdersRoute: typeof ApiShopOrdersRouteWithChildren
+  ApiShopProductsRoute: typeof ApiShopProductsRoute
+  ApiActionsIdApproveRoute: typeof ApiActionsIdApproveRoute
+  ApiActionsIdCancelRoute: typeof ApiActionsIdCancelRoute
+  ApiActionsIdRejectRoute: typeof ApiActionsIdRejectRoute
+  ApiLabCarrierShipmentIdAdvanceRoute: typeof ApiLabCarrierShipmentIdAdvanceRoute
+  ApiLabDisputesIdAdjudicateRoute: typeof ApiLabDisputesIdAdjudicateRoute
+  ApiLabDisputesIdEscalateRoute: typeof ApiLabDisputesIdEscalateRoute
+  ApiLabDisputesIdRequireEvidenceRoute: typeof ApiLabDisputesIdRequireEvidenceRoute
+  ApiLabDisputesIdSyncRoute: typeof ApiLabDisputesIdSyncRoute
+  ApiLabOrdersIdStoryRoute: typeof ApiLabOrdersIdStoryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +559,402 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/disputes': {
+      id: '/api/disputes'
+      path: '/api/disputes'
+      fullPath: '/api/disputes'
+      preLoaderRoute: typeof ApiDisputesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/events': {
+      id: '/api/events'
+      path: '/api/events'
+      fullPath: '/api/events'
+      preLoaderRoute: typeof ApiEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/orders': {
+      id: '/api/orders'
+      path: '/api/orders'
+      fullPath: '/api/orders'
+      preLoaderRoute: typeof ApiOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/overview': {
+      id: '/api/overview'
+      path: '/api/overview'
+      fullPath: '/api/overview'
+      preLoaderRoute: typeof ApiOverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/settings': {
+      id: '/api/settings'
+      path: '/api/settings'
+      fullPath: '/api/settings'
+      preLoaderRoute: typeof ApiSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/lab': {
+      id: '/app/lab'
+      path: '/lab'
+      fullPath: '/app/lab'
+      preLoaderRoute: typeof AppLabRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/orders': {
+      id: '/app/orders'
+      path: '/orders'
+      fullPath: '/app/orders'
+      preLoaderRoute: typeof AppOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/webhooks/paypal': {
+      id: '/webhooks/paypal'
+      path: '/webhooks/paypal'
+      fullPath: '/webhooks/paypal'
+      preLoaderRoute: typeof WebhooksPaypalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/debug/webhooks': {
+      id: '/api/debug/webhooks'
+      path: '/api/debug/webhooks'
+      fullPath: '/api/debug/webhooks'
+      preLoaderRoute: typeof ApiDebugWebhooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/disputes/$id': {
+      id: '/api/disputes/$id'
+      path: '/$id'
+      fullPath: '/api/disputes/$id'
+      preLoaderRoute: typeof ApiDisputesIdRouteImport
+      parentRoute: typeof ApiDisputesRoute
+    }
+    '/api/evidence/$id': {
+      id: '/api/evidence/$id'
+      path: '/api/evidence/$id'
+      fullPath: '/api/evidence/$id'
+      preLoaderRoute: typeof ApiEvidenceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/overview': {
+      id: '/api/lab/overview'
+      path: '/api/lab/overview'
+      fullPath: '/api/lab/overview'
+      preLoaderRoute: typeof ApiLabOverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/reset': {
+      id: '/api/lab/reset'
+      path: '/api/lab/reset'
+      fullPath: '/api/lab/reset'
+      preLoaderRoute: typeof ApiLabResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/sync': {
+      id: '/api/lab/sync'
+      path: '/api/lab/sync'
+      fullPath: '/api/lab/sync'
+      preLoaderRoute: typeof ApiLabSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/shop/config': {
+      id: '/api/shop/config'
+      path: '/api/shop/config'
+      fullPath: '/api/shop/config'
+      preLoaderRoute: typeof ApiShopConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/shop/orders': {
+      id: '/api/shop/orders'
+      path: '/api/shop/orders'
+      fullPath: '/api/shop/orders'
+      preLoaderRoute: typeof ApiShopOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/shop/products': {
+      id: '/api/shop/products'
+      path: '/api/shop/products'
+      fullPath: '/api/shop/products'
+      preLoaderRoute: typeof ApiShopProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/disputes/': {
+      id: '/app/disputes/'
+      path: '/disputes'
+      fullPath: '/app/disputes/'
+      preLoaderRoute: typeof AppDisputesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/disputes/$disputeId': {
+      id: '/app/disputes/$disputeId'
+      path: '/disputes/$disputeId'
+      fullPath: '/app/disputes/$disputeId'
+      preLoaderRoute: typeof AppDisputesDisputeIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/shop/checkout/success': {
+      id: '/shop/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/shop/checkout/success'
+      preLoaderRoute: typeof ShopCheckoutSuccessRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/p/$slug': {
+      id: '/shop/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/shop/p/$slug'
+      preLoaderRoute: typeof ShopPSlugRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/api/actions/$id/approve': {
+      id: '/api/actions/$id/approve'
+      path: '/api/actions/$id/approve'
+      fullPath: '/api/actions/$id/approve'
+      preLoaderRoute: typeof ApiActionsIdApproveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/actions/$id/cancel': {
+      id: '/api/actions/$id/cancel'
+      path: '/api/actions/$id/cancel'
+      fullPath: '/api/actions/$id/cancel'
+      preLoaderRoute: typeof ApiActionsIdCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/actions/$id/reject': {
+      id: '/api/actions/$id/reject'
+      path: '/api/actions/$id/reject'
+      fullPath: '/api/actions/$id/reject'
+      preLoaderRoute: typeof ApiActionsIdRejectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/disputes/$id/assess': {
+      id: '/api/disputes/$id/assess'
+      path: '/assess'
+      fullPath: '/api/disputes/$id/assess'
+      preLoaderRoute: typeof ApiDisputesIdAssessRouteImport
+      parentRoute: typeof ApiDisputesIdRoute
+    }
+    '/api/disputes/$id/trace': {
+      id: '/api/disputes/$id/trace'
+      path: '/trace'
+      fullPath: '/api/disputes/$id/trace'
+      preLoaderRoute: typeof ApiDisputesIdTraceRouteImport
+      parentRoute: typeof ApiDisputesIdRoute
+    }
+    '/api/orders/$id/ship': {
+      id: '/api/orders/$id/ship'
+      path: '/$id/ship'
+      fullPath: '/api/orders/$id/ship'
+      preLoaderRoute: typeof ApiOrdersIdShipRouteImport
+      parentRoute: typeof ApiOrdersRoute
+    }
+    '/api/lab/carrier/$shipmentId/advance': {
+      id: '/api/lab/carrier/$shipmentId/advance'
+      path: '/api/lab/carrier/$shipmentId/advance'
+      fullPath: '/api/lab/carrier/$shipmentId/advance'
+      preLoaderRoute: typeof ApiLabCarrierShipmentIdAdvanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/disputes/$id/adjudicate': {
+      id: '/api/lab/disputes/$id/adjudicate'
+      path: '/api/lab/disputes/$id/adjudicate'
+      fullPath: '/api/lab/disputes/$id/adjudicate'
+      preLoaderRoute: typeof ApiLabDisputesIdAdjudicateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/disputes/$id/escalate': {
+      id: '/api/lab/disputes/$id/escalate'
+      path: '/api/lab/disputes/$id/escalate'
+      fullPath: '/api/lab/disputes/$id/escalate'
+      preLoaderRoute: typeof ApiLabDisputesIdEscalateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/disputes/$id/require-evidence': {
+      id: '/api/lab/disputes/$id/require-evidence'
+      path: '/api/lab/disputes/$id/require-evidence'
+      fullPath: '/api/lab/disputes/$id/require-evidence'
+      preLoaderRoute: typeof ApiLabDisputesIdRequireEvidenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/disputes/$id/sync': {
+      id: '/api/lab/disputes/$id/sync'
+      path: '/api/lab/disputes/$id/sync'
+      fullPath: '/api/lab/disputes/$id/sync'
+      preLoaderRoute: typeof ApiLabDisputesIdSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/orders/$id/story': {
+      id: '/api/lab/orders/$id/story'
+      path: '/api/lab/orders/$id/story'
+      fullPath: '/api/lab/orders/$id/story'
+      preLoaderRoute: typeof ApiLabOrdersIdStoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/shop/orders/$paypalOrderId/capture': {
+      id: '/api/shop/orders/$paypalOrderId/capture'
+      path: '/$paypalOrderId/capture'
+      fullPath: '/api/shop/orders/$paypalOrderId/capture'
+      preLoaderRoute: typeof ApiShopOrdersPaypalOrderIdCaptureRouteImport
+      parentRoute: typeof ApiShopOrdersRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppLabRoute: typeof AppLabRoute
+  AppOrdersRoute: typeof AppOrdersRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppDisputesDisputeIdRoute: typeof AppDisputesDisputeIdRoute
+  AppDisputesIndexRoute: typeof AppDisputesIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppLabRoute: AppLabRoute,
+  AppOrdersRoute: AppOrdersRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppDisputesDisputeIdRoute: AppDisputesDisputeIdRoute,
+  AppDisputesIndexRoute: AppDisputesIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface ShopRouteChildren {
+  ShopIndexRoute: typeof ShopIndexRoute
+  ShopCheckoutSuccessRoute: typeof ShopCheckoutSuccessRoute
+  ShopPSlugRoute: typeof ShopPSlugRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopIndexRoute: ShopIndexRoute,
+  ShopCheckoutSuccessRoute: ShopCheckoutSuccessRoute,
+  ShopPSlugRoute: ShopPSlugRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
+interface ApiDisputesIdRouteChildren {
+  ApiDisputesIdAssessRoute: typeof ApiDisputesIdAssessRoute
+  ApiDisputesIdTraceRoute: typeof ApiDisputesIdTraceRoute
+}
+
+const ApiDisputesIdRouteChildren: ApiDisputesIdRouteChildren = {
+  ApiDisputesIdAssessRoute: ApiDisputesIdAssessRoute,
+  ApiDisputesIdTraceRoute: ApiDisputesIdTraceRoute,
+}
+
+const ApiDisputesIdRouteWithChildren = ApiDisputesIdRoute._addFileChildren(
+  ApiDisputesIdRouteChildren,
+)
+
+interface ApiDisputesRouteChildren {
+  ApiDisputesIdRoute: typeof ApiDisputesIdRouteWithChildren
+}
+
+const ApiDisputesRouteChildren: ApiDisputesRouteChildren = {
+  ApiDisputesIdRoute: ApiDisputesIdRouteWithChildren,
+}
+
+const ApiDisputesRouteWithChildren = ApiDisputesRoute._addFileChildren(
+  ApiDisputesRouteChildren,
+)
+
+interface ApiOrdersRouteChildren {
+  ApiOrdersIdShipRoute: typeof ApiOrdersIdShipRoute
+}
+
+const ApiOrdersRouteChildren: ApiOrdersRouteChildren = {
+  ApiOrdersIdShipRoute: ApiOrdersIdShipRoute,
+}
+
+const ApiOrdersRouteWithChildren = ApiOrdersRoute._addFileChildren(
+  ApiOrdersRouteChildren,
+)
+
+interface ApiShopOrdersRouteChildren {
+  ApiShopOrdersPaypalOrderIdCaptureRoute: typeof ApiShopOrdersPaypalOrderIdCaptureRoute
+}
+
+const ApiShopOrdersRouteChildren: ApiShopOrdersRouteChildren = {
+  ApiShopOrdersPaypalOrderIdCaptureRoute:
+    ApiShopOrdersPaypalOrderIdCaptureRoute,
+}
+
+const ApiShopOrdersRouteWithChildren = ApiShopOrdersRoute._addFileChildren(
+  ApiShopOrdersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  ShopRoute: ShopRouteWithChildren,
+  ApiDisputesRoute: ApiDisputesRouteWithChildren,
+  ApiEventsRoute: ApiEventsRoute,
+  ApiHealthRoute: ApiHealthRoute,
+  ApiOrdersRoute: ApiOrdersRouteWithChildren,
+  ApiOverviewRoute: ApiOverviewRoute,
+  ApiSettingsRoute: ApiSettingsRoute,
+  WebhooksPaypalRoute: WebhooksPaypalRoute,
+  ApiDebugWebhooksRoute: ApiDebugWebhooksRoute,
+  ApiEvidenceIdRoute: ApiEvidenceIdRoute,
+  ApiLabOverviewRoute: ApiLabOverviewRoute,
+  ApiLabResetRoute: ApiLabResetRoute,
+  ApiLabSyncRoute: ApiLabSyncRoute,
+  ApiShopConfigRoute: ApiShopConfigRoute,
+  ApiShopOrdersRoute: ApiShopOrdersRouteWithChildren,
+  ApiShopProductsRoute: ApiShopProductsRoute,
+  ApiActionsIdApproveRoute: ApiActionsIdApproveRoute,
+  ApiActionsIdCancelRoute: ApiActionsIdCancelRoute,
+  ApiActionsIdRejectRoute: ApiActionsIdRejectRoute,
+  ApiLabCarrierShipmentIdAdvanceRoute: ApiLabCarrierShipmentIdAdvanceRoute,
+  ApiLabDisputesIdAdjudicateRoute: ApiLabDisputesIdAdjudicateRoute,
+  ApiLabDisputesIdEscalateRoute: ApiLabDisputesIdEscalateRoute,
+  ApiLabDisputesIdRequireEvidenceRoute: ApiLabDisputesIdRequireEvidenceRoute,
+  ApiLabDisputesIdSyncRoute: ApiLabDisputesIdSyncRoute,
+  ApiLabOrdersIdStoryRoute: ApiLabOrdersIdStoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
