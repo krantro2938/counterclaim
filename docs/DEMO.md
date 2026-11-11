@@ -8,6 +8,8 @@ Everything here uses the **PayPal sandbox** and the deployed app at https://coun
 3. Browser: logged in to sandbox.paypal.com as the **buyer** (personal) account.
 
 ## 1. Purchases (buyer, in /shop)
+The PayPal button opens checkout in a popup; **"Popup blocked? Pay in this tab instead"** runs the same checkout as a same-tab redirect (order `return_url` → `/shop/checkout/return` captures). Purchases made on a dev server (`localhost:3000/shop`) reach the deployed app through the `PAYMENT.CAPTURE.COMPLETED` webhook, which imports the order from PayPal (`GET /v2/checkout/orders/{id}`, keeps our id + number). Manual fallback: `POST /api/lab/orders/import {"paypalOrderId": "…"}`.
+
 Each sandbox transaction can carry only one dispute, so buy spares. Prices are picked for the storylines:
 
 | # | Product | Price | Purpose |
