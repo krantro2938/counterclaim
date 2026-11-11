@@ -26,9 +26,10 @@ export function outcomeFromCode(
 	return "other";
 }
 
+// Stored links are normalised (`provide-supporting-info`); PayPal may send `provide_supporting_info`.
 const relsOf = (links: { rel: string }[]) =>
 	links
-		.map((l) => l.rel)
+		.map((l) => normRel(l.rel))
 		.sort()
 		.join(",");
 
