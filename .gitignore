@@ -18,3 +18,4 @@ video/recordings
 video/node_modules
 *.log
 coverage
+scripts/tmp-*

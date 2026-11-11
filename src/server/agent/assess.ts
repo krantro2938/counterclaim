@@ -1,5 +1,5 @@
 import { generateText, type ModelMessage, Output, stepCountIs } from "ai";
-import { and, desc, sql as dsql, eq, inArray } from "drizzle-orm";
+import { and, desc, sql as dsql, eq, inArray, ne } from "drizzle-orm";
 import { actionLabel } from "#/lib/labels";
 import { buildCaseFile, type CaseFile } from "../casefile";
 import { db } from "../db/client";
@@ -476,14 +476,35 @@ export async function runAssessment(
 				});
 		}
 
-		await recordActivity({
-			actor: "agent",
-			kind: "assessed",
-			text: `Counterclaim assessed the case: ${finalScore}% win likelihood · ${actionLabel(recommended)}${degraded ? " (rule-based)" : ""}`,
-			disputeId,
-			orderId: d.orderId,
-			meta: { assessmentId, latencyMs: Date.now() - started },
-		});
+		// Timeline: only log a re-assessment that changed the advice (or moved the score ≥ 5 points).
+		const [prevReady] = await db()
+			.select({
+				score: assessments.finalScore,
+				action: assessments.recommendedAction,
+			})
+			.from(assessments)
+			.where(
+				and(
+					eq(assessments.disputeId, disputeId),
+					eq(assessments.state, "ready"),
+					ne(assessments.id, assessmentId),
+				),
+			)
+			.orderBy(desc(assessments.version))
+			.limit(1);
+		const changed =
+			!prevReady ||
+			prevReady.action !== recommended ||
+			Math.abs((prevReady.score ?? 0) - finalScore) >= 5;
+		if (changed)
+			await recordActivity({
+				actor: "agent",
+				kind: "assessed",
+				text: `Counterclaim assessed the case: ${finalScore}% win likelihood · ${actionLabel(recommended)}${degraded ? " (rule-based)" : ""}`,
+				disputeId,
+				orderId: d.orderId,
+				meta: { assessmentId, latencyMs: Date.now() - started },
+			});
 		await publish({ type: "assessment.ready", disputeId, assessmentId });
 		log.info(
 			{
