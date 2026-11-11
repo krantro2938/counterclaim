@@ -1,4 +1,5 @@
 import type { CaseFile, Fact } from "../casefile";
+import { isSandbox } from "../env";
 import { pickEvidenceType } from "../evidence/type";
 
 /** Deterministic rubric (SPEC §7.2). Anchors the LLM: final = 0.6 × rubric + 0.4 × llm. */
@@ -162,6 +163,7 @@ export function rubricRecommendation(
 							evidenceType: pickEvidenceType(
 								cf.dispute.evidencesRequested,
 								true,
+								isSandbox(),
 							),
 							notes: `Order shipped with tracking ${tracking} and the carrier confirms delivery to the PayPal-confirmed address. Evidence packet attached.`,
 							includeTracking: true,

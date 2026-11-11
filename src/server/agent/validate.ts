@@ -1,5 +1,6 @@
 import { toMinor } from "#/lib/money";
 import type { CaseFile } from "../casefile";
+import { isSandbox } from "../env";
 import { pickEvidenceType } from "../evidence/type";
 import { validateActionParams } from "../policy/params";
 import type { Assessment, ProposedAction } from "./schema";
@@ -53,6 +54,7 @@ function normalise(
 					evidenceType: pickEvidenceType(
 						cf.dispute.evidencesRequested,
 						Boolean(cf.shipment),
+						isSandbox(),
 					),
 					notes: x.evidence_notes ?? x.note ?? p.rationale,
 					includeTracking: Boolean(cf.shipment),

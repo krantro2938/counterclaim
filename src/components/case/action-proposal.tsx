@@ -51,7 +51,7 @@ export function effectText(
 	const s = detail.shipment;
 	switch (a.type) {
 		case "provide_evidence":
-			return `${a.params.sentEvidenceType ? "Sent" : "Sends"} ${String(a.params.sentEvidenceType ?? a.params.evidenceType ?? "PROOF_OF_FULFILLMENT")} to PayPal${s && a.params.includeTracking !== false && (a.params.sentEvidenceType ?? a.params.evidenceType) !== "OTHER" ? ` with tracking ${s.carrier} ${s.trackingNumber}` : ""}${a.params.includePdf !== false ? " and the evidence PDF" : ""}.`;
+			return `${a.params.sentEvidenceType ? "Sent" : "Sends"} ${String(a.params.sentEvidenceType ?? a.params.evidenceType ?? "PROOF_OF_FULFILLMENT")} to PayPal${s && a.params.includeTracking !== false ? ` with tracking ${s.carrier} ${s.trackingNumber}${(a.params.sentEvidenceType ?? a.params.evidenceType) === "OTHER" ? " in the notes" : ""}` : ""}${a.params.includePdf !== false ? " and the evidence PDF" : ""}.`;
 		case "make_offer":
 			return `Offers the buyer a ${amt} refund (${String(
 				a.params.offerType ?? "REFUND",

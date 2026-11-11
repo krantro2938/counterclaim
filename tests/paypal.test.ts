@@ -167,6 +167,15 @@ describe("pickEvidenceType", () => {
 			"OTHER",
 		);
 	});
+	it("always sends OTHER in the sandbox, which rejects PROOF_OF_FULFILLMENT even when requested", () => {
+		expect(
+			pickEvidenceType(
+				req("PROOF_OF_FULFILLMENT", "PROOF_OF_REFUND"),
+				true,
+				true,
+			),
+		).toBe("OTHER");
+	});
 	it("ignores evidence the buyer submitted", () => {
 		expect(
 			pickEvidenceType(

@@ -349,7 +349,8 @@ describe("validator", () => {
 		);
 		expect(v.actions[0]).toMatchObject({
 			type: "provide_evidence",
-			params: { evidenceType: "PROOF_OF_FULFILLMENT", includeTracking: true },
+			// test env = sandbox, where PayPal only accepts OTHER (SPEC §6.3)
+			params: { evidenceType: "OTHER", includeTracking: true },
 		});
 	});
 	it("rejects messages leaking unknown contact details", () => {

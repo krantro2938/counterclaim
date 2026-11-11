@@ -4,6 +4,7 @@ import { formatMoney, minorToPaypalMoney } from "#/lib/money";
 import { buildCaseFile } from "../casefile";
 import { db } from "../db/client";
 import { actions, assessments, disputes, evidenceFiles } from "../db/schema";
+import { isSandbox } from "../env";
 import { publish } from "../events/bus";
 import { pickEvidenceType } from "../evidence/type";
 import { enqueue } from "../jobs/queue";
@@ -250,6 +251,7 @@ async function provideEvidenceAction(
 	const evidenceType = pickEvidenceType(
 		cf.dispute.evidencesRequested,
 		Boolean(cf.shipment),
+		isSandbox(),
 	);
 	if (p.evidenceType && p.evidenceType !== evidenceType) {
 		throw Object.assign(
@@ -306,7 +308,11 @@ async function provideEvidenceAction(
 	const ev = {
 		evidenceType,
 		trackingInfo,
-		notes: p.notes ?? "Proof of fulfilment attached.",
+		notes: withTracking(
+			p.notes ?? "Evidence packet attached.",
+			evidenceType,
+			cf.shipment,
+		),
 		file,
 	};
 	try {
@@ -352,4 +358,15 @@ async function provideEvidenceAction(
 		}
 		throw err;
 	}
+}
+
+/** OTHER evidence carries no tracking_info field, so the tracking goes into the notes. */
+function withTracking(
+	notes: string,
+	evidenceType: string,
+	shipment: { carrier: string; trackingNumber: string } | null,
+): string {
+	if (evidenceType === "PROOF_OF_FULFILLMENT" || !shipment) return notes;
+	if (notes.includes(shipment.trackingNumber)) return notes;
+	return `${notes}\n\nTracking: ${shipment.carrier} ${shipment.trackingNumber} (uploaded to PayPal; full delivery timeline in the attached PDF).`;
 }
