@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { desc, sql as dsql, eq } from "drizzle-orm";
 import { db } from "../db/client";
-import { customerMessages, orders, shipments } from "../db/schema";
+import { customerMessages, disputes, orders, shipments } from "../db/schema";
 import { publish } from "../events/bus";
 import { enqueue } from "../jobs/queue";
 import { recordActivity } from "../kv";
@@ -153,6 +153,8 @@ export async function latestShipment(orderId: string) {
 export async function labReset(
 	opts: { keepOrders?: boolean } = { keepOrders: true },
 ) {
+	// PayPal's dispute list lags by 10+ minutes: remember the IDs and re-sync each one directly.
+	const known = await db().select({ id: disputes.id }).from(disputes);
 	await db().execute(
 		dsql`truncate table agent_steps, evidence_files, actions, assessments, activity, webhook_events, jobs restart identity cascade`,
 	);
@@ -163,6 +165,8 @@ export async function labReset(
 			dsql`truncate table carrier_events, shipments, customer_messages, orders cascade`,
 		);
 	}
+	for (const { id } of known)
+		await enqueue("sync_dispute", { refId: id, payload: { reason: "reset" } });
 	await enqueue("poll_disputes");
 	await enqueue("protection_scan");
 	await publish({ type: "kpi.updated" });

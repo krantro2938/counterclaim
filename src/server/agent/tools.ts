@@ -22,10 +22,11 @@ export function truncate(v: unknown, n = MAX_RESULT_CHARS): string {
 }
 
 /** Names of the PayPal Agent Toolkit tools exposed (read-only). */
+// get_shipment_tracking is not given to the model: this app has no shipping/trackers scope (403),
+// and get_order already returns the v2 trackers.
 export const PAYPAL_READ_TOOLS = [
 	"get_dispute",
 	"get_order",
-	"get_shipment_tracking",
 	"list_transactions",
 ] as const;
 
@@ -75,6 +76,8 @@ export function buildAgentTools(
 	) => {
 		if (!paypalConfigured()) throw new Error("PayPal sandbox not configured");
 		const r = await runToolkitTool(readToolkit(), name, args);
+		// A failed read must not become citable "PP:" evidence or look like a successful call in the trace.
+		if (!r.ok) throw new Error(`${name} failed: ${r.raw.slice(0, 300)}`);
 		calledPayPal.set(name, r.data);
 		return r.data;
 	};
@@ -206,18 +209,6 @@ export function buildAgentTools(
 				if (!cf.order?.paypalOrderId)
 					throw new Error("No PayPal order linked to this dispute");
 				return paypal("get_order", { id: cf.order.paypalOrderId });
-			}),
-		}),
-		get_shipment_tracking: tool({
-			description:
-				"PayPal Agent Toolkit: tracking PayPal has on file for this order's capture.",
-			inputSchema: z.object({}),
-			execute: wrap("get_shipment_tracking", "paypal_agent_toolkit", () => {
-				if (!cf.order?.captureId)
-					throw new Error("No capture linked to this dispute");
-				return paypal("get_shipment_tracking", {
-					transaction_id: cf.order.captureId,
-				});
 			}),
 		}),
 		list_transactions: tool({

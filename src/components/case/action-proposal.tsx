@@ -51,7 +51,7 @@ export function effectText(
 	const s = detail.shipment;
 	switch (a.type) {
 		case "provide_evidence":
-			return `Sends ${String(a.params.evidenceType ?? "PROOF_OF_FULFILLMENT")} to PayPal${s && a.params.includeTracking !== false ? ` with tracking ${s.carrier} ${s.trackingNumber}` : ""}${a.params.includePdf !== false ? " and the evidence PDF" : ""}.`;
+			return `${a.params.sentEvidenceType ? "Sent" : "Sends"} ${String(a.params.sentEvidenceType ?? a.params.evidenceType ?? "PROOF_OF_FULFILLMENT")} to PayPal${s && a.params.includeTracking !== false && (a.params.sentEvidenceType ?? a.params.evidenceType) !== "OTHER" ? ` with tracking ${s.carrier} ${s.trackingNumber}` : ""}${a.params.includePdf !== false ? " and the evidence PDF" : ""}.`;
 		case "make_offer":
 			return `Offers the buyer a ${amt} refund (${String(
 				a.params.offerType ?? "REFUND",
@@ -140,6 +140,10 @@ export function ActionProposal({
 	};
 
 	const status = action.status;
+	// PayPal no longer allows this action or wants different evidence: retrying can't work.
+	const optionsChanged =
+		status === "failed" &&
+		/NOT_ALLOWED|EVIDENCE_TYPE/.test(JSON.stringify(action.error ?? ""));
 	return (
 		<div
 			ref={ref}
@@ -171,6 +175,12 @@ export function ActionProposal({
 								type: action.type,
 								params: {
 									...p,
+									// executed cards describe what was actually sent
+									sentEvidenceType: (
+										action.response as {
+											sent?: { evidenceType?: string };
+										} | null
+									)?.sent?.evidenceType,
 									amountMinor: amount
 										? Math.round(Number(amount) * 100)
 										: p.amountMinor,
@@ -282,15 +292,29 @@ export function ActionProposal({
 
 			{editable && (
 				<div className="flex flex-wrap gap-2">
-					<Button
-						onClick={() => {
-							const e = edits();
-							if (e) requestApprove(action, e);
-						}}
-						disabled={busy}
-					>
-						{status === "failed" ? "Retry as a new action" : "Approve"}
-					</Button>
+					{status === "failed" && optionsChanged ? (
+						<Button
+							onClick={() =>
+								fetch(
+									`/api/disputes/${encodeURIComponent(action.disputeId)}/assess`,
+									{ method: "POST" },
+								)
+							}
+							disabled={busy}
+						>
+							Re-assess with PayPal's current options
+						</Button>
+					) : (
+						<Button
+							onClick={() => {
+								const e = edits();
+								if (e) requestApprove(action, e);
+							}}
+							disabled={busy}
+						>
+							{status === "failed" ? "Retry as a new action" : "Approve"}
+						</Button>
+					)}
 					{status !== "failed" && (
 						<Button
 							variant="ghost"

@@ -22,7 +22,13 @@ import { getSettings } from "../settings";
 import { syncDispute } from "../sync/disputes";
 
 type ActionRow = typeof actions.$inferSelect;
-type Result = { response: unknown; debugId: string | null; via: string };
+type Result = {
+	response: unknown;
+	debugId: string | null;
+	via: string;
+	/** What was actually sent (rendered on executed cards). */
+	sent?: Record<string, unknown>;
+};
 
 /** Executes approved actions against PayPal (SPEC §7.5). PayPal-Request-Id = action UUID. Never auto-retries. */
 export async function executeAction(actionId: string): Promise<void> {
@@ -84,7 +90,7 @@ export async function executeAction(actionId: string): Promise<void> {
 			.update(actions)
 			.set({
 				status: "succeeded",
-				response: { via: r.via, body: r.response },
+				response: { via: r.via, body: r.response, sent: r.sent },
 				paypalDebugId: r.debugId,
 				executedAt: new Date(),
 				error: null,
@@ -145,6 +151,14 @@ export async function executeAction(actionId: string): Promise<void> {
 			actionId: a.id,
 			status: "failed",
 		});
+		// PayPal's allowed actions or requested evidence changed: get a fresh recommendation.
+		const issue = JSON.stringify(error);
+		if (
+			/NOT_ALLOWED|EVIDENCE_TYPE_CHANGED|EVIDENCE_TYPE_IS_NOT_ALLOWED|ACTION_NOT_ALLOWED/.test(
+				issue,
+			)
+		)
+			await enqueue("assess", { refId: a.disputeId, dedupe: true });
 		// No rethrow: mutating calls are never retried automatically.
 	}
 }
@@ -231,6 +245,20 @@ async function provideEvidenceAction(
 		includePdf?: boolean;
 	};
 	const cf = await buildCaseFile(d.id);
+	// PayPal only accepts evidence types it requested. What the merchant approved is what gets sent:
+	// if PayPal now wants a different type, fail closed and re-assess (like the HATEOAS gate).
+	const evidenceType = pickEvidenceType(
+		cf.dispute.evidencesRequested,
+		Boolean(cf.shipment),
+	);
+	if (p.evidenceType && p.evidenceType !== evidenceType) {
+		throw Object.assign(
+			new Error(
+				`PayPal now asks for ${evidenceType} evidence, but this action was approved as ${p.evidenceType}. Re-assessing.`,
+			),
+			{ code: "EVIDENCE_TYPE_CHANGED" },
+		);
+	}
 	const settings = await getSettings();
 	const [assess] = await db()
 		.select()
@@ -264,11 +292,6 @@ async function provideEvidenceAction(
 			contentType: "application/pdf",
 		};
 	}
-	// Re-checked against the latest snapshot: PayPal rejects evidence types it didn't request.
-	const evidenceType = pickEvidenceType(
-		cf.dispute.evidencesRequested,
-		Boolean(cf.shipment),
-	);
 	const trackingInfo =
 		p.includeTracking !== false &&
 		cf.shipment &&
@@ -292,6 +315,11 @@ async function provideEvidenceAction(
 			response: r.data,
 			debugId: r.debugId,
 			via: "rest:provide-evidence (multipart: input + evidence-file)",
+			sent: {
+				evidenceType,
+				trackingNumber: trackingInfo?.[0]?.tracking_number ?? null,
+				pdf: file?.name ?? null,
+			},
 		};
 	} catch (err) {
 		// The file part name is documented inconsistently; retry once with the alternative, with a new request id.
@@ -315,6 +343,11 @@ async function provideEvidenceAction(
 				response: r.data,
 				debugId: r.debugId,
 				via: "rest:provide-evidence (multipart: input + evidence_file)",
+				sent: {
+					evidenceType,
+					trackingNumber: trackingInfo?.[0]?.tracking_number ?? null,
+					pdf: file?.name ?? null,
+				},
 			};
 		}
 		throw err;

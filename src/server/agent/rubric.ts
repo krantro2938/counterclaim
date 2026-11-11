@@ -1,4 +1,5 @@
 import type { CaseFile, Fact } from "../casefile";
+import { pickEvidenceType } from "../evidence/type";
 
 /** Deterministic rubric (SPEC §7.2). Anchors the LLM: final = 0.6 × rubric + 0.4 × llm. */
 
@@ -158,7 +159,10 @@ export function rubricRecommendation(
 					{
 						type: "provide_evidence",
 						params: {
-							evidenceType: "PROOF_OF_FULFILLMENT",
+							evidenceType: pickEvidenceType(
+								cf.dispute.evidencesRequested,
+								true,
+							),
 							notes: `Order shipped with tracking ${tracking} and the carrier confirms delivery to the PayPal-confirmed address. Evidence packet attached.`,
 							includeTracking: true,
 							includePdf: true,

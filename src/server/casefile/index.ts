@@ -220,7 +220,9 @@ export function assembleCaseFile(input: {
 				strength: addrMatch ? "strong" : "medium",
 				tag: addrMatch ? "address_match" : "address_mismatch",
 				text: addrMatch
-					? `The order shipped to the PayPal-confirmed address (${addrShort(o.paypalShippingAddress)}).`
+					? s
+						? `The order shipped to the PayPal-confirmed address (${addrShort(o.paypalShippingAddress)}).`
+						: `The order's ship-to address is the PayPal-confirmed address (${addrShort(o.paypalShippingAddress)}).`
 					: `The ship-to address (${addrShort(o.shippingAddress)}) differs from the PayPal address (${addrShort(o.paypalShippingAddress)}).`,
 			});
 		}

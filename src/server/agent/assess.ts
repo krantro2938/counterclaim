@@ -87,12 +87,9 @@ async function runToolMode(
 			},
 		});
 		for (const c of calls) {
-			const source = [
-				"get_dispute",
-				"get_order",
-				"get_shipment_tracking",
-				"list_transactions",
-			].includes(c.toolName)
+			const source = ["get_dispute", "get_order", "list_transactions"].includes(
+				c.toolName,
+			)
 				? "paypal_agent_toolkit"
 				: "case_file";
 			steps.push({

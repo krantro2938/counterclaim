@@ -66,8 +66,23 @@ export async function syncDispute(
 		orderId = o?.id ?? null;
 	}
 	const outcomeCode = d.dispute_outcome?.outcome_code;
-	const outcome =
+	let outcome =
 		d.status === "RESOLVED" ? (outcomeFromCode(outcomeCode) ?? "other") : null;
+	if (outcome === "lost") {
+		// Resolved for the buyer because the merchant accepted or offered: settled by choice, not lost.
+		const [chosen] = await db()
+			.select({ id: actions.id })
+			.from(actions)
+			.where(
+				and(
+					eq(actions.disputeId, d.dispute_id),
+					eq(actions.status, "succeeded"),
+					inArray(actions.type, ["accept_claim", "make_offer"]),
+				),
+			)
+			.limit(1);
+		if (chosen) outcome = "settled";
+	}
 	const row = {
 		id: d.dispute_id,
 		orderId,
