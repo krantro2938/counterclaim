@@ -46,7 +46,7 @@ video/
 ## 4. HyperFrames setup
 
 - Install and follow the HyperFrames docs/skill (`researcher` confirms the current CLI and render command, and whether there's a Claude Code skill to load).
-- Canvas **1920×1080, 30 fps**. Fonts: Newsreader / Geist / Geist Mono (Counterclaim); Fraunces for Kiln & Thread scenes.
+- Canvas **1920×1080, 30 fps**. Font: Bricolage Grotesque everywhere (no serif, no mono); Kiln & Thread scenes set it condensed (wdth 78 %).
 - Colours: the DESIGN.md tokens, light theme. Background `--background` (warm paper), accent `--primary` (seal teal). Outcome colours only for outcome moments.
 - Motion: DESIGN.md §11 easing `cubic-bezier(0.2, 0.8, 0.2, 1)`, durations 200–400 ms for UI-like motion, up to 800 ms for type reveals. No bounces, no particle effects, no sparkle "AI" visuals.
 - **Callout overlays** on recordings: a soft-tinted rounded rectangle (`--accent` at 30% opacity, 2 px `--primary` border) plus a short label in Geist 28 px. A maximum of one callout on screen at a time, held ≥ 1.5 s.

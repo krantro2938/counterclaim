@@ -93,7 +93,7 @@ export function CaseTimeline({ detail }: { detail: DisputeDetail }) {
 	if (!items.length)
 		return <p className="py-6 text-sm text-muted-foreground">No events yet.</p>;
 	return (
-		<ol className="relative ml-1 border-l border-border/80 pl-6">
+		<ol className="relative ml-1 border-l border-dashed border-border pl-6">
 			{items.map((it) => (
 				<li key={it.key} className="relative pb-6 last:pb-0">
 					<span
@@ -107,7 +107,7 @@ export function CaseTimeline({ detail }: { detail: DisputeDetail }) {
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<time
-									className="font-mono text-xs text-muted-foreground tabular"
+									className="text-xs text-muted-foreground tabular"
 									dateTime={it.at}
 								>
 									{formatDateTime(it.at)}
@@ -121,11 +121,11 @@ export function CaseTimeline({ detail }: { detail: DisputeDetail }) {
 							{ACTOR_LABEL[it.actor] ?? it.actor}
 						</span>
 					</div>
-					<p className="mt-1 text-[15px]">
+					<p className="mt-0.5">
 						{it.text} {it.simulated && <SimulatedTag className="ml-1" />}
 					</p>
 					{it.sub && (
-						<p className="mt-2 rounded-xl bg-card px-4 py-3 font-display text-[18px] leading-snug text-foreground/80">
+						<p className="mt-2 w-fit max-w-full rounded-2xl rounded-tl-md bg-muted px-4 py-2.5 text-sm leading-relaxed">
 							“{it.sub}”
 						</p>
 					)}

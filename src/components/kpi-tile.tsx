@@ -1,36 +1,66 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "#/lib/utils";
 
-/** KPI tile: eyebrow label, big serif value, quiet hint + sparkline. No border, no card (DESIGN §6.1). */
+/** KPI card: label + small badge on top, value and a quiet comparison below (DESIGN §6.1). */
 export function KpiTile({
 	label,
 	value,
 	hint,
-	spark,
+	badge,
+	badgeTone = "muted",
 	to,
 	className,
 }: {
 	label: string;
 	value: React.ReactNode;
 	hint?: React.ReactNode;
+	badge?: React.ReactNode;
+	badgeTone?: "won" | "lost" | "deadline" | "muted";
 	spark?: number[];
 	to?: string;
 	className?: string;
 }) {
+	const tone = {
+		won: "bg-won-soft text-won",
+		lost: "bg-lost-soft text-lost",
+		deadline: "bg-deadline-soft text-deadline",
+		muted: "bg-muted text-muted-foreground",
+	}[badgeTone];
 	const body = (
-		<div className={cn("flex h-full flex-col gap-3", to && "group", className)}>
-			<span className="eyebrow">{label}</span>
-			<span className="font-display text-[52px] leading-none tabular transition-colors group-hover:text-primary">
-				{value}
-			</span>
-			<div className="flex items-end justify-between gap-2 text-[13px] text-muted-foreground">
-				<span>{hint}</span>
-				{spark && spark.length > 1 && <Sparkline values={spark} />}
+		<div
+			className={cn(
+				"field flex h-full flex-col justify-between gap-4 p-5 transition-colors sm:gap-5 sm:p-6",
+				to && "hover:bg-accent/60",
+				className,
+			)}
+		>
+			<div className="flex items-center justify-between gap-2">
+				<span className="font-medium">{label}</span>
+				{badge != null && (
+					<span
+						className={cn(
+							"rounded-full px-2 py-0.5 text-xs font-medium tabular",
+							tone,
+						)}
+					>
+						{badge}
+					</span>
+				)}
+			</div>
+			<div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+				<span className="font-display text-[22px] leading-none tabular sm:text-[26px]">
+					{value}
+				</span>
+				{hint && (
+					<span className="hidden text-xs text-muted-foreground sm:inline">
+						{hint}
+					</span>
+				)}
 			</div>
 		</div>
 	);
 	return to ? (
-		<Link to={to} className="block rounded-md focus-visible:outline-2">
+		<Link to={to} className="block rounded-[28px] focus-visible:outline-2">
 			{body}
 		</Link>
 	) : (

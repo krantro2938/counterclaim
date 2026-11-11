@@ -11,6 +11,7 @@ import { ShieldAlert, Truck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+	BuyerCell,
 	ClientOnly,
 	counterclaimGrid,
 	GridEmpty,
@@ -68,16 +69,15 @@ function OrdersPage() {
 	const atRisk = rows.filter((r) => r.protectionStatus === "at_risk").length;
 
 	return (
-		<Page wide>
+		<Page>
 			<PageHeader
-				eyebrow="Work"
 				title="Orders & Protection"
 				subtitle="Keep every order eligible for PayPal Seller Protection: tracking on file, shipped to the PayPal address."
 			/>
 			{atRisk > 0 && (
 				<div
 					role="status"
-					className="-mt-4 flex items-center gap-3 rounded-xl bg-deadline-soft px-5 py-4 text-sm"
+					className="flex items-center gap-3 rounded-3xl bg-deadline-soft px-5 py-4"
 				>
 					<ShieldAlert className="size-4 shrink-0 text-deadline" />
 					<span>
@@ -89,13 +89,14 @@ function OrdersPage() {
 					</span>
 				</div>
 			)}
-			<div className="flex flex-col gap-5">
-				<div className="flex items-center gap-2">
+			<section className="field flex min-w-0 flex-col gap-4 p-5 sm:p-6">
+				<div className="flex flex-wrap items-center justify-between gap-2">
+					<h2 className="text-[15px] font-semibold">All orders</h2>
 					<Input
 						value={quick}
 						onChange={(e) => setQuick(e.target.value)}
-						placeholder="Filter orders…"
-						className="w-full rounded-full px-4 sm:w-72"
+						placeholder="Search orders…"
+						className="h-9 w-full rounded-full px-4 sm:w-60"
 						aria-label="Quick filter"
 					/>
 				</div>
@@ -111,7 +112,7 @@ function OrdersPage() {
 						<OrdersGrid rows={rows} loading={q.isLoading} quick={quick} />
 					</ClientOnly>
 				)}
-			</div>
+			</section>
 		</Page>
 	);
 }
@@ -213,7 +214,7 @@ export function ShipButton({
 				>
 					{ship.isPending ? "Sending to PayPal…" : "Confirm and add tracking"}
 				</Button>
-				<p className="font-mono text-[11px] text-muted-foreground">
+				<p className="tabular text-[11px] text-muted-foreground">
 					Agent Toolkit create_shipment_tracking → POST
 					/v1/shipping/trackers-batch
 				</p>
@@ -257,15 +258,16 @@ function OrdersGrid({
 				width: 90,
 				pinned: "left",
 				valueFormatter: (p) => `#${p.value}`,
-				cellClass: "font-mono tabular",
+				cellClass: "tabular",
 			},
 			{
 				colId: "buyer",
 				headerName: "Buyer",
 				field: "buyer",
 				flex: 1,
-				minWidth: 130,
+				minWidth: 160,
 				valueFormatter: (p) => p.value ?? "—",
+				cellRenderer: BuyerCell,
 			},
 			{
 				colId: "items",
@@ -299,7 +301,7 @@ function OrdersGrid({
 			{
 				colId: "shipment",
 				headerName: "Shipment",
-				width: 230,
+				width: 210,
 				valueGetter: (p) => p.data?.shipment?.trackingNumber ?? "",
 				cellRenderer: (p: ICellRendererParams<OrderRowDto>) => {
 					const s = p.data?.shipment;
@@ -307,7 +309,7 @@ function OrdersGrid({
 					return (
 						<span className="flex items-center gap-1.5">
 							<span className="text-xs">{s.carrier}</span>
-							<span className="truncate font-mono text-xs">
+							<span className="truncate tabular text-xs">
 								{s.trackingNumber}
 							</span>
 							{s.simulated && <SimulatedTag label="Sim" />}
@@ -334,6 +336,7 @@ function OrdersGrid({
 			{
 				colId: "reasons",
 				headerName: "Reasons",
+				hide: true,
 				flex: 1.4,
 				minWidth: 220,
 				valueGetter: (p) => p.data?.reasons.join(" · ") ?? "",
@@ -350,7 +353,7 @@ function OrdersGrid({
 						<Link
 							to="/app/disputes/$disputeId"
 							params={{ disputeId: p.data.disputeId }}
-							className="font-mono text-xs text-primary hover:underline"
+							className="tabular text-xs text-primary hover:underline"
 						>
 							{p.data.disputeId}
 						</Link>
@@ -381,7 +384,7 @@ function OrdersGrid({
 		<div
 			className="w-full"
 			style={{
-				height: Math.min(780, Math.max(260, 46 + sorted.length * 60 + 24)),
+				height: Math.min(780, Math.max(260, 42 + sorted.length * 56 + 24)),
 			}}
 		>
 			<AgGridReact<OrderRowDto>
@@ -438,11 +441,11 @@ function OrderCards({
 			</p>
 		);
 	return (
-		<ul className="space-y-3">
+		<ul className="space-y-2">
 			{list.map((o) => (
-				<li key={o.id} className="field space-y-3 p-5">
+				<li key={o.id} className="tile space-y-3 p-4">
 					<div className="flex items-center justify-between gap-2">
-						<span className="font-mono text-sm">#{o.number}</span>
+						<span className="tabular text-sm">#{o.number}</span>
 						<Money amountMinor={o.amountMinor} currency={o.currency} />
 					</div>
 					<p className="text-sm">
@@ -454,7 +457,7 @@ function OrderCards({
 						{!o.shipment?.uploadedToPaypalAt && <ShipButton order={o} />}
 					</div>
 					{o.shipment && (
-						<p className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+						<p className="flex items-center gap-1.5 tabular text-xs text-muted-foreground">
 							{o.shipment.carrier} {o.shipment.trackingNumber}{" "}
 							<SimulatedTag label="Sim" />
 						</p>

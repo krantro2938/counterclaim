@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	AlertTriangle,
+	ArrowLeft,
 	Check,
 	Copy,
 	ExternalLink,
@@ -26,7 +27,7 @@ import type {
 } from "#/components/case/types";
 import { OutcomeCard, VerdictCard } from "#/components/case/verdict";
 import { Money } from "#/components/money";
-import { Page } from "#/components/page";
+import { Avatar, Page } from "#/components/page";
 import {
 	DeadlineChip,
 	ProtectionBadge,
@@ -217,81 +218,16 @@ function CasePage() {
 	const busy = approve.isPending;
 
 	return (
-		<Page wide className="md:gap-12">
-			{/* Header: eyebrow (ID, stage) · serif title (reason) · amount · meta */}
-			<header className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
-				<div className="min-w-0 space-y-4">
-					<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-						<span className="eyebrow">Dispute</span>
-						<CopyId id={dispute.id} />
-						<span className="text-muted-foreground/50">·</span>
-						<span className="eyebrow">{stageLabel(dispute.stage)}</span>
-					</div>
-					<h1 className="font-display text-[44px] leading-[1.02] md:text-[56px]">
-						{reasonLabel(dispute.reason)}
-						<span className="text-muted-foreground">
-							{" "}
-							· {formatMoney(dispute.amountMinor, dispute.currency)}
-						</span>
-					</h1>
-					<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-						<StatusBadge status={dispute.status} outcome={dispute.outcome} />
-						<DeadlineChip
-							dueAt={
-								dispute.sellerResponseDueAt
-									? String(dispute.sellerResponseDueAt)
-									: null
-							}
-							resolved={resolved}
-							className="text-[13px]"
-						/>
-						{d.order && (
-							<span className="text-muted-foreground">
-								{d.order.buyerName ?? "Buyer"} · Order #{d.order.number}
-							</span>
-						)}
-					</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<Button variant="outline" size="sm" asChild>
-						<a
-							href="https://www.sandbox.paypal.com/resolutioncenter"
-							target="_blank"
-							rel="noreferrer"
-							className="gap-1.5"
-						>
-							Open in PayPal <ExternalLink className="size-3.5" />
-						</a>
-					</Button>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="size-8"
-								aria-label="More actions"
-							>
-								<MoreHorizontal className="size-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem
-								onClick={() => reassess.mutate()}
-								disabled={resolved}
-							>
-								Re-assess
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setRawOpen(true)}>
-								View raw JSON
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-			</header>
-
-			<div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(0,3fr)_minmax(400px,2fr)] xl:gap-14">
+		<Page>
+			<Link
+				to="/app/disputes"
+				className="inline-flex w-fit items-center gap-1.5 px-1 pt-1 text-[13px] text-muted-foreground hover:text-foreground"
+			>
+				<ArrowLeft className="size-3.5" /> All disputes
+			</Link>
+			<div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
 				{/* Right column first in DOM order on small screens: verdict stays on top */}
-				<aside className="order-first space-y-4 xl:sticky xl:top-20 xl:order-last xl:self-start">
+				<aside className="order-first flex min-w-0 flex-col gap-4 xl:sticky xl:top-4 xl:order-last xl:self-start">
 					{resolved ? (
 						<OutcomeCard detail={d} />
 					) : (
@@ -309,8 +245,10 @@ function CasePage() {
 						/>
 					)}
 					{visibleActions.length > 0 && (
-						<div className="space-y-3 pt-6">
-							<h3 className="eyebrow mb-4">Proposed actions</h3>
+						<div className="space-y-3">
+							<h3 className="px-1 pt-2 text-[15px] font-semibold">
+								Proposed actions
+							</h3>
 							{visibleActions.map((a) => (
 								<div key={a.id} id={`action-${a.id}`}>
 									<ActionProposal
@@ -330,44 +268,111 @@ function CasePage() {
 					{!resolved && <AgentChat disputeId={dispute.id} />}
 				</aside>
 
-				<div className="min-w-0">
+				<section className="field min-w-0 p-5 md:p-6" aria-label="Case">
+					<header className="flex flex-wrap items-start gap-4 pb-5">
+						<Avatar name={d.order?.buyerName} className="size-11 text-sm" />
+						<div className="min-w-0 flex-1">
+							<h1 className="font-display text-[22px]">
+								{reasonLabel(dispute.reason)} ·{" "}
+								{formatMoney(dispute.amountMinor, dispute.currency)}
+							</h1>
+							<p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] text-muted-foreground">
+								{d.order
+									? `${d.order.buyerName ?? "Buyer"} · Order #${d.order.number}`
+									: "No matching order"}
+								<span aria-hidden>·</span>
+								<CopyId id={dispute.id} />
+								<span aria-hidden>·</span>
+								{stageLabel(dispute.stage)}
+							</p>
+							<div className="mt-3 flex flex-wrap items-center gap-3">
+								<StatusBadge
+									status={dispute.status}
+									outcome={dispute.outcome}
+								/>
+								<DeadlineChip
+									dueAt={
+										dispute.sellerResponseDueAt
+											? String(dispute.sellerResponseDueAt)
+											: null
+									}
+									resolved={resolved}
+								/>
+							</div>
+						</div>
+						<div className="flex items-center gap-2">
+							<Button variant="outline" size="sm" asChild>
+								<a
+									href="https://www.sandbox.paypal.com/resolutioncenter"
+									target="_blank"
+									rel="noreferrer"
+									className="gap-1.5"
+								>
+									Open in PayPal <ExternalLink className="size-3.5" />
+								</a>
+							</Button>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="outline"
+										size="icon"
+										className="size-9"
+										aria-label="More actions"
+									>
+										<MoreHorizontal className="size-4" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									<DropdownMenuItem
+										onClick={() => reassess.mutate()}
+										disabled={resolved}
+									>
+										Re-assess
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => setRawOpen(true)}>
+										View raw JSON
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+					</header>
 					<Tabs defaultValue="timeline">
 						<TabsList
 							variant="line"
-							className="h-auto w-full justify-start gap-7 overflow-x-auto overflow-y-hidden p-0 pb-1.5"
+							className="no-scrollbar h-auto w-full justify-start gap-1.5 overflow-x-auto p-0"
 						>
 							{["Timeline", "Reasoning", "Order", "Trace", "PayPal"].map(
 								(t) => (
 									<TabsTrigger
 										key={t}
 										value={t.toLowerCase()}
-										className="flex-none px-0 pb-2 text-[15px]"
+										className="h-9 flex-none rounded-full border-0 bg-muted! px-4 text-[13.5px] font-normal text-muted-foreground shadow-none after:hidden hover:bg-accent/60! data-[state=active]:bg-accent! data-[state=active]:font-medium data-[state=active]:text-accent-foreground"
 									>
 										{t}
 									</TabsTrigger>
 								),
 							)}
 						</TabsList>
-						<TabsContent value="timeline" className="pt-8">
+						<TabsContent value="timeline" className="pt-6">
 							<CaseTimeline detail={d} />
 						</TabsContent>
-						<TabsContent value="reasoning" className="pt-8">
+						<TabsContent value="reasoning" className="pt-6">
 							<Reasoning detail={d} facts={facts} />
 						</TabsContent>
-						<TabsContent value="order" className="pt-8">
+						<TabsContent value="order" className="pt-6">
 							<OrderTab detail={d} />
 						</TabsContent>
-						<TabsContent value="trace" className="pt-8">
-							<h3 className="mb-5 font-display text-[28px]">
+						<TabsContent value="trace" className="pt-6">
+							<h3 className="mb-4 font-display text-lg">
 								How Counterclaim reached this
 							</h3>
 							<TraceViewer detail={d} />
 						</TabsContent>
-						<TabsContent value="paypal" className="pt-8">
+						<TabsContent value="paypal" className="pt-6">
 							<PayPalLinks detail={d} />
 						</TabsContent>
 					</Tabs>
-				</div>
+				</section>
 			</div>
 
 			<ApproveDialog
@@ -384,7 +389,7 @@ function CasePage() {
 					<DialogHeader>
 						<DialogTitle>Raw PayPal dispute</DialogTitle>
 					</DialogHeader>
-					<pre className="max-h-[70vh] overflow-auto rounded-lg bg-muted p-4 font-mono text-[11px]">
+					<pre className="max-h-[70vh] overflow-auto rounded-lg bg-muted p-4 tabular text-[11px]">
 						{JSON.stringify(dispute.raw, null, 2)}
 					</pre>
 				</DialogContent>
@@ -398,7 +403,7 @@ function CopyId({ id }: { id: string }) {
 	return (
 		<button
 			type="button"
-			className="group inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-foreground"
+			className="group inline-flex items-center gap-1 tabular hover:text-foreground"
 			onClick={() =>
 				navigator.clipboard?.writeText(id).then(() => {
 					setDone(true);
@@ -488,7 +493,7 @@ function Reasoning({
 						<li key={r.label} className="flex items-center gap-4 px-5 py-2.5">
 							<span
 								className={cn(
-									"w-8 font-mono text-xs tabular",
+									"w-8 tabular text-xs",
 									r.earned > 0
 										? "text-won"
 										: r.earned < 0
@@ -516,7 +521,7 @@ function Reasoning({
 				<ul className="space-y-2.5 text-sm">
 					{facts.map((f) => (
 						<li key={f.id} className="flex gap-4">
-							<span className="w-8 shrink-0 font-mono text-xs text-muted-foreground">
+							<span className="w-8 shrink-0 tabular text-xs text-muted-foreground">
 								{f.id}
 							</span>
 							<span className="flex-1">
@@ -594,9 +599,7 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 					{o.items.map((i) => (
 						<tr key={i.title}>
 							<td className="py-2">{i.title}</td>
-							<td className="py-2 text-right font-mono tabular">
-								{i.quantity}
-							</td>
+							<td className="py-2 text-right tabular">{i.quantity}</td>
 							<td className="py-2 text-right">
 								<Money amountMinor={i.unitMinor} currency={o.currency} />
 							</td>
@@ -643,15 +646,15 @@ function OrderTab({ detail }: { detail: DisputeDetail }) {
 				<dt className="text-muted-foreground">Paid</dt>
 				<dd>{formatDateTime(o.capturedAt ? String(o.capturedAt) : null)}</dd>
 				<dt className="text-muted-foreground">PayPal order ID</dt>
-				<dd className="font-mono text-xs">{o.paypalOrderId ?? "—"}</dd>
+				<dd className="tabular text-xs">{o.paypalOrderId ?? "—"}</dd>
 				<dt className="text-muted-foreground">Capture ID</dt>
-				<dd className="font-mono text-xs">{o.captureId ?? "—"}</dd>
+				<dd className="tabular text-xs">{o.captureId ?? "—"}</dd>
 				<dt className="text-muted-foreground">Shipment</dt>
 				<dd>
 					{detail.shipment ? (
 						<span className="inline-flex flex-wrap items-center gap-2">
 							{detail.shipment.carrier}{" "}
-							<span className="font-mono text-xs">
+							<span className="tabular text-xs">
 								{detail.shipment.trackingNumber}
 							</span>
 							{detail.shipment.simulated && <SimulatedTag />}
@@ -687,7 +690,7 @@ function PayPalLinks({ detail }: { detail: DisputeDetail }) {
 						<li
 							key={l.rel + l.href}
 							className={cn(
-								"inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-mono text-xs",
+								"inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 tabular text-xs",
 								action
 									? "bg-accent text-accent-foreground"
 									: sandbox

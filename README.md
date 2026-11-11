@@ -116,4 +116,4 @@ Scripts: `pnpm test` · `pnpm check` · `pnpm demo:reset` (clears assessments/ac
 - Single merchant (configured by env), USD only, no auth.
 
 ## Licence
-MIT. Product illustrations are original SVGs made for this project. Fonts: Newsreader, Geist, Geist Mono, Fraunces (SIL OFL).
+MIT. Product illustrations are original SVGs made for this project. Font: Bricolage Grotesque (SIL OFL).

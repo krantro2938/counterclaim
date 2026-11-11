@@ -62,7 +62,7 @@ export function VerdictCard({
 	const cur = detail.dispute.currency;
 	if (!a) {
 		return (
-			<section className="field space-y-4 p-7" aria-busy>
+			<section className="field space-y-4 p-6" aria-busy>
 				<div className="flex items-center gap-2 text-sm text-muted-foreground">
 					<Loader2 className="size-4 animate-spin" /> Counterclaim is building
 					the case file and assessing…
@@ -76,10 +76,10 @@ export function VerdictCard({
 	const primary = pending[0];
 	return (
 		<section
-			className="on-forest space-y-7 rounded-2xl p-7 md:p-8"
+			className="space-y-5 rounded-[28px] bg-gradient-to-b from-sage to-card p-6 dark:from-sage/60 dark:to-card"
 			aria-label="Verdict"
 		>
-			<p className="eyebrow">Counterclaim recommends</p>
+			<p className="text-muted-foreground">Counterclaim recommends</p>
 			{a.degraded && (
 				<div className="flex items-start gap-2 rounded-lg bg-deadline-soft px-3 py-2 text-xs text-deadline">
 					<AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
@@ -87,7 +87,7 @@ export function VerdictCard({
 				</div>
 			)}
 			<div className="flex items-start justify-between gap-2">
-				<h2 className="-mt-3 font-display text-[34px] leading-[1.08]">
+				<h2 className="-mt-3 font-display text-[22px] leading-snug">
 					{a.headline}
 				</h2>
 				{detail.assessmentRunning && (
@@ -125,12 +125,12 @@ export function VerdictCard({
 				<div className="flex flex-wrap gap-2.5">
 					<Button
 						size="lg"
-						className="flex-1 justify-center hover:bg-primary/90"
+						className="flex-1 justify-center"
 						onClick={() => onPrimary(primary)}
 						disabled={detail.assessmentRunning}
 					>
 						{primaryLabel(primary, cur)}
-						<kbd className="ml-2 hidden rounded-md bg-primary-foreground/10 px-1.5 font-mono text-[10px] sm:inline">
+						<kbd className="ml-2 hidden rounded-md bg-primary-foreground/10 px-1.5 tabular text-[10px] sm:inline">
 							A
 						</kbd>
 					</Button>
@@ -210,8 +210,8 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 	return (
 		<section
 			className={cn(
-				"relative overflow-hidden rounded-2xl p-7 md:p-8",
-				won ? "on-forest" : "bg-card",
+				"relative overflow-hidden rounded-[28px] p-6",
+				won ? "bg-gradient-to-b from-won-soft to-card" : "bg-card",
 			)}
 			aria-label="Outcome"
 		>
@@ -232,8 +232,8 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 			</div>
 			<p
 				className={cn(
-					"mt-4 font-display text-[44px] leading-none tabular",
-					lost ? "text-lost" : "",
+					"mt-3 font-display text-[32px] leading-none tabular",
+					won ? "text-won" : lost ? "text-lost" : "",
 				)}
 			>
 				{won
@@ -242,16 +242,16 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 						? `${formatMoney(d.amountMinor, d.currency)} refunded`
 						: formatMoney(d.amountMinor, d.currency)}
 			</p>
-			<dl className="mt-7 grid grid-cols-2 gap-4 text-sm">
+			<dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
 				<div>
 					<dt className="text-xs text-muted-foreground">
 						Time from dispute to response
 					</dt>
-					<dd className="font-mono tabular">{formatDuration(responseSecs)}</dd>
+					<dd className="tabular">{formatDuration(responseSecs)}</dd>
 				</div>
 				<div>
 					<dt className="text-xs text-muted-foreground">Opened</dt>
-					<dd className="font-mono text-xs tabular">
+					<dd className="tabular text-xs">
 						{new Date(created).toLocaleString()}
 					</dd>
 				</div>

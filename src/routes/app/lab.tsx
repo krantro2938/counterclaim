@@ -112,7 +112,7 @@ function LabPage() {
 			d.status === "UNDER_REVIEW");
 
 	return (
-		<Page wide>
+		<Page>
 			<PageHeader
 				eyebrow={
 					<span className="inline-flex items-center gap-1.5 text-simulated">
@@ -121,11 +121,11 @@ function LabPage() {
 				}
 				title="Sandbox controls"
 			/>
-			<div className="-mt-4 rounded-xl bg-simulated-soft p-6">
+			<div className="rounded-[28px] bg-simulated-soft p-6">
 				<p className="max-w-3xl text-sm leading-relaxed">
 					These call sandbox-only PayPal endpoints (
-					<span className="font-mono text-xs">require-evidence</span>,{" "}
-					<span className="font-mono text-xs">adjudicate</span>) or local
+					<span className="tabular text-xs">require-evidence</span>,{" "}
+					<span className="tabular text-xs">adjudicate</span>) or local
 					simulators (carrier scans, demo inbox). They stand in for time passing
 					and for PayPal's reviewers.
 				</p>
@@ -134,13 +134,13 @@ function LabPage() {
 						size="sm"
 						variant="outline"
 						onClick={() => run("/api/lab/sync", "Sync queued")}
-						className="gap-1.5 bg-background"
+						className="gap-1.5 bg-card"
 					>
 						<RefreshCw className="size-3.5" /> Sync now
 					</Button>
 					<AlertDialog>
 						<AlertDialogTrigger asChild>
-							<Button size="sm" variant="outline" className="bg-background">
+							<Button size="sm" variant="outline" className="bg-card">
 								Reset demo data
 							</Button>
 						</AlertDialogTrigger>
@@ -174,7 +174,7 @@ function LabPage() {
 				/>
 			)}
 
-			<section>
+			<section className="field min-w-0 p-5 sm:p-6">
 				<SectionHeading>Disputes</SectionHeading>
 				{!q.data ? (
 					<Skeleton className="mt-3 h-32" />
@@ -203,7 +203,7 @@ function LabPage() {
 											<Link
 												to="/app/disputes/$disputeId"
 												params={{ disputeId: d.id }}
-												className="font-mono text-xs hover:underline"
+												className="tabular text-xs hover:underline"
 											>
 												{d.id}
 											</Link>
@@ -230,7 +230,7 @@ function LabPage() {
 													.map((l) => (
 														<span
 															key={l.rel}
-															className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]"
+															className="rounded bg-muted px-1.5 py-0.5 tabular text-[11px]"
 														>
 															{l.rel}
 														</span>
@@ -323,7 +323,7 @@ function LabPage() {
 				)}
 			</section>
 
-			<section>
+			<section className="field min-w-0 p-5 sm:p-6">
 				<SectionHeading>Orders: demo inbox &amp; carrier</SectionHeading>
 				{!q.data ? (
 					<Skeleton className="mt-3 h-32" />
@@ -346,7 +346,7 @@ function LabPage() {
 									const delivered = s?.events.includes("delivered");
 									return (
 										<TableRow key={o.id}>
-											<TableCell className="font-mono text-xs">
+											<TableCell className="tabular text-xs">
 												#{o.number}
 											</TableCell>
 											<TableCell>{o.buyer ?? "—"}</TableCell>
@@ -455,7 +455,7 @@ function LabPage() {
 				)}
 			</section>
 
-			<section>
+			<section className="field min-w-0 p-5 sm:p-6">
 				<SectionHeading>Webhook log (last 50)</SectionHeading>
 				{!q.data ? (
 					<Skeleton className="mt-3 h-24" />
@@ -476,7 +476,7 @@ function LabPage() {
 								) : (
 									<X className="size-4 text-lost" aria-label="Not verified" />
 								)}
-								<span className="font-mono text-xs">{w.type}</span>
+								<span className="tabular text-xs">{w.type}</span>
 								<span className="hidden truncate text-xs text-muted-foreground md:inline">
 									{w.verifyDetail}
 								</span>

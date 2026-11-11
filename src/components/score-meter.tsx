@@ -28,12 +28,12 @@ export function ScoreMeter({
 			<div className={cn("text-muted-foreground", className)}>No score yet</div>
 		);
 	return (
-		<div className={cn("space-y-3", className)}>
+		<div className={cn("space-y-3 rounded-2xl bg-card p-4", className)}>
 			<div className="flex items-end justify-between gap-3">
-				<span className="eyebrow pb-1.5">Win likelihood</span>
+				<span className="pb-1 font-medium">Win likelihood</span>
 				<span
 					className={cn(
-						"font-display text-[56px] leading-none tabular",
+						"font-display text-[32px] leading-none tabular",
 						textToneFor(final),
 					)}
 				>
@@ -83,7 +83,7 @@ function ThinBar({
 		<div title={hint}>
 			<div className="flex justify-between text-xs text-muted-foreground">
 				<span>{label}</span>
-				<span className="tabular font-mono">
+				<span className="tabular">
 					{value == null ? "—" : Math.round(value)}
 				</span>
 			</div>
@@ -122,10 +122,7 @@ export function MiniScore({
 				/>
 			</span>
 			<span
-				className={cn(
-					"w-9 text-right font-mono text-xs tabular",
-					textToneFor(value),
-				)}
+				className={cn("w-9 text-right tabular text-xs", textToneFor(value))}
 			>
 				{Math.round(value)}%
 			</span>

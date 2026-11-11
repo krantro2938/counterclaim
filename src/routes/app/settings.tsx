@@ -70,7 +70,7 @@ function SettingsPage() {
 		);
 	if (!q.data || !auto)
 		return (
-			<Page className="max-w-[1120px]">
+			<Page className="mx-auto max-w-[1180px]">
 				<Skeleton className="h-14 w-64 rounded-xl" />
 				<Skeleton className="h-72 rounded-xl" />
 			</Page>
@@ -78,9 +78,8 @@ function SettingsPage() {
 	const c = q.data.connection;
 
 	return (
-		<Page className="max-w-[1120px] gap-16 md:gap-20">
+		<Page className="mx-auto max-w-[1180px]">
 			<PageHeader
-				eyebrow="Setup"
 				title="Settings"
 				subtitle="How much Counterclaim may do on its own, and what it knows about your store."
 			/>
@@ -124,7 +123,7 @@ function SettingsPage() {
 							disabled={!auto.autoSubmitFulfillment}
 						/>
 						<Input
-							className="h-9 w-16 bg-background font-mono"
+							className="h-9 w-16 bg-card tabular"
 							inputMode="numeric"
 							value={auto.autoSubmitMinScore}
 							onChange={(e) =>
@@ -149,7 +148,7 @@ function SettingsPage() {
 						<div className="flex items-center gap-2">
 							<Label className="text-xs text-muted-foreground">Up to</Label>
 							<Input
-								className="h-9 w-24 bg-background font-mono"
+								className="h-9 w-24 bg-card tabular"
 								inputMode="decimal"
 								defaultValue={(auto.autoAcceptMaxMinor / 100).toFixed(2)}
 								onBlur={(e) => {
@@ -169,7 +168,7 @@ function SettingsPage() {
 								Likelihood below
 							</Label>
 							<Input
-								className="h-9 w-16 bg-background font-mono"
+								className="h-9 w-16 bg-card tabular"
 								inputMode="numeric"
 								value={auto.autoAcceptMaxLikelihood}
 								onChange={(e) =>
@@ -190,7 +189,7 @@ function SettingsPage() {
 						<Label htmlFor="undo">Undo window (seconds)</Label>
 						<Input
 							id="undo"
-							className="w-28 bg-background font-mono"
+							className="w-28 bg-card tabular"
 							inputMode="numeric"
 							value={auto.undoWindowSeconds}
 							onChange={(e) =>
@@ -205,7 +204,7 @@ function SettingsPage() {
 						<Label htmlFor="risk">Flag unshipped orders after (hours)</Label>
 						<Input
 							id="risk"
-							className="w-28 bg-background font-mono"
+							className="w-28 bg-card tabular"
 							inputMode="numeric"
 							value={hours}
 							onChange={(e) =>
@@ -268,7 +267,7 @@ function SettingsPage() {
 				title="Connection"
 				desc="Live status of the PayPal sandbox link, webhooks, the poller and the AI model."
 			>
-				<dl className="field grid gap-x-6 gap-y-4 p-6 text-sm sm:grid-cols-[180px_1fr]">
+				<dl className="tile grid gap-x-6 gap-y-3 p-4 text-sm sm:grid-cols-[160px_1fr]">
 					<dt className="text-muted-foreground">PayPal ({c.paypalEnv})</dt>
 					<dd>
 						<StatusLine
@@ -285,10 +284,10 @@ function SettingsPage() {
 					<dd className="space-y-0.5">
 						<StatusLine
 							ok={c.webhookId ? true : null}
-							okText={<span className="font-mono text-xs">{c.webhookId}</span>}
+							okText={<span className="tabular text-xs">{c.webhookId}</span>}
 							badText="No webhook ID; the poller keeps things in sync"
 						/>
-						<p className="font-mono text-xs text-muted-foreground">
+						<p className="tabular text-xs text-muted-foreground">
 							{c.webhookUrl}
 						</p>
 						<p className="text-xs text-muted-foreground">
@@ -306,7 +305,7 @@ function SettingsPage() {
 					</dd>
 					<dt className="text-muted-foreground">AI model</dt>
 					<dd>
-						<span className="font-mono text-xs">{c.models.assess}</span>{" "}
+						<span className="tabular text-xs">{c.models.assess}</span>{" "}
 						<span className="text-muted-foreground">
 							via{" "}
 							{c.aiProvider === "anthropic"
@@ -333,10 +332,10 @@ function Section({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="grid gap-6 md:grid-cols-[260px_minmax(0,1fr)] md:gap-14">
+		<section className="field grid gap-5 p-5 md:grid-cols-[260px_minmax(0,1fr)] md:gap-10 md:p-6">
 			<div>
-				<h2 className="font-display text-[30px] leading-tight">{title}</h2>
-				<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+				<h2 className="text-[15px] font-semibold">{title}</h2>
+				<p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
 					{desc}
 				</p>
 			</div>
@@ -361,10 +360,10 @@ function SwitchRow({
 	children?: React.ReactNode;
 }) {
 	return (
-		<div className="field p-6">
+		<div className="tile p-4">
 			<div className="flex items-start justify-between gap-6">
 				<div>
-					<Label htmlFor={id} className="text-[15px] font-medium">
+					<Label htmlFor={id} className="font-medium">
 						{label}
 					</Label>
 					<p className="mt-1 text-sm leading-relaxed text-muted-foreground">

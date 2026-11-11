@@ -1,5 +1,6 @@
-import { Download, FileText } from "lucide-react";
+import { Download } from "lucide-react";
 import { useState } from "react";
+import { cn } from "#/lib/utils";
 import { Button } from "../ui/button";
 import {
 	Sheet,
@@ -9,6 +10,34 @@ import {
 	SheetTitle,
 } from "../ui/sheet";
 import type { DisputeDetail } from "./types";
+
+/** A red PDF file with the word "PDF" on it (DESIGN §6.1). */
+export function PdfIcon({ className }: { className?: string }) {
+	return (
+		<svg
+			viewBox="0 0 40 48"
+			className={cn("h-12 w-10 shrink-0", className)}
+			aria-hidden
+		>
+			<path
+				d="M7 0h19l14 14v27a7 7 0 0 1-7 7H7a7 7 0 0 1-7-7V7a7 7 0 0 1 7-7Z"
+				className="fill-pdf"
+			/>
+			<path d="M26 0v7a7 7 0 0 0 7 7h7Z" fill="#fff" fillOpacity="0.4" />
+			<text
+				x="20"
+				y="36"
+				textAnchor="middle"
+				fontSize="11.5"
+				fontWeight="700"
+				fill="#fff"
+				style={{ fontFamily: "var(--font-sans)", letterSpacing: "0.04em" }}
+			>
+				PDF
+			</text>
+		</svg>
+	);
+}
 
 /** Evidence packet: thumbnail on the case page, full PDF in a side sheet. */
 export function EvidencePreview({ detail }: { detail: DisputeDetail }) {
@@ -22,28 +51,23 @@ export function EvidencePreview({ detail }: { detail: DisputeDetail }) {
 		? `/api/evidence/${sent.id}.pdf`
 		: `/api/disputes/${detail.dispute.id}/evidence-preview`;
 	return (
-		<section aria-label="Evidence" className="field p-6">
+		<section aria-label="Evidence" className="field p-5">
 			<button
 				type="button"
 				onClick={() => setOpen(true)}
 				className="flex w-full items-center gap-4 text-left"
 			>
-				<span className="flex h-16 w-12 shrink-0 flex-col items-center justify-center rounded-md bg-background">
-					<FileText className="size-5 text-primary" />
-					<span className="mt-1 font-mono text-[9px] text-muted-foreground">
-						PDF
-					</span>
-				</span>
+				<PdfIcon />
 				<span className="min-w-0">
 					<span className="block font-medium">
 						{sent ? "Evidence packet sent" : "Draft evidence packet"}
 					</span>
-					<span className="block truncate font-mono text-xs text-muted-foreground">
+					<span className="block truncate text-xs text-muted-foreground">
 						{sent
 							? `${sent.filename} · ${(sent.sizeBytes / 1024).toFixed(0)} KB`
 							: `evidence-${detail.dispute.id}.pdf`}
 					</span>
-					<span className="text-xs text-primary">Preview →</span>
+					<span className="text-xs font-medium text-primary">Preview</span>
 				</span>
 			</button>
 			<Sheet open={open} onOpenChange={setOpen}>

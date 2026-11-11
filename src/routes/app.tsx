@@ -3,22 +3,10 @@ import {
 	createFileRoute,
 	Link,
 	Outlet,
-	useMatches,
 	useNavigate,
 	useRouterState,
 } from "@tanstack/react-router";
-import {
-	FlaskConical,
-	Gavel,
-	LayoutDashboard,
-	Monitor,
-	Moon,
-	Package,
-	Search,
-	Settings,
-	Store,
-	Sun,
-} from "lucide-react";
+import { Monitor, Moon, Search, Store, Sun } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { LiveIndicator } from "#/components/status";
 import { useTheme } from "#/components/theme";
@@ -39,24 +27,11 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
-import { Kbd } from "#/components/ui/kbd";
 import {
-	Sidebar,
-	SidebarContent,
-	SidebarFooter,
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarInset,
-	SidebarMenu,
-	SidebarMenuBadge,
-	SidebarMenuButton,
-	SidebarMenuItem,
-	SidebarProvider,
-	SidebarRail,
-	SidebarTrigger,
-} from "#/components/ui/sidebar";
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "#/components/ui/tooltip";
 import { useFallbackInterval, useLiveEvents } from "#/hooks/use-live";
 import { api, qk } from "#/lib/api";
 import { reasonLabel } from "#/lib/labels";
@@ -68,29 +43,28 @@ export const Route = createFileRoute("/app")({
 	component: AppShell,
 });
 
-const GROUP_LABEL = "text-[10.5px] font-medium uppercase tracking-[0.14em]";
-const NAV_BUTTON = "h-9 rounded-lg px-2.5 text-[14px]";
-
-/** The mark: an open "C" holding a four-point star (DESIGN §2.1). Inherits the text colour. */
+/** The mark: an open "C" holding a four-point star, on a forest tile (DESIGN §2.1). */
 export function Logo({ className }: { className?: string }) {
 	return (
-		<svg
-			viewBox="0 0 32 32"
-			className={cn("size-7", className)}
-			aria-hidden
-			fill="none"
+		<span
+			className={cn(
+				"flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground",
+				className,
+			)}
 		>
-			<path
-				d="M21.4 9.6A9 9 0 1 0 21.4 22.4"
-				stroke="currentColor"
-				strokeWidth="2.4"
-				strokeLinecap="round"
-			/>
-			<path
-				d="M23 10.5c.5 3.3 1.2 4.9 4.5 5.5-3.3.6-4 2.2-4.5 5.5-.5-3.3-1.2-4.9-4.5-5.5 3.3-.6 4-2.2 4.5-5.5Z"
-				fill="currentColor"
-			/>
-		</svg>
+			<svg viewBox="0 0 32 32" className="size-6" aria-hidden fill="none">
+				<path
+					d="M21.4 9.6A9 9 0 1 0 21.4 22.4"
+					stroke="currentColor"
+					strokeWidth="2.6"
+					strokeLinecap="round"
+				/>
+				<path
+					d="M23 10.5c.5 3.3 1.2 4.9 4.5 5.5-3.3.6-4 2.2-4.5 5.5-.5-3.3-1.2-4.9-4.5-5.5 3.3-.6 4-2.2 4.5-5.5Z"
+					fill="currentColor"
+				/>
+			</svg>
+		</span>
 	);
 }
 
@@ -103,6 +77,15 @@ function useDisputeRows() {
 	});
 }
 
+const NAV: { to: string; label: string; exact?: boolean; lab?: boolean }[] = [
+	{ to: "/app", label: "Overview", exact: true },
+	{ to: "/app/disputes", label: "Disputes" },
+	{ to: "/app/orders", label: "Orders" },
+	{ to: "/app/settings", label: "Settings" },
+	{ to: "/app/lab", label: "Lab", lab: true },
+];
+
+/** App frame: a rounded panel on the sage canvas, top bar with pill navigation (DESIGN §4). */
 function AppShell() {
 	const navigate = useNavigate();
 	const goDispute = useCallback(
@@ -126,145 +109,80 @@ function AppShell() {
 		return () => window.removeEventListener("keydown", onKey);
 	}, []);
 
+	const nav = (
+		<>
+			{NAV.map((n) => (
+				<NavPill
+					key={n.to}
+					{...n}
+					badge={n.to === "/app/disputes" ? needs : undefined}
+				/>
+			))}
+		</>
+	);
+
 	return (
-		<SidebarProvider>
-			<Sidebar collapsible="icon" variant="inset">
-				<SidebarHeader className="pt-4 pb-6">
-					<Link
-						to="/app"
-						className="flex items-center gap-2.5 rounded-md px-1 py-1 text-primary"
-					>
-						<Logo className="shrink-0" />
-						<span className="wordmark text-foreground group-data-[collapsible=icon]:hidden">
-							Counterclaim
-						</span>
+		<div className="min-h-svh bg-canvas p-0 sm:p-3 lg:p-5">
+			<div className="mx-auto flex min-h-svh max-w-[1600px] flex-col bg-background sm:min-h-[calc(100svh-1.5rem)] sm:rounded-[36px] sm:ring-4 sm:ring-white/50 lg:min-h-[calc(100svh-2.5rem)] dark:sm:ring-white/5">
+				<header className="flex h-[68px] items-center gap-4 px-4 sm:px-5 md:h-[76px] md:px-8">
+					<Link to="/app" className="flex items-center gap-2.5">
+						<Logo />
+						<span className="font-display text-[17px]">Counterclaim</span>
 					</Link>
-				</SidebarHeader>
-				<SidebarContent>
-					<SidebarGroup>
-						<SidebarGroupLabel className={GROUP_LABEL}>Work</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<SidebarMenu>
-								<NavItem
-									to="/app"
-									exact
-									icon={LayoutDashboard}
-									label="Overview"
-								/>
-								<NavItem
-									to="/app/disputes"
-									icon={Gavel}
-									label="Disputes"
-									badge={needs || undefined}
-								/>
-								<NavItem to="/app/orders" icon={Package} label="Orders" />
-							</SidebarMenu>
-						</SidebarGroupContent>
-					</SidebarGroup>
-					<SidebarGroup>
-						<SidebarGroupLabel className={GROUP_LABEL}>Setup</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<SidebarMenu>
-								<NavItem to="/app/settings" icon={Settings} label="Settings" />
-							</SidebarMenu>
-						</SidebarGroupContent>
-					</SidebarGroup>
-					<SidebarGroup>
-						<SidebarGroupLabel className={GROUP_LABEL}>
-							Sandbox
-						</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<SidebarMenu>
-								<NavItem to="/app/lab" icon={FlaskConical} label="Lab" dot />
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										asChild
-										tooltip="Kiln & Thread shop"
-										className={NAV_BUTTON}
-									>
-										<a href="/shop" target="_blank" rel="noreferrer">
-											<Store />
-											<span>Demo shop</span>
-										</a>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							</SidebarMenu>
-						</SidebarGroupContent>
-					</SidebarGroup>
-				</SidebarContent>
-				<SidebarFooter className="pb-4">
-					<div className="flex items-center gap-2.5 px-1.5 py-1 group-data-[collapsible=icon]:hidden">
-						<span className="flex size-8 items-center justify-center rounded-full bg-sage text-xs font-semibold text-sage-foreground">
+					<nav
+						aria-label="Main"
+						className="mx-auto hidden items-center gap-1.5 md:flex"
+					>
+						{nav}
+					</nav>
+					<div className="ml-auto flex items-center gap-2 md:ml-0">
+						<LiveIndicator className="mr-1 hidden lg:inline-flex" />
+						<IconPill label="Search (⌘K)" onClick={() => setCmdOpen(true)}>
+							<Search className="size-4" />
+						</IconPill>
+						<IconPill label="Demo shop" href="/shop">
+							<Store className="size-4" />
+						</IconPill>
+						<ThemeMenu />
+						<span
+							className="ml-1 flex size-9 items-center justify-center rounded-full bg-sage text-xs font-semibold text-sage-foreground"
+							title="Maya · Kiln & Thread"
+						>
 							M
 						</span>
-						<span className="leading-tight">
-							<span className="block text-sm">Maya</span>
-							<span className="block text-xs text-muted-foreground">
-								Kiln &amp; Thread
-							</span>
-						</span>
-					</div>
-				</SidebarFooter>
-				<SidebarRail />
-			</Sidebar>
-			<SidebarInset className="min-w-0 md:peer-data-[variant=inset]:shadow-none">
-				<header className="sticky top-0 z-20 flex h-16 items-center gap-3 rounded-t-xl bg-background/85 px-5 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-10">
-					<SidebarTrigger
-						className="-ml-1.5 text-muted-foreground"
-						aria-label="Toggle sidebar"
-					/>
-					<Crumbs />
-					<div className="ml-auto flex items-center gap-3">
-						<Button
-							variant="secondary"
-							size="sm"
-							className="hidden h-9 w-56 justify-start gap-2 px-3.5 font-normal text-muted-foreground sm:inline-flex"
-							onClick={() => setCmdOpen(true)}
-						>
-							<Search className="size-3.5" />
-							Search
-							<Kbd className="ml-auto bg-background">⌘K</Kbd>
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							className="size-8 sm:hidden"
-							aria-label="Search"
-							onClick={() => setCmdOpen(true)}
-						>
-							<Search className="size-4" />
-						</Button>
-						<LiveIndicator className="hidden sm:inline-flex" />
-						<ThemeMenu />
 					</div>
 				</header>
-				<div className="min-w-0 flex-1">
+				<nav
+					aria-label="Main"
+					className="no-scrollbar -mt-2 flex gap-1.5 overflow-x-auto px-3 pb-3 sm:px-5 md:hidden"
+				>
+					{nav}
+				</nav>
+				<main className="min-w-0 flex-1">
 					<Outlet />
-				</div>
-			</SidebarInset>
+				</main>
+			</div>
 			<CommandPalette
 				open={cmdOpen}
 				onOpenChange={setCmdOpen}
 				rows={disputes.data?.rows ?? []}
 			/>
-		</SidebarProvider>
+		</div>
 	);
 }
 
-function NavItem({
+function NavPill({
 	to,
-	icon: Icon,
 	label,
-	badge,
 	exact,
-	dot,
+	lab,
+	badge,
 }: {
 	to: string;
-	icon: React.ComponentType;
 	label: string;
-	badge?: number;
 	exact?: boolean;
-	dot?: boolean;
+	lab?: boolean;
+	badge?: number;
 }) {
 	const pathname = useRouterState({
 		select: (s) => s.location.pathname,
@@ -273,79 +191,68 @@ function NavItem({
 		? pathname === to
 		: pathname === to || pathname.startsWith(`${to}/`);
 	return (
-		<SidebarMenuItem>
-			<SidebarMenuButton
-				asChild
-				isActive={active}
-				tooltip={label}
-				className={NAV_BUTTON}
-			>
-				<Link to={to}>
-					<Icon />
-					<span>{label}</span>
-					{dot && (
-						<span
-							aria-hidden
-							className="ml-auto size-1.5 rounded-full bg-simulated"
-						/>
-					)}
-				</Link>
-			</SidebarMenuButton>
+		<Link
+			to={to}
+			aria-current={active ? "page" : undefined}
+			className={cn(
+				"inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-4 text-[13.5px] transition-colors",
+				active
+					? "border-transparent bg-card font-medium text-foreground"
+					: "border-transparent text-muted-foreground hover:bg-card/70 hover:text-foreground",
+			)}
+		>
+			{label}
 			{badge ? (
-				<SidebarMenuBadge className="top-2 rounded-full bg-deadline-soft px-2 text-deadline">
+				<span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-medium text-primary-foreground tabular">
 					{badge}
-				</SidebarMenuBadge>
+				</span>
 			) : null}
-		</SidebarMenuItem>
+			{lab && (
+				<span aria-hidden className="size-1.5 rounded-full bg-simulated" />
+			)}
+		</Link>
 	);
 }
 
-const CRUMB: Record<string, string> = {
-	"/app": "Overview",
-	"/app/disputes": "Disputes",
-	"/app/orders": "Orders & Protection",
-	"/app/settings": "Settings",
-	"/app/lab": "Lab",
-};
-
-function Crumbs() {
-	const matches = useMatches();
-	const last = matches[matches.length - 1];
-	const path = last?.pathname.replace(/\/$/, "") || "/app";
-	const parts: { label: string; to?: string }[] = [];
-	if (path.startsWith("/app/disputes/")) {
-		parts.push({ label: "Disputes", to: "/app/disputes" });
-		parts.push({ label: decodeURIComponent(path.split("/")[3] ?? "") });
-	} else {
-		parts.push({ label: CRUMB[path] ?? "Counterclaim" });
-	}
+function IconPill({
+	label,
+	onClick,
+	href,
+	children,
+}: {
+	label: string;
+	onClick?: () => void;
+	href?: string;
+	children: React.ReactNode;
+}) {
+	const cls =
+		"flex size-9 items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground";
 	return (
-		<nav
-			aria-label="Breadcrumb"
-			className="flex min-w-0 items-center gap-2 text-sm"
-		>
-			{parts.map((p, i) => (
-				<span key={p.label} className="flex min-w-0 items-center gap-1.5">
-					{i > 0 && <span className="text-muted-foreground/50">/</span>}
-					{p.to ? (
-						<Link
-							to={p.to}
-							className="text-muted-foreground hover:text-foreground"
-						>
-							{p.label}
-						</Link>
-					) : (
-						<span
-							className={
-								i > 0 ? "truncate font-mono text-xs" : "text-muted-foreground"
-							}
-						>
-							{p.label}
-						</span>
-					)}
-				</span>
-			))}
-		</nav>
+		<Tooltip>
+			<TooltipTrigger asChild>
+				{href ? (
+					<a
+						href={href}
+						target="_blank"
+						rel="noreferrer"
+						className={cls}
+						aria-label={label}
+					>
+						{children}
+					</a>
+				) : (
+					<button
+						type="button"
+						className={cls}
+						onClick={onClick}
+						aria-label={label}
+					>
+						{children}
+					</button>
+				)}
+			</TooltipTrigger>
+			<TooltipContent>{label}</TooltipContent>
+		</Tooltip>
 	);
 }
 
@@ -355,9 +262,9 @@ function ThemeMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
-					variant="ghost"
+					variant="outline"
 					size="icon"
-					className="size-8"
+					className="size-9 text-muted-foreground"
 					aria-label="Theme"
 				>
 					{resolved === "dark" ? (
@@ -437,7 +344,7 @@ function CommandPalette({
 									go("/app/disputes/$disputeId", { disputeId: r.id })
 								}
 							>
-								<span className="font-mono text-xs">{r.id}</span>
+								<span className="text-xs">{r.id}</span>
 								<span className="text-muted-foreground">
 									#{r.orderNumber ?? "—"} · {reasonLabel(r.reason)} ·{" "}
 									{formatMoney(r.amountMinor, r.currency)}

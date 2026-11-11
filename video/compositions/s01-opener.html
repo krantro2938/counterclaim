@@ -1,32 +1,29 @@
 <template>
   <style>
-    @font-face { font-family: "Newsreader"; src: url("assets/fonts/newsreader.woff2") format("woff2"); font-weight: 200 800; }
-    @font-face { font-family: "Geist"; src: url("assets/fonts/geist.woff2") format("woff2"); font-weight: 100 900; }
-    @font-face { font-family: "Geist Mono"; src: url("assets/fonts/geist-mono.woff2") format("woff2"); font-weight: 100 900; }
-    @font-face { font-family: "Fraunces"; src: url("assets/fonts/fraunces.woff2") format("woff2"); font-weight: 100 900; }
+    @font-face { font-family: "Bricolage Grotesque"; src: url("assets/fonts/bricolage.woff2") format("woff2"); font-weight: 200 800; font-stretch: 75% 100%; }
     #root {
       position: absolute; inset: 0; overflow: hidden;
-      --paper: oklch(0.985 0.004 85); --ink: oklch(0.22 0.012 60); --muted: oklch(0.5 0.012 60);
-      --line: oklch(0.9 0.008 80); --card: oklch(0.995 0.003 85); --seal: oklch(0.42 0.075 175);
-      --seal-soft: oklch(0.94 0.02 175); --won: oklch(0.5 0.13 150); --won-soft: oklch(0.95 0.04 150);
+      --paper: oklch(0.962 0.008 115); --ink: oklch(0.24 0.015 150); --muted: oklch(0.54 0.012 140);
+      --line: oklch(0.93 0.006 110); --card: oklch(1 0 0); --seal: oklch(0.42 0.08 155);
+      --seal-soft: oklch(0.95 0.025 140); --won: oklch(0.5 0.13 150); --won-soft: oklch(0.95 0.04 150);
       --lost: oklch(0.53 0.17 28); --lost-soft: oklch(0.95 0.03 28); --deadline: oklch(0.55 0.13 65); --deadline-soft: oklch(0.96 0.05 80);
       --sim: oklch(0.52 0.12 300); --sim-soft: oklch(0.96 0.03 300);
-      background: var(--paper); color: var(--ink); font-family: "Geist", sans-serif;
+      background: var(--paper); color: var(--ink); font-family: "Bricolage Grotesque", sans-serif;
     }
-    .display { font-family: "Newsreader", serif; font-optical-sizing: auto; letter-spacing: -0.01em; line-height: 1.1; }
-    .mono { font-family: "Geist Mono", monospace; font-variant-numeric: tabular-nums; }
+    .display { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; font-optical-sizing: auto; letter-spacing: -0.025em; line-height: 1.1; }
+    .mono { font-family: "Bricolage Grotesque", sans-serif; font-variant-numeric: tabular-nums; }
 
     #s1-shop { position: absolute; inset: 0; background: oklch(0.97 0.01 70); color: oklch(0.25 0.02 50); }
     #s1-nav { position: absolute; left: 160px; right: 160px; top: 70px; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid oklch(0.88 0.015 60); padding-bottom: 28px; }
-    #s1-brand { font-family: "Fraunces", serif; font-size: 44px; font-weight: 600; }
+    #s1-brand { font-family: "Bricolage Grotesque", sans-serif; font-stretch: 78%; font-size: 44px; font-weight: 600; }
     #s1-links { font-size: 24px; color: oklch(0.5 0.02 50); display: flex; gap: 48px; }
     #s1-hero { position: absolute; left: 160px; top: 260px; width: 760px; }
     #s1-kicker { font-size: 28px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.58 0.12 45); }
-    #s1-h1 { font-family: "Fraunces", serif; font-size: 112px; line-height: 1.02; font-weight: 600; margin-top: 24px; }
+    #s1-h1 { font-family: "Bricolage Grotesque", sans-serif; font-stretch: 78%; font-size: 112px; line-height: 1.02; font-weight: 600; margin-top: 24px; }
     #s1-sub { font-size: 30px; color: oklch(0.5 0.02 50); margin-top: 32px; line-height: 1.45; }
     #s1-photo { position: absolute; right: 160px; top: 230px; width: 760px; height: 620px; border-radius: 28px; overflow: hidden; background: #eadfcf; }
     #s1-photo img { width: 100%; height: 100%; object-fit: cover; }
-    #s1-notice { position: absolute; right: 120px; top: 120px; width: 620px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 30px 80px -20px rgb(40 30 20 / 0.35); padding: 30px 34px; }
+    #s1-notice { position: absolute; right: 120px; top: 120px; width: 620px; background: var(--card); border-radius: 20px; box-shadow: 0 30px 80px -20px rgb(40 30 20 / 0.35); padding: 30px 34px; }
     #s1-notice .from { font-size: 26px; color: var(--muted); display: flex; justify-content: space-between; }
     #s1-notice .subj { font-size: 34px; font-weight: 600; margin-top: 10px; }
     #s1-notice .line { display: flex; gap: 14px; align-items: center; margin-top: 16px; font-size: 26px; }

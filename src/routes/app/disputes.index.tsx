@@ -13,6 +13,7 @@ import { Copy, Layers, RefreshCw, Rows3, Rows4 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
+	BuyerCell,
 	ClientOnly,
 	counterclaimGrid,
 	GridEmpty,
@@ -123,21 +124,13 @@ function DisputesInbox() {
 	}, [q.data]);
 
 	return (
-		<Page wide>
+		<Page>
 			<PageHeader
-				eyebrow="Work"
 				title="Disputes"
 				subtitle="Every PayPal dispute on your account, scored and ready for a decision."
 			/>
-			<div className="flex flex-col gap-5">
-				<div className="flex flex-wrap items-center gap-3">
-					<Input
-						value={quick}
-						onChange={(e) => setQuick(e.target.value)}
-						placeholder="Filter by buyer, order, ID…"
-						className="w-full rounded-full px-4 sm:w-72"
-						aria-label="Quick filter"
-					/>
+			<section className="field flex min-w-0 flex-col gap-4 p-5 sm:p-6">
+				<div className="flex flex-wrap items-center gap-2">
 					<ToggleGroup
 						type="single"
 						value={segment}
@@ -159,7 +152,7 @@ function DisputesInbox() {
 						</ToggleGroupItem>
 					</ToggleGroup>
 					<Select value={reason} onValueChange={setReason}>
-						<SelectTrigger className="w-48" aria-label="Reason">
+						<SelectTrigger size="sm" className="w-44" aria-label="Reason">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
@@ -171,7 +164,14 @@ function DisputesInbox() {
 							))}
 						</SelectContent>
 					</Select>
-					<div className="ml-auto flex items-center gap-1">
+					<div className="ml-auto flex items-center gap-2">
+						<Input
+							value={quick}
+							onChange={(e) => setQuick(e.target.value)}
+							placeholder="Search buyer, order, ID…"
+							className="h-9 w-full rounded-full px-4 sm:w-60"
+							aria-label="Quick filter"
+						/>
 						{!isMobile && (
 							<>
 								<Tooltip>
@@ -244,23 +244,22 @@ function DisputesInbox() {
 					</ClientOnly>
 				)}
 				<p className="text-xs text-muted-foreground">
-					Tip: <kbd className="font-mono">j</kbd>/
-					<kbd className="font-mono">k</kbd> to move,{" "}
-					<kbd className="font-mono">Enter</kbd> to open.
+					Tip: <kbd className="tabular">j</kbd>/<kbd className="tabular">k</kbd>{" "}
+					to move, <kbd className="tabular">Enter</kbd> to open.
 				</p>
-			</div>
+			</section>
 		</Page>
 	);
 }
 
-/** Pill segmented control (DESIGN §6.1): a muted track, the active segment lifts to paper. */
-export const SEGMENTED = "max-w-full overflow-x-auto rounded-full bg-muted p-1";
+/** Pill filters (DESIGN §6.1): soft grey pills; the active one turns sage with a filled count. */
+export const SEGMENTED = "no-scrollbar max-w-full gap-1.5 overflow-x-auto";
 export const SEGMENT =
-	"h-8 rounded-full px-3.5 text-muted-foreground hover:bg-transparent hover:text-foreground data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm";
+	"group/seg h-9 rounded-full bg-muted px-4 font-normal text-muted-foreground hover:bg-accent/60 hover:text-foreground data-[state=on]:bg-accent data-[state=on]:font-medium data-[state=on]:text-accent-foreground";
 
 function Count({ n }: { n: number }) {
 	return (
-		<span className="ml-0.5 font-mono text-[11px] tabular text-muted-foreground">
+		<span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-[11px] text-muted-foreground tabular group-data-[state=on]/seg:bg-primary group-data-[state=on]/seg:text-primary-foreground">
 			{n}
 		</span>
 	);
@@ -276,7 +275,7 @@ export function ErrorBox({
 	return (
 		<div
 			role="alert"
-			className="flex items-center justify-between gap-3 rounded-xl bg-lost-soft px-5 py-4 text-sm text-lost"
+			className="flex items-center justify-between gap-3 rounded-3xl bg-lost-soft px-5 py-4 text-sm text-lost"
 		>
 			<span>Couldn't load data: {message}</span>
 			{onRetry && (
@@ -309,7 +308,7 @@ function IdCell({ value }: ICellRendererParams<Row, string>) {
 	if (!value) return null;
 	return (
 		<span className="group/id flex items-center gap-1">
-			<span className="truncate font-mono text-xs">{value}</span>
+			<span className="truncate tabular text-xs">{value}</span>
 			<button
 				type="button"
 				className="invisible rounded p-0.5 text-muted-foreground hover:text-foreground group-hover/id:visible"
@@ -332,7 +331,7 @@ function GroupHeader({ data }: ICellRendererParams<Row>) {
 	return (
 		<div className="flex h-full items-end gap-2 px-4 pb-2.5">
 			<span className="eyebrow">{data.__group}</span>
-			<span className="font-mono text-[11px] tabular text-muted-foreground">
+			<span className="tabular text-[11px] text-muted-foreground">
 				{data.count}
 			</span>
 		</div>
@@ -381,15 +380,16 @@ function DisputesGrid({
 				field: "orderNumber" as never,
 				width: 96,
 				valueFormatter: (p) => (p.value ? `#${p.value}` : "—"),
-				cellClass: "font-mono tabular",
+				cellClass: "tabular",
 			},
 			{
 				colId: "buyer",
 				headerName: "Buyer",
 				field: "buyer" as never,
 				flex: 1,
-				minWidth: 130,
+				minWidth: 160,
 				valueFormatter: (p) => p.value ?? "—",
+				cellRenderer: BuyerCell,
 			},
 			{
 				colId: "reason",
@@ -464,6 +464,7 @@ function DisputesGrid({
 			{
 				colId: "next",
 				headerName: "Next step",
+				hide: true,
 				field: "nextStep" as never,
 				flex: 1,
 				minWidth: 180,
@@ -601,7 +602,7 @@ function DisputesGrid({
 					780,
 					Math.max(
 						260,
-						46 + rows.length * (dense ? 44 : 60) + (grouped ? 4 * 48 : 0) + 24,
+						42 + rows.length * (dense ? 44 : 56) + (grouped ? 4 * 48 : 0) + 24,
 					),
 				),
 			}}
@@ -619,7 +620,7 @@ function DisputesGrid({
 				quickFilterText={quick}
 				isFullWidthRow={(p) => isGroup(p.rowNode.data)}
 				fullWidthCellRenderer={GroupHeader}
-				getRowHeight={(p) => (isGroup(p.data) ? 48 : dense ? 44 : 60)}
+				getRowHeight={(p) => (isGroup(p.data) ? 48 : dense ? 44 : 56)}
 				getRowClass={(p: RowClassParams<Row>) =>
 					isGroup(p.data) ? undefined : "cursor-pointer"
 				}
@@ -669,13 +670,13 @@ function DisputeCards({
 			</p>
 		);
 	return (
-		<ul className="space-y-3">
+		<ul className="space-y-2">
 			{list.map((r) => (
 				<li key={r.id}>
 					<Link
 						to="/app/disputes/$disputeId"
 						params={{ disputeId: r.id }}
-						className="field flex min-h-10 flex-col gap-3 p-5 active:bg-accent"
+						className="tile flex min-h-10 flex-col gap-3 p-4 active:bg-accent"
 					>
 						<div className="flex items-center justify-between gap-2">
 							<StatusBadge status={r.status} outcome={r.outcome} />

@@ -1,27 +1,47 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Send, Sparkle } from "lucide-react";
+import {
+	FileSearch,
+	HandCoins,
+	HelpCircle,
+	MessageSquareText,
+	Send,
+} from "lucide-react";
 import { useState } from "react";
 import { post, qk } from "#/lib/api";
 import { cn } from "#/lib/utils";
 import { Button } from "../ui/button";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "../ui/collapsible";
-import { Textarea } from "../ui/textarea";
 
 type Msg = { role: "user" | "assistant"; content: string };
-const SUGGESTIONS = [
-	"Why do you think this?",
-	"Draft a softer message",
-	"What if I offer $10 instead?",
+const SUGGESTIONS: {
+	text: string;
+	Icon: React.ComponentType<{ className?: string }>;
+	tint: string;
+}[] = [
+	{
+		text: "Why do you think this?",
+		Icon: HelpCircle,
+		tint: "bg-review-soft text-review",
+	},
+	{
+		text: "Draft a softer message",
+		Icon: MessageSquareText,
+		tint: "bg-won-soft text-won",
+	},
+	{
+		text: "What if I offer $10 instead?",
+		Icon: HandCoins,
+		tint: "bg-deadline-soft text-deadline",
+	},
+	{
+		text: "What evidence is missing?",
+		Icon: FileSearch,
+		tint: "bg-simulated-soft text-simulated",
+	},
 ];
 
 /** Ask Counterclaim about this case. Read-only; revisions become new proposals that still need approval. */
 export function AgentChat({ disputeId }: { disputeId: string }) {
 	const qc = useQueryClient();
-	const [open, setOpen] = useState(false);
 	const [input, setInput] = useState("");
 	const [msgs, setMsgs] = useState<Msg[]>([]);
 	const ask = useMutation({
@@ -49,88 +69,83 @@ export function AgentChat({ disputeId }: { disputeId: string }) {
 		ask.mutate(t);
 	};
 	return (
-		<Collapsible open={open} onOpenChange={setOpen} className="field">
-			<CollapsibleTrigger className="flex w-full items-center gap-2 px-6 py-5 text-left text-sm font-medium">
-				<Sparkle className="size-4 text-primary" /> Ask Counterclaim about this
-				case
-				<ChevronDown
-					className={cn(
-						"ml-auto size-4 text-muted-foreground transition-transform",
-						open && "rotate-180",
-					)}
-				/>
-			</CollapsibleTrigger>
-			<CollapsibleContent className="space-y-4 px-6 pb-6">
-				{msgs.length === 0 && (
-					<div className="flex flex-wrap gap-1.5">
-						{SUGGESTIONS.map((s) => (
-							<button
-								key={s}
-								type="button"
-								onClick={() => send(s)}
-								className="rounded-full bg-background px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+		<section
+			className="field space-y-4 p-5 sm:p-6"
+			aria-label="Ask Counterclaim"
+		>
+			<h3 className="text-[15px] font-semibold">Ask Counterclaim</h3>
+			{msgs.length === 0 ? (
+				<div className="grid grid-cols-2 gap-2">
+					{SUGGESTIONS.map((s) => (
+						<button
+							key={s.text}
+							type="button"
+							onClick={() => send(s.text)}
+							className="tile flex min-h-[84px] flex-col justify-between gap-3 p-3 text-left text-[13px] font-medium leading-snug transition-colors hover:bg-accent"
+						>
+							<span
+								className={cn(
+									"flex size-7 items-center justify-center rounded-lg",
+									s.tint,
+								)}
 							>
-								{s}
-							</button>
-						))}
-					</div>
-				)}
+								<s.Icon className="size-3.5" />
+							</span>
+							{s.text}
+						</button>
+					))}
+				</div>
+			) : (
 				<ul className="max-h-80 space-y-2 overflow-y-auto" aria-live="polite">
 					{msgs.map((m, i) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: append-only transcript
 						<li
 							key={i}
 							className={cn(
-								"rounded-xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap",
+								"w-fit max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap",
 								m.role === "user"
-									? "ml-8 bg-accent text-accent-foreground"
-									: "mr-4 bg-background",
+									? "ml-auto bg-accent text-accent-foreground"
+									: "bg-review-soft text-foreground",
 							)}
 						>
 							{m.content}
 						</li>
 					))}
 					{ask.isPending && (
-						<li className="mr-4 animate-pulse rounded-xl bg-background px-4 py-2.5 text-sm text-muted-foreground">
+						<li className="w-fit animate-pulse rounded-2xl bg-review-soft px-4 py-2.5 text-sm text-muted-foreground">
 							Thinking…
 						</li>
 					)}
 				</ul>
-				<form
-					className="flex items-end gap-2"
-					onSubmit={(e) => {
-						e.preventDefault();
-						send(input);
-					}}
+			)}
+			<form
+				className="flex items-center gap-2 rounded-full bg-muted py-1 pr-1 pl-4 focus-within:ring-2 focus-within:ring-ring/40"
+				onSubmit={(e) => {
+					e.preventDefault();
+					send(input);
+				}}
+			>
+				<input
+					value={input}
+					onChange={(e) => setInput(e.target.value)}
+					placeholder="Ask why, or ask for a change…"
+					className="h-9 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+					aria-label="Message Counterclaim"
+				/>
+				<Button
+					type="submit"
+					size="icon"
+					className="size-9"
+					aria-label="Send"
+					disabled={ask.isPending || !input.trim()}
 				>
-					<Textarea
-						value={input}
-						onChange={(e) => setInput(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" && !e.shiftKey) {
-								e.preventDefault();
-								send(input);
-							}
-						}}
-						rows={2}
-						placeholder="Ask why, or ask for a change…"
-						className="min-h-0 bg-background text-sm"
-						aria-label="Message Counterclaim"
-					/>
-					<Button
-						type="submit"
-						size="icon"
-						aria-label="Send"
-						disabled={ask.isPending || !input.trim()}
-					>
-						<Send className="size-4" />
-					</Button>
-				</form>
-				<p className="text-[11px] text-muted-foreground">
-					Chat can explain and revise proposals. Nothing is sent to PayPal until
-					you approve.
-				</p>
-			</CollapsibleContent>
-		</Collapsible>
+					<Send className="size-4" />
+				</Button>
+			</form>
+			<p className="text-center text-[11px] text-muted-foreground">
+				Chat can explain and revise proposals. Nothing is sent to PayPal until
+				you approve.
+			</p>
+		</section>
 	);
 }

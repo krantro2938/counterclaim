@@ -26,7 +26,7 @@ export function FactChip({ id, facts }: { id: string; facts: FactDto[] }) {
 		<button
 			type="button"
 			className={cn(
-				"inline-flex h-5 items-center gap-1 rounded-full bg-muted px-2 align-middle font-mono text-[11px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+				"inline-flex h-5 items-center gap-1 rounded-full bg-muted px-2 align-middle tabular text-[11px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
 				f?.simulated && "bg-simulated-soft",
 			)}
 			aria-label={`Fact ${id}`}
@@ -48,7 +48,7 @@ export function FactChip({ id, facts }: { id: string; facts: FactDto[] }) {
 				<div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
 					<src.Icon className="size-3.5" />
 					{pp ? "PayPal Agent Toolkit (live read)" : src.label}
-					<span className="ml-auto font-mono">{id}</span>
+					<span className="ml-auto tabular">{id}</span>
 				</div>
 				<p>
 					{f

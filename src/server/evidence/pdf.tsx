@@ -19,44 +19,33 @@ let fontsReady = false;
 function registerFonts() {
 	if (fontsReady) return;
 	Font.register({
-		family: "Newsreader",
+		family: "Bricolage",
 		fonts: [
 			{
 				src: require.resolve(
-					"@fontsource/newsreader/files/newsreader-latin-500-normal.woff",
-				),
-				fontWeight: 500,
-			},
-			{
-				src: require.resolve(
-					"@fontsource/newsreader/files/newsreader-latin-600-normal.woff",
-				),
-				fontWeight: 600,
-			},
-		],
-	});
-	Font.register({
-		family: "Geist",
-		fonts: [
-			{
-				src: require.resolve(
-					"@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff",
+					"@fontsource/bricolage-grotesque/files/bricolage-grotesque-latin-400-normal.woff",
 				),
 				fontWeight: 400,
 			},
 			{
 				src: require.resolve(
-					"@fontsource/geist-sans/files/geist-sans-latin-600-normal.woff",
+					"@fontsource/bricolage-grotesque/files/bricolage-grotesque-latin-500-normal.woff",
+				),
+				fontWeight: 500,
+			},
+			{
+				src: require.resolve(
+					"@fontsource/bricolage-grotesque/files/bricolage-grotesque-latin-600-normal.woff",
 				),
 				fontWeight: 600,
 			},
+			{
+				src: require.resolve(
+					"@fontsource/bricolage-grotesque/files/bricolage-grotesque-latin-700-normal.woff",
+				),
+				fontWeight: 700,
+			},
 		],
-	});
-	Font.register({
-		family: "GeistMono",
-		src: require.resolve(
-			"@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff",
-		),
 	});
 	Font.registerHyphenationCallback((w) => [w]);
 	fontsReady = true;
@@ -72,7 +61,7 @@ const s = StyleSheet.create({
 	page: {
 		padding: 40,
 		paddingBottom: 56,
-		fontFamily: "Geist",
+		fontFamily: "Bricolage",
 		fontSize: 9.5,
 		color: ink,
 		lineHeight: 1.45,
@@ -86,11 +75,16 @@ const s = StyleSheet.create({
 		paddingBottom: 10,
 		marginBottom: 14,
 	},
-	title: { fontFamily: "Newsreader", fontWeight: 600, fontSize: 20 },
-	sub: { color: muted, fontSize: 8.5, marginTop: 2 },
-	mono: { fontFamily: "GeistMono", fontSize: 8.5 },
+	title: {
+		fontFamily: "Bricolage",
+		fontWeight: 600,
+		fontSize: 20,
+		lineHeight: 1.25,
+	},
+	sub: { color: muted, fontSize: 8.5, marginTop: 4 },
+	mono: { fontFamily: "Bricolage", fontSize: 8.5 },
 	h2: {
-		fontFamily: "Newsreader",
+		fontFamily: "Bricolage",
 		fontWeight: 600,
 		fontSize: 12.5,
 		marginTop: 14,
@@ -201,7 +195,7 @@ function Packet({
 					<View style={{ alignItems: "flex-end" }}>
 						<Text
 							style={{
-								fontFamily: "Newsreader",
+								fontFamily: "Bricolage",
 								fontWeight: 600,
 								fontSize: 16,
 							}}

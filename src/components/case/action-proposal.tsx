@@ -144,12 +144,12 @@ export function ActionProposal({
 		<div
 			ref={ref}
 			className={cn(
-				"field space-y-5 p-6 transition-shadow",
+				"field space-y-4 p-5 transition-shadow",
 				highlight && "ring-2 ring-primary/30",
 			)}
 		>
 			<div className="flex items-start gap-3">
-				<span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background text-primary">
+				<span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">
 					<Icon className="size-4" />
 				</span>
 				<div className="min-w-0 flex-1">
@@ -203,7 +203,7 @@ export function ActionProposal({
 						rows={action.type === "send_message" ? 4 : 3}
 						disabled={!editable || busy}
 						maxLength={2000}
-						className="bg-background text-sm"
+						className="text-sm"
 					/>
 				</div>
 			) : null}
@@ -223,7 +223,7 @@ export function ActionProposal({
 							value={amount}
 							onChange={(e) => setAmount(e.target.value)}
 							inputMode="decimal"
-							className="w-32 bg-background font-mono"
+							className="w-32 tabular"
 							disabled={!editable || busy}
 							aria-invalid={Boolean(amountErr)}
 						/>
@@ -236,7 +236,7 @@ export function ActionProposal({
 			{action.rationale && (
 				<p className="text-xs text-muted-foreground">Why: {action.rationale}</p>
 			)}
-			<p className="font-mono text-[11px] text-muted-foreground">
+			<p className="tabular text-[11px] text-muted-foreground">
 				{ACTION_ENDPOINT[action.type]}
 			</p>
 
@@ -250,7 +250,7 @@ export function ActionProposal({
 					</p>
 					<p>{String((action.error as { message?: string }).message ?? "")}</p>
 					{(action.error as { debugId?: string }).debugId && (
-						<p className="font-mono text-xs">
+						<p className="tabular text-xs">
 							PayPal debug ID {(action.error as { debugId?: string }).debugId}
 						</p>
 					)}
@@ -272,7 +272,7 @@ export function ActionProposal({
 				<p className="flex items-center gap-1.5 text-sm text-won">
 					<CheckCircle2 className="size-4" /> Accepted by PayPal
 					{action.paypalDebugId ? (
-						<span className="font-mono text-xs text-muted-foreground">
+						<span className="tabular text-xs text-muted-foreground">
 							{" "}
 							· debug {action.paypalDebugId}
 						</span>
@@ -398,9 +398,7 @@ export function ApproveDialog({
 									{formatMoney(amt, detail.dispute.currency)}
 								</p>
 							)}
-							<p className="font-mono text-xs">
-								{ACTION_ENDPOINT[merged.type]}
-							</p>
+							<p className="tabular text-xs">{ACTION_ENDPOINT[merged.type]}</p>
 						</div>
 					</AlertDialogDescription>
 				</AlertDialogHeader>

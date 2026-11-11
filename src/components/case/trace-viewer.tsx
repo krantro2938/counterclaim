@@ -37,7 +37,7 @@ export function TraceViewer({ detail }: { detail: DisputeDetail }) {
 			<div className="field flex flex-wrap gap-x-5 gap-y-1 px-4 py-3 text-xs text-muted-foreground">
 				<span>
 					Model{" "}
-					<span className="font-mono text-foreground">
+					<span className="tabular text-foreground">
 						{a.model ?? "rules only"}
 					</span>
 				</span>
@@ -46,7 +46,7 @@ export function TraceViewer({ detail }: { detail: DisputeDetail }) {
 					{a.latencyMs != null ? `${(a.latencyMs / 1000).toFixed(1)} s` : ""}
 				</span>
 				{a.tokensIn != null && (
-					<span className="font-mono">
+					<span className="tabular">
 						{a.tokensIn.toLocaleString()} in /{" "}
 						{(a.tokensOut ?? 0).toLocaleString()} out tokens
 					</span>
@@ -93,7 +93,7 @@ function StepRow({ step }: { step: StepDto }) {
 		icon = <Wrench className="size-3.5" />;
 		title = (
 			<span>
-				<span className="font-mono">{String(p.tool)}</span>
+				<span className="tabular">{String(p.tool)}</span>
 				<span className="text-muted-foreground">
 					({JSON.stringify(p.input ?? {})})
 				</span>
@@ -162,7 +162,7 @@ function StepRow({ step }: { step: StepDto }) {
 				)}
 			</button>
 			{open && body && (
-				<pre className="mx-4 mb-4 max-h-64 overflow-auto whitespace-pre-wrap rounded-md bg-background p-3 font-mono text-[11px] leading-relaxed">
+				<pre className="mx-4 mb-4 max-h-64 overflow-auto whitespace-pre-wrap rounded-md bg-background p-3 tabular text-[11px] leading-relaxed">
 					{body}
 				</pre>
 			)}

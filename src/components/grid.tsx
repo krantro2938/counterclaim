@@ -1,9 +1,11 @@
+import type { ICellRendererParams } from "ag-grid-community";
 import {
 	AllCommunityModule,
 	ModuleRegistry,
 	themeQuartz,
 } from "ag-grid-community";
 import { useEffect, useState } from "react";
+import { Avatar } from "./page";
 import { Skeleton } from "./ui/skeleton";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -12,26 +14,26 @@ ModuleRegistry.registerModules([AllCommunityModule]);
  * hairline rows, airy row height. Dark mode follows the CSS variables. */
 export const counterclaimGrid = themeQuartz.withParams({
 	fontFamily: "var(--font-sans)",
-	fontSize: 14,
-	headerFontSize: 11,
+	fontSize: 13.5,
+	headerFontSize: 12,
 	headerFontWeight: 500,
-	backgroundColor: "var(--background)",
+	backgroundColor: "var(--card)",
 	foregroundColor: "var(--foreground)",
-	headerBackgroundColor: "var(--background)",
+	headerBackgroundColor: "var(--card)",
 	headerTextColor: "var(--muted-foreground)",
 	borderColor: "color-mix(in oklch, var(--border) 70%, transparent)",
 	wrapperBorder: false,
 	columnBorder: false,
 	headerColumnBorder: false,
-	headerColumnResizeHandleColor: "var(--border)",
+	headerColumnResizeHandleColor: "transparent",
 	headerRowBorder: true,
 	rowBorder: true,
 	pinnedColumnBorder: false,
 	rowHoverColor: "var(--muted)",
 	selectedRowBackgroundColor: "var(--accent)",
 	accentColor: "var(--primary)",
-	rowHeight: 60,
-	headerHeight: 44,
+	rowHeight: 56,
+	headerHeight: 40,
 	wrapperBorderRadius: 0,
 	cellHorizontalPadding: 16,
 	valueChangeValueHighlightBackgroundColor: "var(--accent)",
@@ -89,4 +91,15 @@ export function saveColumnState(key: string, state: unknown[]) {
 	try {
 		localStorage.setItem(COL_STATE_PREFIX + key, JSON.stringify(state));
 	} catch {}
+}
+
+/** Grid cell: initials avatar + name, like a contact list. */
+export function BuyerCell({ value }: ICellRendererParams) {
+	if (!value) return <span className="text-muted-foreground">—</span>;
+	return (
+		<span className="flex min-w-0 items-center gap-2.5">
+			<Avatar name={String(value)} className="size-7 text-[10px]" />
+			<span className="truncate font-medium">{String(value)}</span>
+		</span>
+	);
 }

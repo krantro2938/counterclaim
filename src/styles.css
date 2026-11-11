@@ -1,72 +1,66 @@
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
-@import "@fontsource/instrument-serif/400.css";
-@import "@fontsource/instrument-serif/400-italic.css";
-@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/bricolage-grotesque/standard.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* ── Counterclaim tokens (DESIGN.md §3): "Orchard" — cream paper, forest ink, sage fields ── */
+/* ── Counterclaim tokens (DESIGN.md §3): calm sage canvas, white cards, forest accent ── */
 :root {
 	--radius: 0.75rem;
 
-	--background: oklch(0.99 0.004 95);
-	--foreground: oklch(0.22 0.014 150);
-	--card: oklch(0.966 0.009 100);
+	--canvas: oklch(0.935 0.022 135);
+	--background: oklch(0.962 0.008 115);
+	--foreground: oklch(0.24 0.015 150);
+	--card: oklch(1 0 0);
 	--card-foreground: var(--foreground);
-	--popover: oklch(0.995 0.003 95);
+	--popover: oklch(1 0 0);
 	--popover-foreground: var(--foreground);
-	--muted: oklch(0.955 0.01 105);
-	--muted-foreground: oklch(0.52 0.014 140);
-	--border: oklch(0.92 0.008 100);
-	--input: oklch(0.89 0.01 100);
-	--ring: oklch(0.5 0.07 155);
+	--muted: oklch(0.962 0.007 115);
+	--muted-foreground: oklch(0.54 0.012 140);
+	--border: oklch(0.93 0.006 110);
+	--input: oklch(0.9 0.008 110);
+	--ring: oklch(0.55 0.08 155);
 
-	--primary: oklch(0.38 0.07 155);
-	--primary-foreground: oklch(0.97 0.012 95);
-	--secondary: oklch(0.95 0.012 105);
+	--primary: oklch(0.42 0.08 155);
+	--primary-foreground: oklch(0.985 0.006 100);
+	--secondary: oklch(0.962 0.008 120);
 	--secondary-foreground: var(--foreground);
-	--accent: oklch(0.935 0.02 130);
-	--accent-foreground: oklch(0.3 0.05 150);
-	--destructive: oklch(0.52 0.14 32);
-	--destructive-foreground: oklch(0.97 0.012 95);
+	--accent: oklch(0.95 0.025 140);
+	--accent-foreground: oklch(0.34 0.06 152);
+	--destructive: oklch(0.55 0.15 30);
+	--destructive-foreground: oklch(0.985 0.006 100);
 
-	/* brand fields (DESIGN §3.1) */
-	--forest: oklch(0.32 0.055 155);
-	--forest-foreground: oklch(0.95 0.015 95);
-	--forest-muted: oklch(0.79 0.035 135);
-	--sage: oklch(0.87 0.03 125);
-	--sage-foreground: oklch(0.25 0.03 145);
+	/* brand tints (DESIGN §3.1) */
+	--sage: oklch(0.9 0.035 135);
+	--sage-foreground: oklch(0.3 0.04 150);
+	--pdf: oklch(0.58 0.2 27);
 
-	--won: oklch(0.47 0.11 150);
-	--won-soft: oklch(0.94 0.035 145);
-	--lost: oklch(0.52 0.14 32);
-	--lost-soft: oklch(0.95 0.025 40);
-	--deadline: oklch(0.53 0.11 68);
-	--deadline-soft: oklch(0.95 0.04 85);
-	--review: oklch(0.48 0.06 235);
-	--review-soft: oklch(0.945 0.018 235);
-	--simulated: oklch(0.5 0.09 320);
-	--simulated-soft: oklch(0.95 0.022 320);
+	--won: oklch(0.5 0.12 150);
+	--won-soft: oklch(0.955 0.035 148);
+	--lost: oklch(0.55 0.15 30);
+	--lost-soft: oklch(0.96 0.025 35);
+	--deadline: oklch(0.56 0.12 68);
+	--deadline-soft: oklch(0.965 0.04 85);
+	--review: oklch(0.52 0.09 250);
+	--review-soft: oklch(0.96 0.02 250);
+	--simulated: oklch(0.52 0.1 310);
+	--simulated-soft: oklch(0.96 0.025 310);
 
 	--score-low: var(--lost);
-	--score-mid: oklch(0.7 0.12 75);
+	--score-mid: oklch(0.72 0.13 75);
 	--score-high: var(--won);
 
 	--chart-1: var(--primary);
 	--chart-2: var(--sage);
-	--chart-3: oklch(0.7 0.12 75);
+	--chart-3: oklch(0.72 0.13 75);
 	--chart-4: var(--lost);
 	--chart-5: var(--review);
 
-	/* the sidebar is the outer canvas; the page sits on it as a paper panel */
-	--sidebar: oklch(0.952 0.012 98);
+	--sidebar: var(--background);
 	--sidebar-foreground: var(--foreground);
-	--sidebar-border: oklch(0.92 0.01 100);
-	--sidebar-accent: oklch(0.915 0.02 125);
-	--sidebar-accent-foreground: oklch(0.24 0.03 150);
+	--sidebar-border: var(--border);
+	--sidebar-accent: var(--accent);
+	--sidebar-accent-foreground: var(--accent-foreground);
 	--sidebar-primary: var(--primary);
 	--sidebar-primary-foreground: var(--primary-foreground);
 	--sidebar-ring: var(--ring);
@@ -82,86 +76,46 @@
 }
 
 .dark {
-	--background: oklch(0.195 0.012 150);
-	--foreground: oklch(0.94 0.014 95);
-	--card: oklch(0.228 0.014 150);
+	--canvas: oklch(0.15 0.01 150);
+	--background: oklch(0.17 0.01 150);
+	--foreground: oklch(0.94 0.01 100);
+	--card: oklch(0.212 0.012 150);
 	--card-foreground: var(--foreground);
-	--popover: oklch(0.235 0.014 150);
+	--popover: oklch(0.225 0.012 150);
 	--popover-foreground: var(--foreground);
-	--muted: oklch(0.25 0.014 150);
-	--muted-foreground: oklch(0.7 0.02 125);
-	--border: oklch(0.29 0.014 150);
-	--input: oklch(0.33 0.014 150);
-	--ring: oklch(0.75 0.06 135);
-	--primary: oklch(0.87 0.045 125);
+	--muted: oklch(0.25 0.012 150);
+	--muted-foreground: oklch(0.7 0.015 130);
+	--border: oklch(0.28 0.012 150);
+	--input: oklch(0.32 0.012 150);
+	--ring: oklch(0.75 0.08 145);
+	--primary: oklch(0.8 0.1 145);
 	--primary-foreground: oklch(0.2 0.02 150);
-	--secondary: oklch(0.25 0.014 150);
+	--secondary: oklch(0.25 0.012 150);
 	--secondary-foreground: var(--foreground);
-	--accent: oklch(0.28 0.028 150);
-	--accent-foreground: oklch(0.89 0.04 128);
-	--destructive: oklch(0.68 0.14 32);
-	--forest: oklch(0.31 0.055 155);
-	--forest-foreground: oklch(0.95 0.015 95);
-	--forest-muted: oklch(0.79 0.035 135);
-	--sage: oklch(0.36 0.03 140);
-	--sage-foreground: oklch(0.92 0.025 125);
-	--won: oklch(0.76 0.12 148);
+	--accent: oklch(0.27 0.03 150);
+	--accent-foreground: oklch(0.88 0.06 140);
+	--destructive: oklch(0.7 0.14 30);
+	--sage: oklch(0.32 0.035 145);
+	--sage-foreground: oklch(0.9 0.04 135);
+	--pdf: oklch(0.62 0.19 27);
+	--won: oklch(0.78 0.12 148);
 	--won-soft: oklch(0.29 0.045 150);
-	--lost: oklch(0.74 0.12 35);
-	--lost-soft: oklch(0.29 0.04 35);
-	--deadline: oklch(0.8 0.11 78);
+	--lost: oklch(0.75 0.12 32);
+	--lost-soft: oklch(0.29 0.04 32);
+	--deadline: oklch(0.82 0.11 78);
 	--deadline-soft: oklch(0.3 0.04 78);
-	--review: oklch(0.76 0.06 235);
-	--review-soft: oklch(0.28 0.025 235);
-	--simulated: oklch(0.78 0.08 320);
-	--simulated-soft: oklch(0.28 0.03 320);
-	--score-mid: oklch(0.8 0.11 78);
-	--sidebar: oklch(0.165 0.01 150);
-	--sidebar-foreground: var(--foreground);
-	--sidebar-border: oklch(0.25 0.012 150);
-	--sidebar-accent: oklch(0.25 0.02 150);
-	--sidebar-accent-foreground: var(--foreground);
-	--sidebar-primary: var(--primary);
-	--sidebar-primary-foreground: var(--primary-foreground);
-	--sidebar-ring: var(--ring);
-}
-
-/* The forest field (verdict, won outcome): an inverted scope where tokens re-map to cream-on-green,
-   so buttons, badges and meters inside it just work (DESIGN §3.1). */
-.on-forest {
-	--foreground: var(--forest-foreground);
-	--card-foreground: var(--forest-foreground);
-	--muted: oklch(1 0 0 / 0.1);
-	--muted-foreground: var(--forest-muted);
-	--border: oklch(1 0 0 / 0.14);
-	--input: oklch(1 0 0 / 0.18);
-	--ring: var(--forest-muted);
-	--primary: var(--forest-foreground);
-	--primary-foreground: var(--forest);
-	--secondary: oklch(1 0 0 / 0.1);
-	--secondary-foreground: var(--forest-foreground);
-	--accent: oklch(1 0 0 / 0.1);
-	--accent-foreground: var(--forest-foreground);
-	--won: oklch(0.87 0.1 145);
-	--won-soft: oklch(1 0 0 / 0.1);
-	--lost: oklch(0.83 0.1 38);
-	--lost-soft: oklch(1 0 0 / 0.1);
-	--deadline: oklch(0.88 0.1 85);
-	--deadline-soft: oklch(1 0 0 / 0.1);
-	--review: oklch(0.85 0.05 235);
-	--review-soft: oklch(1 0 0 / 0.1);
-	--score-high: oklch(0.87 0.1 145);
-	--score-mid: oklch(0.88 0.1 85);
-	--score-low: oklch(0.83 0.1 38);
-	background-color: var(--forest);
-	color: var(--forest-foreground);
+	--review: oklch(0.78 0.08 250);
+	--review-soft: oklch(0.28 0.03 250);
+	--simulated: oklch(0.79 0.09 310);
+	--simulated-soft: oklch(0.28 0.035 310);
+	--score-mid: oklch(0.82 0.11 78);
 }
 
 @theme inline {
-	--font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
-	--font-display: "Instrument Serif", Georgia, serif;
-	--font-shop: "Fraunces Variable", Georgia, serif;
+	--font-sans: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: var(--font-sans);
+	--font-display: var(--font-sans);
+	--font-shop: var(--font-sans);
 
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
@@ -187,9 +141,8 @@
 	--color-chart-3: var(--chart-3);
 	--color-chart-4: var(--chart-4);
 	--color-chart-5: var(--chart-5);
-	--color-forest: var(--forest);
-	--color-forest-foreground: var(--forest-foreground);
-	--color-forest-muted: var(--forest-muted);
+	--color-canvas: var(--canvas);
+	--color-pdf: var(--pdf);
 	--color-sage: var(--sage);
 	--color-sage-foreground: var(--sage-foreground);
 	--color-won: var(--won);
@@ -232,7 +185,7 @@
 		@apply border-border outline-ring/50;
 	}
 	html {
-		font-size: 15px;
+		font-size: 14px;
 		color-scheme: light;
 	}
 	html.dark {
@@ -240,8 +193,8 @@
 	}
 	body {
 		@apply bg-background text-foreground font-sans antialiased;
-		line-height: 1.55;
-		font-feature-settings: "ss01";
+		line-height: 1.5;
+		font-variant-numeric: tabular-nums;
 	}
 	:focus-visible {
 		outline: 2px solid var(--ring);
@@ -253,23 +206,35 @@
 	.tabular {
 		font-variant-numeric: tabular-nums;
 	}
+	/* Headings: the same family at display optical size, tight and semibold */
 	.font-display {
-		font-family: var(--font-display);
-		font-weight: 400;
-		font-synthesis-weight: none;
-		letter-spacing: -0.012em;
-		line-height: 1.08;
+		font-family: var(--font-sans);
+		font-weight: 600;
+		font-optical-sizing: auto;
+		letter-spacing: -0.025em;
+		line-height: 1.15;
 	}
-	/* Small uppercase label with wide tracking (section eyebrows, the wordmark's voice) */
 	.eyebrow {
-		@apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground;
+		@apply text-xs font-medium text-muted-foreground;
 	}
-	.wordmark {
-		@apply text-[13px] font-semibold uppercase tracking-[0.24em];
+	/* The shop shares the family but sets headings condensed, so it reads as another brand */
+	.font-shop {
+		font-stretch: 78%;
+		letter-spacing: -0.01em;
 	}
-	/* A flat colour field: no border, no shadow (DESIGN §4) */
+	/* Card: white on the tinted panel, very round, no border, no shadow (DESIGN §4) */
 	.field {
-		@apply rounded-xl bg-card;
+		@apply rounded-[28px] bg-card;
+	}
+	/* Tile: a quiet grey block inside a card (suggestions, toggles, sub-items) */
+	.tile {
+		@apply rounded-2xl bg-muted;
+	}
+	.no-scrollbar {
+		scrollbar-width: none;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
 	}
 }
 
@@ -323,8 +288,7 @@
 .ag-row.cursor-pointer {
 	cursor: pointer;
 }
-/* Header labels in the eyebrow voice */
+/* Header labels: quiet, sentence case */
 .ag-header-cell-text {
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
+	font-weight: 400;
 }
