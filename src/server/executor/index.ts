@@ -5,6 +5,7 @@ import { buildCaseFile } from "../casefile";
 import { db } from "../db/client";
 import { actions, assessments, disputes, evidenceFiles } from "../db/schema";
 import { publish } from "../events/bus";
+import { pickEvidenceType } from "../evidence/type";
 import { enqueue } from "../jobs/queue";
 import { recordActivity } from "../kv";
 import { log } from "../log";
@@ -263,8 +264,15 @@ async function provideEvidenceAction(
 			contentType: "application/pdf",
 		};
 	}
+	// Re-checked against the latest snapshot: PayPal rejects evidence types it didn't request.
+	const evidenceType = pickEvidenceType(
+		cf.dispute.evidencesRequested,
+		Boolean(cf.shipment),
+	);
 	const trackingInfo =
-		p.includeTracking !== false && cf.shipment
+		p.includeTracking !== false &&
+		cf.shipment &&
+		evidenceType === "PROOF_OF_FULFILLMENT"
 			? [
 					{
 						carrier_name: cf.shipment.carrier,
@@ -273,11 +281,7 @@ async function provideEvidenceAction(
 				]
 			: undefined;
 	const ev = {
-		evidenceType:
-			(p.evidenceType as
-				| "PROOF_OF_FULFILLMENT"
-				| "PROOF_OF_REFUND"
-				| "OTHER") ?? "PROOF_OF_FULFILLMENT",
+		evidenceType,
 		trackingInfo,
 		notes: p.notes ?? "Proof of fulfilment attached.",
 		file,

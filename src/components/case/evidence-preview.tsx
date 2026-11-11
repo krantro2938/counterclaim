@@ -42,7 +42,10 @@ export function PdfIcon({ className }: { className?: string }) {
 /** Evidence packet: thumbnail on the case page, full PDF in a side sheet. */
 export function EvidencePreview({ detail }: { detail: DisputeDetail }) {
 	const [open, setOpen] = useState(false);
-	const sent = detail.evidenceFiles[0];
+	// Only a packet whose action PayPal accepted counts as sent; a failed attempt is still a draft.
+	const sent = detail.evidenceFiles.find((f) =>
+		detail.actions.some((a) => a.id === f.actionId && a.status === "succeeded"),
+	);
 	const hasEvidenceAction = detail.actions.some(
 		(a) => a.type === "provide_evidence",
 	);

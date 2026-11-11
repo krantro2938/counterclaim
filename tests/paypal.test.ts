@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { pickEvidenceType } from "../src/server/evidence/type";
 
 const calls: { url: string; init: RequestInit }[] = [];
 
@@ -149,5 +150,29 @@ describe("webhook verification", () => {
 		expect((await verifyWebhook(new Headers(), { id: "x" })).verified).toBe(
 			false,
 		);
+	});
+});
+
+describe("pickEvidenceType", () => {
+	const req = (...types: string[]) =>
+		types.map((t) => ({ evidence_type: t, source: "REQUESTED_FROM_SELLER" }));
+	it("keeps proof of fulfilment when PayPal asked for it or asked for nothing", () => {
+		expect(pickEvidenceType(req("PROOF_OF_FULFILLMENT", "OTHER"), true)).toBe(
+			"PROOF_OF_FULFILLMENT",
+		);
+		expect(pickEvidenceType([], true)).toBe("PROOF_OF_FULFILLMENT");
+	});
+	it("falls back to OTHER when PayPal only requested refund proof or other (sandbox SNAD claim)", () => {
+		expect(pickEvidenceType(req("PROOF_OF_REFUND", "OTHER"), true)).toBe(
+			"OTHER",
+		);
+	});
+	it("ignores evidence the buyer submitted", () => {
+		expect(
+			pickEvidenceType(
+				[{ evidence_type: "CREATE", source: "SUBMITTED_BY_BUYER" }],
+				false,
+			),
+		).toBe("OTHER");
 	});
 });
