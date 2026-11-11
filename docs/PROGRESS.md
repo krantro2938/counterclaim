@@ -1,33 +1,33 @@
 # Counterclaim — Progress
 
-## ▶ Status summary (Wed Nov 11 23:25 MSK): waiting on one sandbox login in the Claude-connected browser
+## ▶ Status summary (Thu Nov 12 01:10 MSK): real sandbox data flowing; G0 nearly done, G2 actions half verified
 
-**State:** PayPal sandbox is connected and verified (token, list disputes, create order, webhook `3FV32316LX9093800`). The deployed app, shop and worker are healthy (poller syncing every ~20 s, all 200s). UI redesign is done and live. G0 is still missing a real purchase and a real dispute. Every remaining PayPal step (G0 to G4) depends on that, so work is stopped here.
+**New since 23:25:** 8 real sandbox purchases (#9006–9013) captured and imported into the deployed app via verified webhooks. Tracking upload works (v2 `/track`; the toolkit's trackers-batch is 403 for this app). 3 real disputes filed in the Resolution Center, synced by webhook, assessed by Mercury (93% / 82% / 2%) and visible in the inbox. **provide-evidence (+PDF) ✅** and **accept-claim (toolkit) ✅** against the real sandbox. SPEC §6.5 now holds the observed state machine. Six real bugs fixed along the way (see Done).
 
-**Why it's blocked:** the buyer is logged in to the sandbox in another browser/profile, not the one the Claude extension controls. In the extension's tab group, https://www.sandbox.paypal.com/myaccount/summary redirects to the sign-in page (email `sb-8dagh53790893@personal.example.com` is prefilled). I don't type passwords.
+**Blocking next step:** fresh disputes filed as *inquiries* (buyer skips "contacted the seller"), to verify send-message / make-offer / escalate → adjudicate and to have clean storylines for the video. The buyer sandbox session expires ~15 min after each login, so each batch of buyer steps needs one login (#2).
 
 **What's left for you, in order:**
-1. In the **Claude extension's browser** (the tab titled "Log in to your account" in the Claude tab group), type the personal account's password and log in (#2). Then tell me, and I'll run the purchases A to H in `/shop`, Mark shipped, open the disputes and fill SPEC §6.5 (docs/DEMO.md §1 to §4).
+1. One more buyer login in the Claude-connected browser (#2). I'll then buy 4 spares and file 3–4 inquiry disputes in one go.
 2. Activate the Mistral workspace plan (#4) for the Voxtral voice-over, or plan to record the VO yourself.
 3. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
 
-**Time check:** freeze is Thu 20:00 MSK (~20 h). G1 to G3 code is already built and only needs real-sandbox verification. Once the buyer login works, the plan is G0 and G2 verification (~2 h), then G4 demo runs and video assets. If the login isn't done by Thu 10:00, cut per SPEC §13: record the demo on whatever disputes exist, and drop the Claude comparison and the voice-over (use captions).
+**Known issues:** sandbox `require-evidence`/`adjudicate` refuse buyer-filed claims (`ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`); the sandbox dispute list lags (webhooks are the reliable path); this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com`: `sudo systemctl restart systemd-resolved` before recording.
 
-**Known issues:** this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com` (public DNS is fine): `sudo systemctl restart systemd-resolved` before recording.
-
-_Last update: Wed Nov 11 23:25 MSK · Current gate: **G0 (late)**: token/disputes/orders/webhook verified; needs one real purchase + dispute_
+_Last update: Thu Nov 12 01:10 MSK · Current gate: **G0 → G2 (late)**: real purchases, tracking, disputes, evidence and accept verified; send-message/make-offer/escalate pending fresh inquiries; Expert G0/G1 review running_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
 ## Needs Schreuder (blocking first)
 
 1. ~~PayPal sandbox credentials~~ ✅ done Nov 11 (token, disputes, orders, webhook verified; server redeployed).
-2. **Sandbox buyer login in the Claude-connected browser** (still open at 23:25: you logged in elsewhere, but the extension's browser shows the sign-in page with `sb-8dagh53790893@personal.example.com` prefilled; type the password there). Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
+2. **Sandbox buyer login in the Claude-connected browser, once per batch** (the session expires ~15 min after login). Type the password in the "Log in to your account" tab of the Claude tab group (`sb-8dagh53790893@personal.example.com` is prefilled). Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
 3. _(optional)_ `ANTHROPIC_API_KEY` in `.env` for the Claude-vs-Mercury comparison at G2. Without it the demo runs on Mercury (works well, see below).
 4. **Mistral API key has zero quota** (blocks Voxtral voice-over). `/v1/models` → 200, but every chat/TTS call returns 429 with `x-ratelimit-limit-req-minute: 0`. In https://console.mistral.ai → your workspace → **Billing / Plans**, activate a plan (the free "Experiment" tier or pay-as-you-go) so the key gets a non-zero rate limit. Then run: `pnpm tsx --env-file=.env video/tools/tts.ts --id 03 --text "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting." --voices voice_478,voice_3150,en_paul_neutral --out video/audio/candidates` (Sheila, James, Paul-neutral) and pick one. Fallback per VIDEO.md §3: record the VO yourself.
 5. _(optional)_ PayPal Claude Code plugin (`/plugin install paypal@claude-plugins-official`). Not needed: `scripts/paypal-check.ts` covers inspection.
 
 ## Done
+- **Real sandbox data (Nov 12, 00:00–01:00 MSK):** 8 purchases #9006–9013 (from localhost, same-tab checkout), imported into prod by `PAYMENT.CAPTURE.COMPLETED` webhook (verified) / Lab import. Mark shipped A/B/E/F → v2 `/track` 200 (debug `f529941972613` …), trackers visible on the order and to the buyer. Disputes PP-R-ZHG-10199603 (INR claim, under PayPal review), PP-R-SKD-10199604 (SNAD claim → evidence OTHER + PDF accepted, debug `f803079a5ba6c`), PP-R-UCV-10199605 (INR inquiry → accept-claim via toolkit, run from localhost).
+- **Bugs fixed against the real sandbox:** toolkit errors returned as values were logged as success (tracking silently failed); re-assessment on every sync (PayPal `provide_evidence` vs stored `provide-evidence`); assessments stuck `running` after a worker restart + stale job locks now 2 min; evidence type must be one PayPal requested (`pickEvidenceType`, tested); PDF card said "sent" after a failed submit; demo messages could be timestamped after the dispute.
 - **Env:** Node 22.23 + pnpm 12 pinned via `mise.toml` (system Node is 26). Docker OK. `gh` authenticated (krantro2938). SSH to aeza-de OK. `cloudflared` not installed (not needed, see Decisions).
 - **Infra:** DNS `counterclaim.aansl.com` → aeza-de (Cloudflare, DNS only). Docker compose stack (`deploy/compose.yaml`: postgres 16 + web + worker) behind the shared Caddy (TLS OK). Migrations + seed run on web start.
 - **Research (researcher ×4):** TanStack Start 1.169 + `nitro/vite`; shadcn `init -t start`; AG Grid 36.3 (row grouping is Enterprise); AI SDK 7 (`instructions`, `stepCountIs`, `Output.object`); `@ai-sdk/openai-compatible` 3; Mercury supports `tools` + `json_schema` strict (temperature must be 0.5–1); `@paypal/agent-toolkit` 1.11 bundles `ai@4` (tools use `parameters`; `accept_dispute_claim` only takes `{dispute_id, note}`, enabled by `disputes.create`; `create_shipment_tracking` uses `/v1/shipping/trackers-batch`; `context.request_id` → `PayPal-Request-Id`); PayPal JS SDK **v6** via `@paypal/react-paypal-js/sdk-v6`; Disputes REST shapes (send-message JSON vs multipart ❓, provide-evidence `input` + `evidence-file` ❓).
