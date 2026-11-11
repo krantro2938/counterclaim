@@ -1,26 +1,28 @@
 # Counterclaim — Progress
 
-## ▶ Status summary (Wed Nov 11 14:20 MSK): PayPal connected, waiting on the sandbox buyer login (Needs Schreuder #2)
+## ▶ Status summary (Wed Nov 11 23:25 MSK): waiting on one sandbox login in the Claude-connected browser
 
-**New since 01:20:** PayPal sandbox app credentials are in both `.env` files. Token ✅ (scopes include disputes read/update/create, refunds, webhooks; no `shipping/trackers` scope listed, so tracking upload gets tested on the first shipment). `GET /v1/customer/disputes` 200 (0 disputes). `POST /v2/checkout/orders` 200. Webhook `3FV32316LX9093800` registered → `https://counterclaim.aansl.com/webhooks/paypal`. Server redeployed: Settings → Connection shows token OK + webhook ID; worker poller running. UI redesigned to a calm card workspace (see Decisions).
+**State:** PayPal sandbox is connected and verified (token, list disputes, create order, webhook `3FV32316LX9093800`). The deployed app, shop and worker are healthy (poller syncing every ~20 s, all 200s). UI redesign is done and live. G0 is still missing a real purchase and a real dispute. Every remaining PayPal step (G0 to G4) depends on that, so work is stopped here.
 
-**Blocking next step:** a real purchase and a real dispute need the sandbox **buyer** logged in to the browser connected to the Claude extension (#2). The sandbox login page appeared at 14:15; per the brief I stopped that browser task.
+**Why it's blocked:** the buyer is logged in to the sandbox in another browser/profile, not the one the Claude extension controls. In the extension's tab group, https://www.sandbox.paypal.com/myaccount/summary redirects to the sign-in page (email `sb-8dagh53790893@personal.example.com` is prefilled). I don't type passwords.
 
 **What's left for you, in order:**
-1. Log in at https://www.sandbox.paypal.com as the sandbox **personal** account in the extension-connected browser (#2).
-2. Activate the Mistral workspace plan (#4) for the Voxtral voice-over; or plan to record the VO yourself.
+1. In the **Claude extension's browser** (the tab titled "Log in to your account" in the Claude tab group), type the personal account's password and log in (#2). Then tell me, and I'll run the purchases A to H in `/shop`, Mark shipped, open the disputes and fill SPEC §6.5 (docs/DEMO.md §1 to §4).
+2. Activate the Mistral workspace plan (#4) for the Voxtral voice-over, or plan to record the VO yourself.
 3. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
+
+**Time check:** freeze is Thu 20:00 MSK (~20 h). G1 to G3 code is already built and only needs real-sandbox verification. Once the buyer login works, the plan is G0 and G2 verification (~2 h), then G4 demo runs and video assets. If the login isn't done by Thu 10:00, cut per SPEC §13: record the demo on whatever disputes exist, and drop the Claude comparison and the voice-over (use captions).
 
 **Known issues:** this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com` (public DNS is fine): `sudo systemctl restart systemd-resolved` before recording.
 
-_Last update: Wed Nov 11 14:20 MSK · Current gate: **G0 (late)**: token/disputes/orders/webhook verified; needs one real purchase + dispute_
+_Last update: Wed Nov 11 23:25 MSK · Current gate: **G0 (late)**: token/disputes/orders/webhook verified; needs one real purchase + dispute_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
 ## Needs Schreuder (blocking first)
 
 1. ~~PayPal sandbox credentials~~ ✅ done Nov 11 (token, disputes, orders, webhook verified; server redeployed).
-2. **Sandbox buyer login in the connected browser.** Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
+2. **Sandbox buyer login in the Claude-connected browser** (still open at 23:25: you logged in elsewhere, but the extension's browser shows the sign-in page with `sb-8dagh53790893@personal.example.com` prefilled; type the password there). Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
 3. _(optional)_ `ANTHROPIC_API_KEY` in `.env` for the Claude-vs-Mercury comparison at G2. Without it the demo runs on Mercury (works well, see below).
 4. **Mistral API key has zero quota** (blocks Voxtral voice-over). `/v1/models` → 200, but every chat/TTS call returns 429 with `x-ratelimit-limit-req-minute: 0`. In https://console.mistral.ai → your workspace → **Billing / Plans**, activate a plan (the free "Experiment" tier or pay-as-you-go) so the key gets a non-zero rate limit. Then run: `pnpm tsx --env-file=.env video/tools/tts.ts --id 03 --text "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting." --voices voice_478,voice_3150,en_paul_neutral --out video/audio/candidates` (Sheila, James, Paul-neutral) and pick one. Fallback per VIDEO.md §3: record the VO yourself.
 5. _(optional)_ PayPal Claude Code plugin (`/plugin install paypal@claude-plugins-official`). Not needed: `scripts/paypal-check.ts` covers inspection.
