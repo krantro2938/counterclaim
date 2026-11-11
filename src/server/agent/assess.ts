@@ -244,6 +244,16 @@ export async function runAssessment(
 	if (!d) throw new Error(`Dispute ${disputeId} not found`);
 	if (d.status === "RESOLVED") return null;
 
+	// A run cut off by a worker restart stays "running"; its job is retried, so close the old row.
+	await db()
+		.update(assessments)
+		.set({ state: "failed", error: "Interrupted (worker restarted); re-run" })
+		.where(
+			and(
+				eq(assessments.disputeId, disputeId),
+				eq(assessments.state, "running"),
+			),
+		);
 	const [{ v }] = await db()
 		.select({ v: dsql<number>`coalesce(max(${assessments.version}), 0)` })
 		.from(assessments)

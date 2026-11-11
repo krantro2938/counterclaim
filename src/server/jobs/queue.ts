@@ -53,7 +53,7 @@ export async function enqueue(
 	return row.id;
 }
 
-/** Claim one due job (FOR UPDATE SKIP LOCKED). Stale locks (> 5 min) are reclaimed. */
+/** Claim one due job (FOR UPDATE SKIP LOCKED). Stale locks (> 2 min, e.g. after a restart) are reclaimed. */
 export async function claimJob(): Promise<Job | null> {
 	const rows = await sql()<Job[]>`
 		update jobs set locked_at = now(), attempts = attempts + 1
@@ -61,7 +61,7 @@ export async function claimJob(): Promise<Job | null> {
 			select id from jobs
 			where done_at is null
 			  and run_after <= now()
-			  and (locked_at is null or locked_at < now() - interval '5 minutes')
+			  and (locked_at is null or locked_at < now() - interval '2 minutes')
 			  and attempts < max_attempts
 			order by run_after, id
 			for update skip locked

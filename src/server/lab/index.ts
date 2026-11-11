@@ -84,7 +84,11 @@ export async function labAttachStory(orderId: string, story: Story) {
 		.delete(customerMessages)
 		.where(eq(customerMessages.orderId, orderId));
 	const base = o.capturedAt ?? new Date();
-	const at = (mins: number) => new Date(base.getTime() + mins * 60_000);
+	// Messages land between the purchase and now (scaled down if the order is under ~1 h old),
+	// so they always precede a dispute opened afterwards.
+	const scale = Math.min(1, (Date.now() - base.getTime()) / (60 * 60_000));
+	const at = (mins: number) =>
+		new Date(base.getTime() + mins * 60_000 * Math.max(scale, 0.05));
 	const first = (o.buyerName ?? "there").split(" ")[0];
 	const item = o.items[0]?.title ?? "your order";
 	const msgs: { direction: "in" | "out"; body: string; sentAt: Date }[] = [];
