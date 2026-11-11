@@ -152,21 +152,21 @@ Enable only those actions in the toolkit configuration (`disputes: { list, get, 
 |---|---|---|---|
 | Token | `POST /v1/oauth2/token` | `grant_type=client_credentials`, basic auth | ✅ Nov 11, debug `ca58cde9c0fab` (no `shipping/trackers` scope listed, see Add tracking) |
 | Create order | `POST /v2/checkout/orders` | intent `CAPTURE`, `purchase_units[].reference_id` = our order id, items, shipping | ✅ Nov 11, 200, debug `ca58ce3632e56` |
-| Capture | `POST /v2/checkout/orders/{id}/capture` | store `capture_id`, payer, shipping address | 📄 |
-| Show order | `GET /v2/checkout/orders/{id}` | used by the case file | 📄 |
-| Add tracking | `POST /v2/checkout/orders/{id}/track` | body: `capture_id`, `tracking_number`, `carrier` (e.g. `USPS`), `notify_payer`, optional `items`. Alternative legacy: `POST /v1/shipping/trackers-batch` | ❓ confirm which works in sandbox |
+| Capture | `POST /v2/checkout/orders/{id}/capture` | store `capture_id`, payer, shipping address. Same-tab flow: order `experience_context.return_url`/`cancel_url` → approval link rel `payer-action` → `/shop/checkout/return?token=<order id>` | ✅ Nov 12, 8 captures (#9006–9013), webhooks `PAYMENT.CAPTURE.COMPLETED` verified |
+| Show order | `GET /v2/checkout/orders/{id}` | used by the case file and to import orders paid on another deployment (`purchase_units[].custom_id`/`invoice_id`/`items[].sku`); `purchase_units[].shipping.trackers[]` shows v2 trackers | ✅ Nov 12 |
+| Add tracking | `POST /v2/checkout/orders/{id}/track` | body: `capture_id`, `tracking_number`, `carrier` (e.g. `USPS`), `notify_payer`, optional `items`. **The toolkit's `create_shipment_tracking` (legacy `/v1/shipping/trackers-batch`) returns 403 for this app** (no `shipping/trackers` scope) and reports it as a value `{ok:false,status:403}`, not a throw. v2 `/track` works; the buyer sees the tracking in the Resolution Center | ✅ Nov 12, 200, debug `f529941972613` (v2 /track); ❌ trackers-batch 403 |
 | Refund | `POST /v2/payments/captures/{id}/refund` | used for a pre-dispute goodwill refund | 📄 |
 | Verify webhook | `POST /v1/notifications/verify-webhook-signature` | headers `PAYPAL-TRANSMISSION-ID/TIME/SIG`, `PAYPAL-CERT-URL`, `PAYPAL-AUTH-ALGO` + `webhook_id` + raw `webhook_event` | 📄 |
-| List disputes | `GET /v1/customer/disputes` | filters `update_time_after`, `dispute_state`, paging via `next_page_token` / links | ✅ Nov 11, 200 (0 disputes yet), debug `ca58cde9e6b7f` |
-| Show dispute | `GET /v1/customer/disputes/{id}` | **source of allowed actions = `links[]` (HATEOAS)**; also `status`, `reason`, `dispute_life_cycle_stage`, `seller_response_due_date`, `evidences`, `messages`, `offer`, `disputed_transactions` | 📄 |
+| List disputes | `GET /v1/customer/disputes` | filters `update_time_after`, `dispute_state`, paging via `next_page_token` / links. **Sandbox list lags**: 10 min after filing it returned 1 of 3 disputes; webhooks + fetch by id are the reliable path | ✅ Nov 11, 200, debug `ca58cde9e6b7f` |
+| Show dispute | `GET /v1/customer/disputes/{id}` | **source of allowed actions = `links[]` (HATEOAS)**; rels come with underscores (`provide_evidence`, `accept_claim`, `send_message`, `make_offer`, `provide_supporting_info`), we normalise to dashes. Also `status`, `reason`, `dispute_life_cycle_stage`, `seller_response_due_date`, `evidences` (**`source: REQUESTED_FROM_SELLER` entries = the only evidence types PayPal accepts**), `allowed_response_options.accept_claim.accept_claim_types`, `refund_details.allowed_refund_amount`, `offer.buyer_requested_amount`, `disputed_transactions[].custom`/`invoice_number` (our order id / number) | ✅ Nov 12 |
 | Send message | `POST /v1/customer/disputes/{id}/send-message` | multipart: `input` JSON `{ "message": "…" }` | ❓ confirm format |
 | Make offer | `POST /v1/customer/disputes/{id}/make-offer` | JSON: `note`, `offer_amount{currency_code,value}`, `offer_type` ∈ `REFUND`, `REFUND_WITH_RETURN`, `REFUND_WITH_REPLACEMENT`, `REPLACEMENT_WITHOUT_REFUND`; `return_shipping_address` when returning | 📄 |
-| Provide evidence | `POST /v1/customer/disputes/{id}/provide-evidence` | `multipart/form-data`. Part `input` (JSON): `{ "evidences": [ { "evidence_type": "PROOF_OF_FULFILLMENT" \| "PROOF_OF_REFUND" \| "OTHER", "evidence_info": { "tracking_info": [{ "carrier_name": "USPS", "tracking_number": "…" }], "refund_ids": [] }, "notes": "…", "documents": [{ "name": "evidence.pdf" }] } ] }`. File part name: docs show `evidence-file` (❓ confirm vs `evidence_file`). Only allowed when status is `WAITING_FOR_SELLER_RESPONSE` and the `provide-evidence` link exists. | ❓ |
-| Accept claim | `POST /v1/customer/disputes/{id}/accept-claim` | JSON: `note`, `accept_claim_type` ∈ `REFUND`, `REFUND_WITH_RETURN`, `PARTIAL_REFUND`; `refund_amount`; `return_shipping_address` | 📄 |
+| Provide evidence | `POST /v1/customer/disputes/{id}/provide-evidence` | `multipart/form-data`. Part `input` (JSON): `{ "evidences": [ { "evidence_type": …, "evidence_info": { "tracking_info": [{ "carrier_name": "USPS", "tracking_number": "…" }] }, "notes": "…", "documents": [{ "name": "evidence.pdf" }] } ] }` + file part **`evidence-file`** (works). `evidence_type` must be one PayPal requested (`evidences[].source = REQUESTED_FROM_SELLER`), else 400 `EVIDENCE_TYPE_IS_NOT_ALLOWED` (an SNAD claim requested `PROOF_OF_REFUND` + `OTHER`; `PROOF_OF_FULFILLMENT` was rejected, debug `ca590736d996f`). After success: `WAITING_FOR_SELLER_RESPONSE` → `UNDER_REVIEW` (link `provide_supporting_info`) | ✅ Nov 12, 200, debug `f803079a5ba6c` (OTHER + PDF) |
+| Accept claim | `POST /v1/customer/disputes/{id}/accept-claim` | JSON: `note`, `accept_claim_type` ∈ `REFUND`, `REFUND_WITH_RETURN`, `PARTIAL_REFUND`, `REFUND_WITH_RETURN_SHIPMENT_LABEL` (from `allowed_response_options`); `refund_amount`. Via toolkit `accept_dispute_claim` (no debug id surfaced); response `{links:[detail]}`; dispute then `UNDER_REVIEW` with only `self` while PayPal processes | ✅ Nov 12, toolkit, INQUIRY INR PP-R-UCV-10199605 |
 | Escalate | `POST /v1/customer/disputes/{id}/escalate` | `note`; moves INQUIRY → CHARGEBACK (claim) stage | 📄 |
 | Acknowledge return | `POST /v1/customer/disputes/{id}/acknowledge-return-item` | stretch | 📄 |
-| **Sandbox only:** require evidence | `POST /v1/customer/disputes/{id}/require-evidence` | `{ "action": "SELLER_EVIDENCE" }`; needs status `UNDER_REVIEW` + link present | 📄 |
-| **Sandbox only:** adjudicate | `POST /v1/customer/disputes/{id}/adjudicate` | `{ "adjudication_outcome": "SELLER_FAVOR" \| "BUYER_FAVOR" }`; needs `UNDER_REVIEW` + link present | 📄 |
+| **Sandbox only:** require evidence | `POST /v1/customer/disputes/{id}/require-evidence` | `{ "action": "SELLER_EVIDENCE" }`. 400 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` on a buyer-filed claim in `UNDER_REVIEW` (debug `f14010631b658`); try after a merchant `escalate` | ❌ on buyer-filed claims |
+| **Sandbox only:** adjudicate | `POST /v1/customer/disputes/{id}/adjudicate` | `{ "adjudication_outcome": "SELLER_FAVOR" \| "BUYER_FAVOR" }`. 400 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` on a buyer-filed claim in `UNDER_REVIEW` after evidence (debug `f910492cdd30c`) | ❌ on buyer-filed claims |
 
 Webhooks: `GET/POST /v1/notifications/webhooks` ✅ Nov 11 (list debug `ca58cdea11f52`); webhook `3FV32316LX9093800` → `https://counterclaim.aansl.com/webhooks/paypal`.
 
@@ -178,16 +178,27 @@ Supported evidence file types and size limits: researcher to confirm (expected P
 - **Escalation timing** (accelerated response): sandbox amounts $5.00–5.99 / $9.00–9.99 / ≥ $11 simulate day-5/9/11 escalation 📄. Price demo products so each storyline uses the timing we want. Researcher checks whether this applies to UI-created disputes.
 - Dispute IDs, once created, can't be reopened on the same transaction. **Create 6–9 spare purchases on Wed evening** so demo recording has fresh transactions.
 
-### 6.5 Dispute state machine (fill in at G0 from real observations)
-Expected from docs (to verify):
+### 6.5 Dispute state machine (observed in the sandbox, Nov 12)
+Buyer files in the Resolution Center ("Report a problem"). What the buyer answers to **"Have you contacted the seller?"** decides the starting stage:
+
 ```
-INQUIRY stage, status WAITING_FOR_SELLER_RESPONSE  → links: send-message, make-offer, accept-claim, escalate (?)
-  └─ escalate (merchant) or buyer escalates → CHARGEBACK stage, status UNDER_REVIEW
-        └─ [sandbox] require-evidence SELLER_EVIDENCE → WAITING_FOR_SELLER_RESPONSE → links: provide-evidence, accept-claim
-              └─ provide-evidence → UNDER_REVIEW
-                    └─ [sandbox] adjudicate SELLER_FAVOR/BUYER_FAVOR → RESOLVED (+ dispute_outcome)
+"No"/skipped → INQUIRY, OPEN (links: self)                                  ~3–5 min
+   └─ INQUIRY, WAITING_FOR_SELLER_RESPONSE
+        links: send_message, make_offer, accept_claim, provide_evidence, escalate
+        due = filing + 20 days
+        └─ accept_claim (toolkit) → UNDER_REVIEW (links: self) → (refund processed)
+
+"Yes" → CHARGEBACK (claim), UNDER_REVIEW
+   INR with our tracking on file: stays UNDER_REVIEW, links: provide_supporting_info
+   SNAD: ~3 min → CHARGEBACK, WAITING_FOR_SELLER_RESPONSE
+        links: accept_claim, provide_evidence; evidences requested: PROOF_OF_REFUND, OTHER
+        accept_claim_types: REFUND, PARTIAL_REFUND, REFUND_WITH_RETURN, REFUND_WITH_RETURN_SHIPMENT_LABEL
+        └─ provide_evidence (OTHER + PDF) → UNDER_REVIEW, links: provide_supporting_info
 ```
-The worker records the **actual** sequence of `status` + `links[].rel` observed for one INR dispute here at G0. The lab panel and demo script depend on it.
+- Sandbox `require-evidence` and `adjudicate` both return `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` on these buyer-filed claims. Still to test: INQUIRY → merchant `escalate` → `adjudicate`.
+- Webhooks `CUSTOMER.DISPUTE.CREATED` arrive ~3–4 min after filing; `UPDATED` on each state change. `GET /v1/customer/disputes` (list) lags much longer, so the poller is only a fallback.
+- Buyer sees our uploaded tracking ("Here's the tracking information for your order") before being allowed to file an INR.
+- Demo implication: file disputes **without** "contacted the seller" so they start as inquiries with the full action set (message, offer, evidence, accept).
 
 ## 7. The agent
 
