@@ -48,6 +48,7 @@ Verify-first list when creds arrive (in order): token → `GET disputes?page_siz
 - [ ] After G4: `video/script.md` from real demo data, render scenes, VO.
 
 ## Decisions
+- Nov 11, after Schreuder's feedback: UI redesigned to a calm card workspace. Top pill nav instead of a sidebar; borderless 28 px cards on a tinted panel; one sans family (Bricolage Grotesque) everywhere, with no serif and no mono (app, PDF, video); red PDF file icon. DESIGN.md sections 1-4 and 10 rewritten.
 - **Deploy target: aeza-de** (docker compose + existing Caddy) per Schreuder's brief instead of Render. Same image runs web (`node .output/server/index.mjs`) and worker (`tsx src/worker/index.ts`), `WORKER_MODE=separate`.
 - **No cloudflared:** webhooks go straight to the deployed URL; locally the 60 s poller keeps disputes in sync.
 - **AI SDK 7** for our code; the toolkit keeps its own bundled `ai@4`. We call toolkit tools' `execute` directly and wrap the read tools as AI SDK 7 `tool()`s (SPEC §6.2 allows it). Two toolkit instances: read-only (given to the model) and action (programmatic, per-action `request_id`).
