@@ -4,6 +4,7 @@ import { toDecimalString } from "#/lib/money";
 import { CARRIERS, simulatedTrackingNumber } from "./carrier";
 import { db } from "./db/client";
 import { type Address, orders, products, shipments } from "./db/schema";
+import { env } from "./env";
 import { publish } from "./events/bus";
 import { recordActivity } from "./kv";
 import { log } from "./log";
@@ -48,6 +49,8 @@ export function fromPayPalAddress(
 export async function createShopOrder(input: {
 	slug: string;
 	quantity: number;
+	/** true → same-tab checkout via PayPal's approval page (no popup). */
+	redirect?: boolean;
 }) {
 	const [product] = await db()
 		.select()
@@ -86,6 +89,10 @@ export async function createShopOrder(input: {
 			currency: product.currency,
 			totalValue: toDecimalString(totalMinor, product.currency),
 			description: `Kiln & Thread order #${number}`,
+			...(input.redirect && {
+				returnUrl: `${env().PUBLIC_BASE_URL}/shop/checkout/return`,
+				cancelUrl: `${env().PUBLIC_BASE_URL}/shop/p/${product.slug}`,
+			}),
 			items: [
 				{
 					name: product.title,
@@ -101,10 +108,14 @@ export async function createShopOrder(input: {
 		.update(orders)
 		.set({ paypalOrderId: res.data.id, raw: res.data })
 		.where(eq(orders.id, id));
+	const approveUrl = res.data.links?.find(
+		(l) => l.rel === "payer-action" || l.rel === "approve",
+	)?.href;
 	return {
 		paypalOrderId: res.data.id,
 		orderNumber: number,
 		debugId: res.debugId,
+		approveUrl,
 	};
 }
 

@@ -133,6 +133,9 @@ export type CreateOrderInput = {
 	totalValue: string;
 	items: { name: string; quantity: number; unitValue: string; sku?: string }[];
 	description?: string;
+	/** Same-tab checkout: PayPal sends the buyer back here (`?token=<order id>`). */
+	returnUrl?: string;
+	cancelUrl?: string;
 };
 
 export function createOrder(input: CreateOrderInput, requestId: string) {
@@ -174,6 +177,10 @@ export function createOrder(input: CreateOrderInput, requestId: string) {
 						shipping_preference: "GET_FROM_FILE",
 						user_action: "PAY_NOW",
 						brand_name: "Kiln & Thread",
+						...(input.returnUrl && {
+							return_url: input.returnUrl,
+							cancel_url: input.cancelUrl ?? input.returnUrl,
+						}),
 					},
 				},
 			},

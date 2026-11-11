@@ -35,6 +35,7 @@ import { Route as ApiShopOrdersRouteImport } from './routes/api/shop/orders'
 import { Route as ApiShopProductsRouteImport } from './routes/api/shop/products'
 import { Route as AppDisputesIndexRouteImport } from './routes/app/disputes.index'
 import { Route as AppDisputesDisputeIdRouteImport } from './routes/app/disputes.$disputeId'
+import { Route as ShopCheckoutReturnRouteImport } from './routes/shop/checkout.return'
 import { Route as ShopCheckoutSuccessRouteImport } from './routes/shop/checkout.success'
 import { Route as ShopPSlugRouteImport } from './routes/shop/p.$slug'
 import { Route as ApiActionsIdApproveRouteImport } from './routes/api/actions.$id.approve'
@@ -183,6 +184,11 @@ const AppDisputesDisputeIdRoute = AppDisputesDisputeIdRouteImport.update({
   path: '/disputes/$disputeId',
   getParentRoute: () => AppRoute,
 } as any)
+const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => ShopRoute,
+} as any)
 const ShopCheckoutSuccessRoute = ShopCheckoutSuccessRouteImport.update({
   id: '/checkout/success',
   path: '/checkout/success',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
   '/api/shop/products': typeof ApiShopProductsRoute
   '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/return': typeof ShopCheckoutReturnRoute
   '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
   '/shop/p/$slug': typeof ShopPSlugRoute
   '/app/disputes/': typeof AppDisputesIndexRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
   '/api/shop/products': typeof ApiShopProductsRoute
   '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/return': typeof ShopCheckoutReturnRoute
   '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
   '/shop/p/$slug': typeof ShopPSlugRoute
   '/app/disputes': typeof AppDisputesIndexRoute
@@ -390,6 +398,7 @@ export interface FileRoutesById {
   '/api/shop/orders': typeof ApiShopOrdersRouteWithChildren
   '/api/shop/products': typeof ApiShopProductsRoute
   '/app/disputes/$disputeId': typeof AppDisputesDisputeIdRoute
+  '/shop/checkout/return': typeof ShopCheckoutReturnRoute
   '/shop/checkout/success': typeof ShopCheckoutSuccessRoute
   '/shop/p/$slug': typeof ShopPSlugRoute
   '/app/disputes/': typeof AppDisputesIndexRoute
@@ -437,6 +446,7 @@ export interface FileRouteTypes {
     | '/api/shop/orders'
     | '/api/shop/products'
     | '/app/disputes/$disputeId'
+    | '/shop/checkout/return'
     | '/shop/checkout/success'
     | '/shop/p/$slug'
     | '/app/disputes/'
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/api/shop/orders'
     | '/api/shop/products'
     | '/app/disputes/$disputeId'
+    | '/shop/checkout/return'
     | '/shop/checkout/success'
     | '/shop/p/$slug'
     | '/app/disputes'
@@ -525,6 +536,7 @@ export interface FileRouteTypes {
     | '/api/shop/orders'
     | '/api/shop/products'
     | '/app/disputes/$disputeId'
+    | '/shop/checkout/return'
     | '/shop/checkout/success'
     | '/shop/p/$slug'
     | '/app/disputes/'
@@ -759,6 +771,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDisputesDisputeIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/shop/checkout/return': {
+      id: '/shop/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/shop/checkout/return'
+      preLoaderRoute: typeof ShopCheckoutReturnRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/shop/checkout/success': {
       id: '/shop/checkout/success'
       path: '/checkout/success'
@@ -903,12 +922,14 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface ShopRouteChildren {
   ShopIndexRoute: typeof ShopIndexRoute
+  ShopCheckoutReturnRoute: typeof ShopCheckoutReturnRoute
   ShopCheckoutSuccessRoute: typeof ShopCheckoutSuccessRoute
   ShopPSlugRoute: typeof ShopPSlugRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopIndexRoute: ShopIndexRoute,
+  ShopCheckoutReturnRoute: ShopCheckoutReturnRoute,
   ShopCheckoutSuccessRoute: ShopCheckoutSuccessRoute,
   ShopPSlugRoute: ShopPSlugRoute,
 }

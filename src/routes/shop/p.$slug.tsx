@@ -130,6 +130,30 @@ function Checkout({ slug }: { slug: string }) {
 					onError={(e: Error) => setError(e.message)}
 				/>
 			</PayPalProvider>
+			<button
+				type="button"
+				disabled={busy}
+				className="mt-3 text-sm text-shop-muted underline-offset-4 hover:text-shop-ink hover:underline"
+				onClick={async () => {
+					setError(null);
+					setBusy(true);
+					try {
+						const r = await post<{ approveUrl?: string }>("/api/shop/orders", {
+							slug,
+							quantity: 1,
+							redirect: true,
+						});
+						if (!r.approveUrl)
+							throw new Error("PayPal returned no approval link.");
+						window.location.assign(r.approveUrl);
+					} catch (e) {
+						setError((e as Error).message);
+						setBusy(false);
+					}
+				}}
+			>
+				Popup blocked? Pay in this tab instead
+			</button>
 			{busy && (
 				<p className="mt-2 text-sm text-shop-muted">Confirming your payment…</p>
 			)}
