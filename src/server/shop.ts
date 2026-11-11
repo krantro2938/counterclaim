@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { asc, desc, sql as dsql, eq } from "drizzle-orm";
-import { toDecimalString } from "#/lib/money";
+import { toDecimalString, toMinor } from "#/lib/money";
 import { CARRIERS, simulatedTrackingNumber } from "./carrier";
 import { db } from "./db/client";
 import { type Address, orders, products, shipments } from "./db/schema";
@@ -199,6 +199,96 @@ export async function captureShopOrder(paypalOrderId: string) {
 	});
 	await publish({ type: "kpi.updated" });
 	return { orderNumber: order.number, debugId };
+}
+
+/**
+ * Import a paid PayPal order that another deployment of this shop created (e.g. a checkout run on
+ * a dev server). Reads the order from PayPal and keeps our id (custom_id) and number (invoice_id),
+ * so dispute matching works the same as for orders captured here.
+ */
+export async function importPayPalOrder(paypalOrderId: string) {
+	const [existing] = await db()
+		.select()
+		.from(orders)
+		.where(eq(orders.paypalOrderId, paypalOrderId))
+		.limit(1);
+	if (existing?.status === "captured")
+		return { orderNumber: existing.number, imported: false };
+	const { data, debugId } = await getOrder(paypalOrderId);
+	if (data.status !== "COMPLETED")
+		throw Object.assign(new Error(`PayPal order is ${data.status}`), {
+			status: 409,
+		});
+	const pu = data.purchase_units?.[0];
+	const amount = pu?.payments?.captures?.[0]?.amount ?? pu?.amount;
+	if (!pu || !amount)
+		throw Object.assign(new Error("PayPal order has no purchase unit"), {
+			status: 422,
+		});
+	const known = await db().select().from(products);
+	const items = (pu.items ?? []).map((i) => {
+		const product = known.find((k) => k.slug === i.sku);
+		return {
+			productId: product?.id,
+			slug: i.sku ?? "",
+			title: i.name,
+			quantity: Number(i.quantity) || 1,
+			unitMinor: i.unit_amount
+				? toMinor(i.unit_amount.value, i.unit_amount.currency_code)
+				: 0,
+		};
+	});
+	const uuidRe =
+		/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+	const ref = pu.custom_id ?? pu.reference_id;
+	const id = existing?.id ?? (ref && uuidRe.test(ref) ? ref : randomUUID());
+	const invoiceNumber = Number(/^KT-(\d+)-/.exec(pu.invoice_id ?? "")?.[1]);
+	let number = existing?.number;
+	if (!number) {
+		const [taken] = Number.isFinite(invoiceNumber)
+			? await db()
+					.select({ id: orders.id })
+					.from(orders)
+					.where(eq(orders.number, invoiceNumber))
+					.limit(1)
+			: [undefined];
+		number =
+			Number.isFinite(invoiceNumber) && !taken
+				? invoiceNumber
+				: await nextOrderNumber();
+	}
+	const c = applyCapture(data);
+	const row = {
+		id,
+		number,
+		paypalOrderId,
+		amountMinor: toMinor(amount.value, amount.currency_code),
+		currency: amount.currency_code,
+		items,
+		status: "captured",
+		origin: "paypal",
+		captureId: c.captureId,
+		payerId: c.payerId,
+		buyerEmail: c.buyerEmail,
+		buyerName: c.buyerName,
+		paypalShippingAddress: c.paypalShippingAddress,
+		shippingAddress: c.paypalShippingAddress,
+		capturedAt: c.capturedAt,
+		raw: data,
+	};
+	if (existing) await db().update(orders).set(row).where(eq(orders.id, id));
+	else await db().insert(orders).values(row);
+	await recordActivity({
+		actor: "buyer",
+		kind: "order_captured",
+		text: `Order #${number} paid via PayPal by ${c.buyerName ?? "a buyer"}`,
+		orderId: id,
+		meta: { captureId: c.captureId, debugId, imported: true },
+	});
+	await refreshProtection([id]);
+	await publish({ type: "order.updated", orderId: id, number });
+	await publish({ type: "kpi.updated" });
+	return { orderNumber: number, imported: true };
 }
 
 /**

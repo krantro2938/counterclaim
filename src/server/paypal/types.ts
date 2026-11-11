@@ -105,8 +105,15 @@ export type PayPalOrder = {
 	};
 	purchase_units?: {
 		reference_id?: string;
+		custom_id?: string;
 		invoice_id?: string;
 		amount?: { currency_code: string; value: string };
+		items?: {
+			name: string;
+			quantity: string;
+			sku?: string;
+			unit_amount?: { currency_code: string; value: string };
+		}[];
 		shipping?: {
 			name?: { full_name?: string };
 			address?: PayPalAddress;

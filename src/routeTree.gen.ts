@@ -45,6 +45,7 @@ import { Route as ApiDisputesIdAssessRouteImport } from './routes/api/disputes.$
 import { Route as ApiDisputesIdChatRouteImport } from './routes/api/disputes.$id.chat'
 import { Route as ApiDisputesIdEvidencePreviewRouteImport } from './routes/api/disputes.$id.evidence-preview'
 import { Route as ApiDisputesIdTraceRouteImport } from './routes/api/disputes.$id.trace'
+import { Route as ApiLabOrdersImportRouteImport } from './routes/api/lab/orders.import'
 import { Route as ApiOrdersIdShipRouteImport } from './routes/api/orders.$id.ship'
 import { Route as ApiLabCarrierShipmentIdAdvanceRouteImport } from './routes/api/lab/carrier.$shipmentId.advance'
 import { Route as ApiLabDisputesIdAdjudicateRouteImport } from './routes/api/lab/disputes.$id.adjudicate'
@@ -235,6 +236,11 @@ const ApiDisputesIdTraceRoute = ApiDisputesIdTraceRouteImport.update({
   path: '/trace',
   getParentRoute: () => ApiDisputesIdRoute,
 } as any)
+const ApiLabOrdersImportRoute = ApiLabOrdersImportRouteImport.update({
+  id: '/api/lab/orders/import',
+  path: '/api/lab/orders/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOrdersIdShipRoute = ApiOrdersIdShipRouteImport.update({
   id: '/$id/ship',
   path: '/$id/ship',
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/lab/orders/import': typeof ApiLabOrdersImportRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
   '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
   '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
@@ -362,6 +369,7 @@ export interface FileRoutesByTo {
   '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/lab/orders/import': typeof ApiLabOrdersImportRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
   '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
   '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
@@ -409,6 +417,7 @@ export interface FileRoutesById {
   '/api/disputes/$id/chat': typeof ApiDisputesIdChatRoute
   '/api/disputes/$id/evidence-preview': typeof ApiDisputesIdEvidencePreviewRoute
   '/api/disputes/$id/trace': typeof ApiDisputesIdTraceRoute
+  '/api/lab/orders/import': typeof ApiLabOrdersImportRoute
   '/api/orders/$id/ship': typeof ApiOrdersIdShipRoute
   '/api/lab/carrier/$shipmentId/advance': typeof ApiLabCarrierShipmentIdAdvanceRoute
   '/api/lab/disputes/$id/adjudicate': typeof ApiLabDisputesIdAdjudicateRoute
@@ -457,6 +466,7 @@ export interface FileRouteTypes {
     | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
+    | '/api/lab/orders/import'
     | '/api/orders/$id/ship'
     | '/api/lab/carrier/$shipmentId/advance'
     | '/api/lab/disputes/$id/adjudicate'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
+    | '/api/lab/orders/import'
     | '/api/orders/$id/ship'
     | '/api/lab/carrier/$shipmentId/advance'
     | '/api/lab/disputes/$id/adjudicate'
@@ -547,6 +558,7 @@ export interface FileRouteTypes {
     | '/api/disputes/$id/chat'
     | '/api/disputes/$id/evidence-preview'
     | '/api/disputes/$id/trace'
+    | '/api/lab/orders/import'
     | '/api/orders/$id/ship'
     | '/api/lab/carrier/$shipmentId/advance'
     | '/api/lab/disputes/$id/adjudicate'
@@ -579,6 +591,7 @@ export interface RootRouteChildren {
   ApiActionsIdApproveRoute: typeof ApiActionsIdApproveRoute
   ApiActionsIdCancelRoute: typeof ApiActionsIdCancelRoute
   ApiActionsIdRejectRoute: typeof ApiActionsIdRejectRoute
+  ApiLabOrdersImportRoute: typeof ApiLabOrdersImportRoute
   ApiLabCarrierShipmentIdAdvanceRoute: typeof ApiLabCarrierShipmentIdAdvanceRoute
   ApiLabDisputesIdAdjudicateRoute: typeof ApiLabDisputesIdAdjudicateRoute
   ApiLabDisputesIdEscalateRoute: typeof ApiLabDisputesIdEscalateRoute
@@ -841,6 +854,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDisputesIdTraceRouteImport
       parentRoute: typeof ApiDisputesIdRoute
     }
+    '/api/lab/orders/import': {
+      id: '/api/lab/orders/import'
+      path: '/api/lab/orders/import'
+      fullPath: '/api/lab/orders/import'
+      preLoaderRoute: typeof ApiLabOrdersImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/orders/$id/ship': {
       id: '/api/orders/$id/ship'
       path: '/$id/ship'
@@ -1013,6 +1033,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiActionsIdApproveRoute: ApiActionsIdApproveRoute,
   ApiActionsIdCancelRoute: ApiActionsIdCancelRoute,
   ApiActionsIdRejectRoute: ApiActionsIdRejectRoute,
+  ApiLabOrdersImportRoute: ApiLabOrdersImportRoute,
   ApiLabCarrierShipmentIdAdvanceRoute: ApiLabCarrierShipmentIdAdvanceRoute,
   ApiLabDisputesIdAdjudicateRoute: ApiLabDisputesIdAdjudicateRoute,
   ApiLabDisputesIdEscalateRoute: ApiLabDisputesIdEscalateRoute,

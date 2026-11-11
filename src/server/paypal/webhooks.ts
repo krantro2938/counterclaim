@@ -6,6 +6,7 @@ import { enqueue } from "../jobs/queue";
 import { kvSet, recordActivity } from "../kv";
 import { log } from "../log";
 import { refreshProtection } from "../protection";
+import { importPayPalOrder } from "../shop";
 import { verifyWebhookSignature } from "./rest";
 
 export const WEBHOOK_EVENT_TYPES = [
@@ -150,6 +151,15 @@ export async function processWebhook(eventId: string): Promise<void> {
 				.where(eq(orders.captureId, captureId))
 				.limit(1);
 			if (o) await refreshProtection([o.id]);
+			else {
+				// Paid through another deployment of the shop (e.g. a dev server): import it.
+				const orderId = (
+					res.supplementary_data as
+						| { related_ids?: { order_id?: string } }
+						| undefined
+				)?.related_ids?.order_id;
+				if (orderId) await importPayPalOrder(orderId);
+			}
 		} else if (event.event_type === "PAYMENT.CAPTURE.REFUNDED") {
 			const links =
 				(res.links as { rel: string; href: string }[] | undefined) ?? [];
