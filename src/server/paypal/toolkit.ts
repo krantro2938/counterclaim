@@ -123,11 +123,15 @@ export async function runToolkitTool(
 			data = out;
 		}
 	}
+	// The toolkit reports HTTP failures as a value, e.g. `{ error: … }` or
+	// `{ ok: false, code: "PAYPAL_API_HTTP_ERROR", status: 403 }`, instead of throwing.
+	const obj =
+		data != null && typeof data === "object"
+			? (data as Record<string, unknown>)
+			: null;
 	const isErr =
-		data != null &&
-		typeof data === "object" &&
-		"error" in (data as Record<string, unknown>) &&
-		Object.keys(data as Record<string, unknown>).length <= 2;
+		obj != null &&
+		(obj.ok === false || ("error" in obj && Object.keys(obj).length <= 2));
 	log.info({ toolkit: { name, ok: !isErr, ms } }, "toolkit call");
 	return { ok: !isErr, data, raw, ms };
 }
