@@ -31,18 +31,22 @@ Solo and small e-commerce sellers who take payments with PayPal Checkout on thei
 
 ## PayPal capabilities used
 
-| Capability | Where | How |
-|---|---|---|
-| Orders v2: create + capture | `/shop` checkout, `src/server/shop.ts` | JS SDK **v6** one-time payment button; server creates and captures with `PayPal-Request-Id` |
-| Orders v2: show | case file, agent tool | order details and PayPal-confirmed shipping address |
-| Shipment tracking | Orders → *Mark shipped* | Agent Toolkit `create_shipment_tracking` (`/v1/shipping/trackers-batch`), fallback `POST /v2/checkout/orders/{id}/track` |
-| Disputes: list + show | sync + poller, agent tool | `GET /v1/customer/disputes`, `GET /v1/customer/disputes/{id}`; `links[]` = the agent's action space |
-| Disputes: provide-evidence | executor | multipart (`input` JSON + PDF file part), `PROOF_OF_FULFILLMENT` with tracking info |
-| Disputes: make-offer, send-message, escalate | executor | JSON, `PayPal-Request-Id` = action UUID |
-| Disputes: accept-claim | executor | Agent Toolkit `accept_dispute_claim` (full refund), REST for partial refunds |
-| Disputes sandbox: require-evidence, adjudicate | Lab page | drive the sandbox lifecycle on camera |
-| Webhooks + signature verification | `POST /webhooks/paypal` | `verify-webhook-signature`, stored once per `event.id` |
-| Transaction search | agent tool | Agent Toolkit `list_transactions` |
+| Capability | Where | How | Verified in the sandbox |
+|---|---|---|---|
+| Orders v2: create + capture | `/shop` checkout, `src/server/shop.ts` | JS SDK **v6** one-time payment button (popup), plus a same-tab fallback using `experience_context.return_url` and the `payer-action` link; server captures with `PayPal-Request-Id` | ✅ 14 real captures |
+| Orders v2: show | case file, agent tool, order import | order details, PayPal-confirmed shipping address, `shipping.trackers[]` | ✅ |
+| Shipment tracking | Orders → *Mark shipped* | `POST /v2/checkout/orders/{id}/track`. (The Agent Toolkit's `create_shipment_tracking` uses legacy trackers-batch, which returns 403 without the trackers scope; we detect that and fall back.) The buyer sees the tracking in the Resolution Center | ✅ debug `f529941972613` |
+| Disputes: list + show | webhooks, poller, agent tool | `links[]` = the agent's action space; `evidences[]` with `REQUESTED_FROM_SELLER` = the evidence types PayPal accepts | ✅ |
+| Disputes: provide-evidence | executor | multipart (`input` JSON + `evidence-file` PDF), evidence type picked from what PayPal requested | ✅ debug `f803079a5ba6c` |
+| Disputes: send-message | executor | JSON `{ message }` | ✅ debug `f57361941fe6f` |
+| Disputes: make-offer | executor | JSON, partial `REFUND` with note | ✅ debug `f68670898eba2` |
+| Disputes: escalate | executor, Lab | JSON `{ note }` | ✅ debug `f324049286c13` |
+| Disputes: accept-claim | executor | Agent Toolkit `accept_dispute_claim` | ✅ case resolved, refund shown to the buyer |
+| Disputes sandbox: require-evidence, adjudicate | Lab page | drive the sandbox lifecycle; only offered when PayPal's links include them | partial: refused on claims until PayPal adds the links |
+| Webhooks + signature verification | `POST /webhooks/paypal` | `verify-webhook-signature`, stored once per `event.id`; `PAYMENT.CAPTURE.COMPLETED`, `CUSTOMER.DISPUTE.*` | ✅ all events verified |
+| Transaction search | agent tool | Agent Toolkit `list_transactions` | ✅ |
+
+The real dispute state machine we observed (what the buyer answers decides inquiry vs. claim, which links appear when) is written up in [`docs/SPEC.md` §6.5](docs/SPEC.md).
 
 ## AI tools used, and how
 
@@ -111,7 +115,8 @@ Scripts: `pnpm test` · `pnpm check` · `pnpm demo:reset` (clears assessments/ac
 ## Limitations (honest list)
 
 - **Simulated carrier:** tracking numbers and scan events come from CarrierSim and are labelled *Simulated* everywhere (UI, PDF footnote). Tracking *upload* to PayPal is real.
-- **Sandbox-only endpoints:** `require-evidence` and `adjudicate` stand in for time passing and PayPal's reviewers; they live on the Lab page.
+- **Sandbox-only endpoints:** `require-evidence` and `adjudicate` stand in for time passing and PayPal's reviewers; they live on the Lab page. The sandbox only accepts them once the dispute's links include them (for buyer-filed claims that took ~26 minutes).
+- **Sandbox quirks we work around:** the dispute *list* lags behind by 10+ minutes (webhooks and fetch-by-ID are the reliable path); the sandbox buyer session expires after ~15 minutes.
 - **Demo inbox:** buyer/merchant emails for the storylines are seeded per order from the Lab and labelled as demo data.
 - Single merchant (configured by env), USD only, no auth.
 
