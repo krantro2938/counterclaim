@@ -20,7 +20,7 @@ Fresh disputes for stories 2 and 3 need one buyer login, filed at least 10 minut
 
 | # | Time | Visual | VO |
 |---|---|---|---|
-| 1 | 0:00–0:12 | HyperFrames `s01-opener` (shop hero + dispute card "Item not received · $64.00") | Maya runs Kiln and Thread, a two-person ceramics shop. Every month, PayPal disputes eat into her margin, including ones she should win. |
+| 1 | 0:00–0:12 | HyperFrames `s01-opener` (shop hero + dispute card "Item not received · $64.00", "$1,140 lost last year": persona backstory, matches the graphic) | Maya runs Kiln and Thread, a two-person ceramics shop. Last year she lost over eleven hundred dollars to PayPal disputes she should have won. |
 | 2 | 0:12–0:24 | `s02-problem` (tracking, delivery scan, messages → deadline clock) | The evidence usually exists: a tracking number, a delivery scan, a polite email thread. Pulling it together takes close to an hour per case, against a deadline. |
 | 3 | 0:24–0:32 | `s03-title` | Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting. |
 | 4 | 0:32–0:52 | `ch-prevent` 1 s → Take A: Overview → Orders → #9009 *At risk* → Mark shipped → *Protected* | It watches every order. This one has no tracking, so it isn't covered by Seller Protection. One click sends tracking to PayPal, and the order is protected. |
