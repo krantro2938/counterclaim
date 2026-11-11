@@ -54,6 +54,8 @@ video/
 
 ## 5. Scene list and voice-over script
 
+> The final, data-checked version is `video/script.md` (real dispute IDs, amounts, fallbacks). This table is the original plan.
+
 Words per minute ≈ 140. The total VO is ~370 words. Timings are targets; the final cut follows the generated audio.
 
 | # | Time | Visual | Source | Voice-over |
@@ -63,12 +65,12 @@ Words per minute ≈ 140. The total VO is ~370 words. Timings are targets; the f
 | 3 | 0:24–0:32 | Title card: **Counterclaim**. Subtitle: "An AI dispute agent for small PayPal merchants." | HyperFrames | "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting." |
 | 4 | 0:32–0:52 | Chapter card "Prevent" (1 s) → real: Overview KPIs → Orders page, an order "At risk" → *Mark shipped* popover → row flashes to "Protected". Callout on the ProtectionBadge. | Recording + overlay | "It watches every order. This one has no tracking, so it isn't covered by Seller Protection. One click generates tracking and sends it to PayPal. Now it's protected." |
 | 5 | 0:52–1:05 | Chapter card "Defend" (1 s) → real: disputes inbox; a new row slides in live; toast "New dispute". Browser address bar visible. | Recording | "When a buyer opens a dispute, it appears within a minute. No refresh, no inbox digging." |
-| 6 | 1:05–1:30 | Real: case page. Zoom on the verdict: 88% win likelihood, rubric and AI bars. Callout on fact chips, then hover one. Open the Trace tab briefly. | Recording + zoom + callouts | "Counterclaim builds the case file from PayPal, the order and the shipment. It scores the case with fixed rules and with Claude, then explains why. Every claim links to a fact. You can see exactly which PayPal tools it called." |
+| 6 | 1:05–1:30 | Real: case page. Zoom on the verdict: 88% win likelihood, rubric and AI bars. Callout on fact chips, then hover one. Open the Trace tab briefly. | Recording + zoom + callouts | "Counterclaim builds the case file from PayPal, the order and the shipment. It scores the case with fixed rules and with an AI model, then explains why. Every claim links to a fact. You can see exactly which PayPal tools it called." |
 | 7 | 1:30–1:48 | Real: evidence PDF preview sheet → close → *Approve* → confirm dialog restating the effect → toast with the PayPal debug ID (zoom). | Recording + zoom | "It drafts the evidence packet and proposes the response. Nothing moves until Maya approves. Then it submits proof of delivery through PayPal's Disputes API." |
 | 8 | 1:48–1:58 | Real: status changes; cut (no Lab on screen) → Outcome card counts up: "Won · $64.00 recovered". | Recording | "Case won. Sixty-four dollars recovered, in under a minute of her time." |
 | 9 | 1:58–2:12 | Chapter card "Decide" (1 s) → real: SNAD case → the agent proposes a partial refund offer → Maya edits $20 → $15 → approve. | Recording | "Not every case should be fought. Here the listing warned that glaze colour varies, so it suggests a partial refund to keep the customer. Maya adjusts the amount and sends it." |
 | 10 | 2:12–2:22 | Real: the no-tracking INR case → recommendation "Accept and refund" with a "Never protected" link. | Recording | "And when a case can't be won, it says so, and shows how to prevent the next one." |
-| 11 | 2:22–2:40 | Animated architecture: PayPal webhook → case file → Claude + PayPal Agent Toolkit read tools → validator ("only actions PayPal allows") → human approval → PayPal Disputes, Tracking and Refunds APIs. | HyperFrames | "Under the hood: PayPal webhooks, the PayPal Agent Toolkit and the Disputes API. The AI can only read and propose. It can only choose actions PayPal currently allows, and a human approves every money move." |
+| 11 | 2:22–2:40 | Animated architecture: PayPal webhook → case file → AI model (Mercury via the Vercel AI SDK) + PayPal Agent Toolkit read tools → validator ("only actions PayPal allows") → human approval → PayPal Disputes, Tracking and Refunds APIs. | HyperFrames | "Under the hood: PayPal webhooks, the PayPal Agent Toolkit and the Disputes API. The AI can only read and propose. It can only choose actions PayPal currently allows, and a human approves every money move." |
 | 12 | 2:40–2:47 | Outro: Counterclaim wordmark, the live URL, the GitHub URL. | HyperFrames | "Counterclaim. Stop losing disputes you should win." |
 
 Rules for the script:
