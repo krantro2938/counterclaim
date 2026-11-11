@@ -150,14 +150,14 @@ Enable only those actions in the toolkit configuration (`disputes: { list, get, 
 
 | Purpose | Method + path | Notes | Status |
 |---|---|---|---|
-| Token | `POST /v1/oauth2/token` | `grant_type=client_credentials`, basic auth | 📄 |
-| Create order | `POST /v2/checkout/orders` | intent `CAPTURE`, `purchase_units[].reference_id` = our order id, items, shipping | 📄 |
+| Token | `POST /v1/oauth2/token` | `grant_type=client_credentials`, basic auth | ✅ Nov 11, debug `ca58cde9c0fab` (no `shipping/trackers` scope listed, see Add tracking) |
+| Create order | `POST /v2/checkout/orders` | intent `CAPTURE`, `purchase_units[].reference_id` = our order id, items, shipping | ✅ Nov 11, 200, debug `ca58ce3632e56` |
 | Capture | `POST /v2/checkout/orders/{id}/capture` | store `capture_id`, payer, shipping address | 📄 |
 | Show order | `GET /v2/checkout/orders/{id}` | used by the case file | 📄 |
 | Add tracking | `POST /v2/checkout/orders/{id}/track` | body: `capture_id`, `tracking_number`, `carrier` (e.g. `USPS`), `notify_payer`, optional `items`. Alternative legacy: `POST /v1/shipping/trackers-batch` | ❓ confirm which works in sandbox |
 | Refund | `POST /v2/payments/captures/{id}/refund` | used for a pre-dispute goodwill refund | 📄 |
 | Verify webhook | `POST /v1/notifications/verify-webhook-signature` | headers `PAYPAL-TRANSMISSION-ID/TIME/SIG`, `PAYPAL-CERT-URL`, `PAYPAL-AUTH-ALGO` + `webhook_id` + raw `webhook_event` | 📄 |
-| List disputes | `GET /v1/customer/disputes` | filters `update_time_after`, `dispute_state`, paging via `next_page_token` / links | 📄 |
+| List disputes | `GET /v1/customer/disputes` | filters `update_time_after`, `dispute_state`, paging via `next_page_token` / links | ✅ Nov 11, 200 (0 disputes yet), debug `ca58cde9e6b7f` |
 | Show dispute | `GET /v1/customer/disputes/{id}` | **source of allowed actions = `links[]` (HATEOAS)**; also `status`, `reason`, `dispute_life_cycle_stage`, `seller_response_due_date`, `evidences`, `messages`, `offer`, `disputed_transactions` | 📄 |
 | Send message | `POST /v1/customer/disputes/{id}/send-message` | multipart: `input` JSON `{ "message": "…" }` | ❓ confirm format |
 | Make offer | `POST /v1/customer/disputes/{id}/make-offer` | JSON: `note`, `offer_amount{currency_code,value}`, `offer_type` ∈ `REFUND`, `REFUND_WITH_RETURN`, `REFUND_WITH_REPLACEMENT`, `REPLACEMENT_WITHOUT_REFUND`; `return_shipping_address` when returning | 📄 |
@@ -167,6 +167,8 @@ Enable only those actions in the toolkit configuration (`disputes: { list, get, 
 | Acknowledge return | `POST /v1/customer/disputes/{id}/acknowledge-return-item` | stretch | 📄 |
 | **Sandbox only:** require evidence | `POST /v1/customer/disputes/{id}/require-evidence` | `{ "action": "SELLER_EVIDENCE" }`; needs status `UNDER_REVIEW` + link present | 📄 |
 | **Sandbox only:** adjudicate | `POST /v1/customer/disputes/{id}/adjudicate` | `{ "adjudication_outcome": "SELLER_FAVOR" \| "BUYER_FAVOR" }`; needs `UNDER_REVIEW` + link present | 📄 |
+
+Webhooks: `GET/POST /v1/notifications/webhooks` ✅ Nov 11 (list debug `ca58cdea11f52`); webhook `3FV32316LX9093800` → `https://counterclaim.aansl.com/webhooks/paypal`.
 
 Supported evidence file types and size limits: researcher to confirm (expected PDF/JPG/PNG/GIF, ~10 MB per file). Keep our PDF < 2 MB.
 

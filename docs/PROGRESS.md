@@ -1,28 +1,25 @@
 # Counterclaim — Progress
 
-## ⏸ Status summary (Wed Nov 11 01:20 MSK) — paused, blocked on Needs Schreuder #1 and #2
+## ▶ Status summary (Wed Nov 11 14:20 MSK): PayPal connected, waiting on the sandbox buyer login (Needs Schreuder #2)
 
-**What works now:** the whole product is built and deployed at **https://counterclaim.aansl.com** (repo: https://github.com/krantro2938/counterclaim, public, MIT). Shop (`/shop`), Overview, Disputes inbox (AG Grid, live SSE), Case page (verdict, hybrid score, fact-cited reasoning, editable proposals + approval dialog, timeline, trace, PayPal-links tab, evidence PDF, chat), Orders & Protection, Settings, Lab. Worker: webhooks, 60 s poller, agent, executor. The agent is verified end to end on local fixtures with Inception **Mercury** (tools mode, 4.5–9 s, sensible verdicts for all three storylines). 33 tests, `pnpm check` green. Video: data-independent HyperFrames scenes built (`video/`, 63 s).
+**New since 01:20:** PayPal sandbox app credentials are in both `.env` files. Token ✅ (scopes include disputes read/update/create, refunds, webhooks; no `shipping/trackers` scope listed, so tracking upload gets tested on the first shipment). `GET /v1/customer/disputes` 200 (0 disputes). `POST /v2/checkout/orders` 200. Webhook `3FV32316LX9093800` registered → `https://counterclaim.aansl.com/webhooks/paypal`. Server redeployed: Settings → Connection shows token OK + webhook ID; worker poller running. UI redesigned to a calm card workspace (see Decisions).
 
-**Not done, because no real PayPal call has been possible yet:** G0 sandbox truth, any real purchase/dispute, webhook registration, verifying the dispute action shapes → G1/G2/G3/G4 exit criteria. The code for all of it exists and is tested against mocks.
+**Blocking next step:** a real purchase and a real dispute need the sandbox **buyer** logged in to the browser connected to the Claude extension (#2). The sandbox login page appeared at 14:15; per the brief I stopped that browser task.
 
 **What's left for you, in order:**
-1. PayPal sandbox app credentials into `.env` (Needs Schreuder #1, below). I'm watching `.env` and will continue automatically (G0 checks, webhook registration, server deploy).
-2. Log the sandbox **buyer** into the browser connected to the Claude extension (#2), so I can make purchases and open disputes (see `docs/DEMO.md`).
-3. Activate the Mistral workspace plan (#4) for the Voxtral voice-over; or plan to record the VO yourself.
-4. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
+1. Log in at https://www.sandbox.paypal.com as the sandbox **personal** account in the extension-connected browser (#2).
+2. Activate the Mistral workspace plan (#4) for the Voxtral voice-over; or plan to record the VO yourself.
+3. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
 
-**Known issues:** this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com` (public DNS is fine): `sudo systemctl restart systemd-resolved` before recording. Shop checkout shows "unavailable" until creds are deployed. The deployed app is empty until real sandbox data exists.
+**Known issues:** this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com` (public DNS is fine): `sudo systemctl restart systemd-resolved` before recording.
 
-_Last update: Wed Nov 11 00:45 MSK · Current gate: **G0 (late, blocked on PayPal creds)** · G1/G2 code complete, waiting on real sandbox data_
+_Last update: Wed Nov 11 14:20 MSK · Current gate: **G0 (late)**: token/disputes/orders/webhook verified; needs one real purchase + dispute_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
 ## Needs Schreuder (blocking first)
 
-1. **PayPal sandbox credentials (blocks every real PayPal call, G0–G2 exit criteria).** The browser connected to the Claude extension ("Browser 1") shows the PayPal **login page** on both developer.paypal.com and sandbox.paypal.com.
-   - developer.paypal.com → Apps & Credentials → **Sandbox** → Create App "Counterclaim" (Merchant, linked to the sandbox *business* account). Put **Client ID** and **Secret** into the local `.env` as `PAYPAL_CLIENT_ID=…` / `PAYPAL_CLIENT_SECRET=…`. In the app's feature list, make sure **Disputes** is ticked (and Orders/Payments, Shipping tracking, Transaction search).
-   - Then I'll run `pnpm tsx --env-file=.env scripts/paypal-check.ts --register-webhook https://counterclaim.aansl.com/webhooks/paypal`, copy creds + webhook id to the server `.env`, and redeploy.
+1. ~~PayPal sandbox credentials~~ ✅ done Nov 11 (token, disputes, orders, webhook verified; server redeployed).
 2. **Sandbox buyer login in the connected browser.** Log in at https://www.sandbox.paypal.com as the sandbox **personal** account (Dashboard → Testing Tools → Sandbox Accounts → personal → View/Edit for the password). Needed to pay in `/shop` and open disputes in the Resolution Center. Also stay logged in to developer.paypal.com in the same browser.
 3. _(optional)_ `ANTHROPIC_API_KEY` in `.env` for the Claude-vs-Mercury comparison at G2. Without it the demo runs on Mercury (works well, see below).
 4. **Mistral API key has zero quota** (blocks Voxtral voice-over). `/v1/models` → 200, but every chat/TTS call returns 429 with `x-ratelimit-limit-req-minute: 0`. In https://console.mistral.ai → your workspace → **Billing / Plans**, activate a plan (the free "Experiment" tier or pay-as-you-go) so the key gets a non-zero rate limit. Then run: `pnpm tsx --env-file=.env video/tools/tts.ts --id 03 --text "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting." --voices voice_478,voice_3150,en_paul_neutral --out video/audio/candidates` (Sheila, James, Paul-neutral) and pick one. Fallback per VIDEO.md §3: record the VO yourself.
@@ -42,7 +39,7 @@ Verdict: model only gets a read-only toolkit; action space checked 3× (validato
 Verify-first list when creds arrive (in order): token → `GET disputes?page_size=1` (403 = Disputes feature off) → purchase stores capture → Mark shipped (trackers-batch `errors[]` empty) → open INR dispute, dump raw `links` + `seller_transaction_id` into SPEC §6.5 → send-message (JSON vs multipart) → escalate → require-evidence → provide-evidence (+PDF, confirms `evidence-file`) → adjudicate SELLER_FAVOR → spare disputes: accept-claim (toolkit) + make-offer → register webhook, see `SUCCESS`.
 
 ## In progress / next
-- [ ] G0 sandbox truth (blocked #1): run `scripts/paypal-check.ts`, one purchase + one dispute, fill SPEC §6.5, mark ✅ in SPEC §6.3.
+- [ ] G0 sandbox truth: ✅ token, list disputes, create order, webhooks (SPEC §6.3 marked). Still needed (blocked #2): one purchase + capture, Mark shipped (tracking scope), one INR dispute → fill SPEC §6.5.
 - [x] README draft · webhook/REST tests with mocked fetch (30 tests) · agent chat (F15) · mobile QA of Overview/Inbox/Case (fixed overflow).
 - [x] Video (data-independent part): HyperFrames project in `video/` with scenes 1–3, chapter cards (Prevent/Defend/Decide), 11 (architecture), 12 (outro) = 63 s, `check` ok (remaining warnings: fine print under 28 px, no audio yet). `video/tools/tts.ts` (Voxtral, 429-backoff, 48 kHz, −16 LUFS, 300 ms pads). Voice candidates **blocked** (Needs Schreuder #4); local Kokoro fallback failed (espeak data path bug), dropped.
 - [ ] After G4: `video/script.md` from real demo data, render scenes, VO.
