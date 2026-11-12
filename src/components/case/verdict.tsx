@@ -215,7 +215,6 @@ export function OutcomeCard({ detail }: { detail: DisputeDetail }) {
 			)}
 			aria-label="Outcome"
 		>
-			{won && <span className="won-line absolute inset-x-0 top-0 h-1 bg-won" />}
 			<div className="flex items-center gap-2 text-sm">
 				{won ? <Trophy className="size-4 text-won" /> : null}
 				<span
