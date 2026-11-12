@@ -5,7 +5,7 @@
 **State:** Counterclaim runs end to end on the real PayPal sandbox at https://counterclaim.aansl.com. 14 sandbox purchases, 7 real disputes. Every PayPal action is verified through the product (message, offer, escalate, accept, evidence + PDF, sandbox require-evidence/adjudicate), with debug IDs in SPEC §6.3 and the README. Two real wins: **Recovered $112.00** (SKD $48 + ZHG $64, both `RESOLVED_SELLER_FAVOUR` after our evidence). Expert gate reviews: G0/G1 pass, G2/G3 pass; all requested fixes are in. No console errors on the main routes after the hydration fix. Video: graphics reel and 8 scene clips are rendered (`video/out/`); `video/script.md` uses real data with decided fallbacks.
 
 **What's left for you, in order:**
-1. **Buyer login** (Claude tab group, "Log in to your account"), then tell me: I file the story-2 SNAD inquiry on spare bowl #9015 (needs ~10 min before it's filmable).
+1. ~~Buyer login~~ ✅ 13:34: story-2 dispute PP-R-MGU-10200190 is filmable (offer proposal, 84%); spares PP-R-GSQ-10200192 (story 1) and PP-R-KMX-10200193 (story 3) filed.
 2. **Record** per `docs/DEMO.md` → "Recording day" (takes A–D, off-camera steps listed). Story 1 recipe on DMM: Lab *Require evidence* → film *Approve* → about 20 min later Lab *Adjudicate → Seller wins* → film *Won · $64*. Don't run `demo:reset`.
 3. **Voice-over:** a Mistral key from the workspace that has the TTS limits, in `.env` as `MISTRAL_API_KEY`. Otherwise record it yourself or use captions (decided fallback by 16:00).
 4. **Devpost + YouTube** before 20:00 (SPEC §12 checklist).
