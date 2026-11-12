@@ -38,11 +38,11 @@ Solo and small e-commerce sellers who take payments with PayPal Checkout on thei
 | Shipment tracking | Orders → *Mark shipped* | `POST /v2/checkout/orders/{id}/track`. (The Agent Toolkit's `create_shipment_tracking` uses legacy trackers-batch, which returns 403 without the trackers scope; we detect that and fall back.) The buyer sees the tracking in the Resolution Center | ✅ debug `f529941972613` |
 | Disputes: list + show | webhooks, poller, agent tool | `links[]` = the agent's action space; `evidences[]` with `REQUESTED_FROM_SELLER` = the evidence types PayPal accepts | ✅ |
 | Disputes: provide-evidence | executor | multipart (`input` JSON + `evidence-file` PDF), evidence type picked from what PayPal requested | ✅ debug `f803079a5ba6c` |
-| Disputes: send-message | executor | JSON `{ message }` | ✅ debug `f57361941fe6f` |
+| Disputes: send-message | executor | JSON `{ message }` | ✅ debug `f411215f6b996` (approved in the UI) |
 | Disputes: make-offer | executor | JSON, partial `REFUND` with note | ✅ debug `f68670898eba2` |
 | Disputes: escalate | executor, Lab | JSON `{ note }` | ✅ debug `f324049286c13` |
 | Disputes: accept-claim | executor | Agent Toolkit `accept_dispute_claim` | ✅ case resolved, refund shown to the buyer |
-| Disputes sandbox: require-evidence, adjudicate | Lab page | drive the sandbox lifecycle; only offered when PayPal's links include them | partial: refused on claims until PayPal adds the links |
+| Disputes sandbox: require-evidence, adjudicate | Lab page | drive the sandbox lifecycle; only offered when PayPal's links include them | ✅ `ca590c4679c59`, `f7362910fdfb0` (a real *Won · $48*) |
 | Webhooks + signature verification | `POST /webhooks/paypal` | `verify-webhook-signature`, stored once per `event.id`; `PAYMENT.CAPTURE.COMPLETED`, `CUSTOMER.DISPUTE.*` | ✅ all events verified |
 | Transaction search | agent tool | Agent Toolkit `list_transactions` | ✅ |
 

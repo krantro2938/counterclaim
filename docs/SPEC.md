@@ -166,7 +166,7 @@ Enable only those actions in the toolkit configuration (`disputes: { list, get, 
 | Escalate | `POST /v1/customer/disputes/{id}/escalate` | `note`; → UNDER_REVIEW (links: self). 422 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` if sent while the dispute is mid-transition (right after send-message); retry once the link is present | ✅ Nov 12, 200, debug `f324049286c13` (PP-R-CXI-10199610) |
 | Acknowledge return | `POST /v1/customer/disputes/{id}/acknowledge-return-item` | stretch | 📄 |
 | **Sandbox only:** require evidence | `POST /v1/customer/disputes/{id}/require-evidence` | `{ "action": "SELLER_EVIDENCE" }`. Works only once the `require_evidence` link is present (~26 min into `UNDER_REVIEW`); before that 400 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`. → `WAITING_FOR_SELLER_RESPONSE` with `provide_evidence`, evidences requested PROOF_OF_FULFILLMENT/PROOF_OF_REFUND/PROOF_OF_DELIVERY_SIGNATURE | ✅ Nov 12, debug `ca590c4679c59` (ZHG) |
-| **Sandbox only:** adjudicate | `POST /v1/customer/disputes/{id}/adjudicate` | `{ "adjudication_outcome": "SELLER_FAVOR" \| "BUYER_FAVOR" }`. 400 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` on a buyer-filed claim in `UNDER_REVIEW` after evidence (debug `f910492cdd30c`) | ❌ on buyer-filed claims |
+| **Sandbox only:** adjudicate | `POST /v1/customer/disputes/{id}/adjudicate` | `{ "adjudication_outcome": "SELLER_FAVOR" \| "BUYER_FAVOR" }`. Only while the `adjudicate` link is present (appears ~17–26 min into `UNDER_REVIEW`, can disappear hours later); otherwise 400 `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` | ✅ Nov 12, debug `f7362910fdfb0` → PP-R-SKD-10199604 `RESOLVED_SELLER_FAVOUR` |
 
 Webhooks: `GET/POST /v1/notifications/webhooks` ✅ Nov 11 (list debug `ca58cdea11f52`); webhook `3FV32316LX9093800` → `https://counterclaim.aansl.com/webhooks/paypal`.
 
@@ -195,7 +195,7 @@ Buyer files in the Resolution Center ("Report a problem"). What the buyer answer
         accept_claim_types: REFUND, PARTIAL_REFUND, REFUND_WITH_RETURN, REFUND_WITH_RETURN_SHIPMENT_LABEL
         └─ provide_evidence (OTHER + PDF) → UNDER_REVIEW, links: provide_supporting_info
 ```
-- Sandbox `require-evidence` and `adjudicate` both return `ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE` on these buyer-filed claims. Still to test: INQUIRY → merchant `escalate` → `adjudicate`.
+- Sandbox `require-evidence` and `adjudicate` only work while PayPal shows their links (~17–26 min into `UNDER_REVIEW`; gone again hours later). Verified: SKD evidence → `UNDER_REVIEW` → adjudicate SELLER_FAVOR → `RESOLVED_SELLER_FAVOUR`.
 - Webhooks `CUSTOMER.DISPUTE.CREATED` arrive ~3–4 min after filing; `UPDATED` on each state change. `GET /v1/customer/disputes` (list) lags much longer, so the poller is only a fallback.
 - Buyer sees our uploaded tracking ("Here's the tracking information for your order") before being allowed to file an INR.
 - Second batch (filed without "contacted the seller"): an **INR whose order has our tracking still went straight to `UNDER_REVIEW` (links: provide_supporting_info)**, like the "Yes" case; an INR without tracking and an SNAD started as inquiries in `WAITING_FOR_SELLER_RESPONSE` (SNAD without provide_evidence).
