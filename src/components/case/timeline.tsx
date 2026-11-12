@@ -99,7 +99,7 @@ export function CaseTimeline({ detail }: { detail: DisputeDetail }) {
 					<span
 						aria-hidden
 						className={cn(
-							"absolute -left-[29px] top-1.5 size-2.5 rounded-full ring-4 ring-background",
+							"absolute -left-[calc(1.8125rem+0.5px)] top-1.5 size-2.5 rounded-full ring-4 ring-background",
 							ACTOR_COLOR[it.actor] ?? "bg-muted-foreground",
 						)}
 					/>
