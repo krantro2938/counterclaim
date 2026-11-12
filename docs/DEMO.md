@@ -2,6 +2,25 @@
 
 Everything here uses the **PayPal sandbox** and the deployed app at https://counterclaim.aansl.com. Sandbox-only steps happen on **/app/lab** (labelled "Sandbox controls"), never on camera.
 
+## ▶ Recording day (Thu Nov 12): the cast is ready
+
+Real sandbox cases on https://counterclaim.aansl.com. Light theme, 1440×900, zoom 110%.
+
+| Take | Case | State now | Off camera first | On camera |
+|---|---|---|---|---|
+| A Prevent | Order **#9009** Morning Mugs $36 (unshipped, *At risk*) | ready | nothing | Overview → Orders → #9009 *Mark shipped* → *Protected* |
+| B Defend | **PP-R-DMM-10199608**, vase #9010, $64, INR claim under PayPal review | `UNDER_REVIEW` with `require_evidence` link | Lab → this dispute → **Require evidence** (~1 min later the proposal "Fight with tracking evidence" appears) | Inbox → open the case → verdict, fact chips, Trace → evidence PDF → **Approve** → toast with debug ID |
+| B′ Won | same | after evidence: `UNDER_REVIEW`; the `adjudicate` link appears ~17–26 min later | Lab → **Adjudicate → Seller wins** (only offered once PayPal adds the link) | Case page → *Won · $64.00 recovered* |
+| C Decide | fresh SNAD inquiry on spare bowl **#9015** (shipped, delivered, glaze messages) | **needs one buyer login** to file: "different / not as described" → Colour, **skip "contacted the seller"** | wait ~5 min for `WAITING_FOR_SELLER_RESPONSE` + assessment | proposal "Offer a $12 partial refund" → edit the amount → **Approve** |
+| D Honest | **PP-R-CXI-10199610**, towels #9008, $22, never shipped | `WAITING_FOR_SELLER_RESPONSE`, *Accept and refund* 2% | nothing | open case → "never protected" link → **Approve** accept |
+| (proof) | PP-R-SKD-10199604, bowl #9011 | **Won · $48.00** (real `RESOLVED_SELLER_FAVOUR`) | — | usable as a cutaway if B′'s link is slow |
+
+Spares if a take goes wrong: vases #9014/#9017 (shipped + delivered), bowl #9018 (shipped, glaze), towels #9016/#9019 (unshipped). Each needs a buyer login to file a dispute.
+
+Don't run `pnpm demo:reset` on the deployed app before recording: it clears action history (UCV would show *lost* instead of *settled*). Lab actions and approvals are logged in the timeline anyway.
+
+---
+
 ## 0. One-time
 1. Creds in both `.env` files (local + `aeza-de:~/counterclaim/.env`), redeploy.
 2. `pnpm tsx --env-file=.env scripts/paypal-check.ts --register-webhook https://counterclaim.aansl.com/webhooks/paypal` → put the printed `PAYPAL_WEBHOOK_ID` in the server `.env`, redeploy.
