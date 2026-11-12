@@ -20,5 +20,12 @@ export default defineConfig({
 			"@paypal/agent-toolkit",
 		],
 	},
-	plugins: [nitro(), tailwindcss(), tanstackStart(), viteReact()],
+	plugins: [
+		// React-PDF resolves its built-in fonts through package.json "imports" ("#standard-fonts/…"),
+		// which breaks when Nitro inlines it into _libs: ship it as real node_modules packages instead.
+		nitro({ traceDeps: ["@react-pdf/renderer*", "@react-pdf/font*", "pdfkit*"] }),
+		tailwindcss(),
+		tanstackStart(),
+		viteReact(),
+	],
 });
