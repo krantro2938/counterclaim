@@ -27,32 +27,31 @@ TAKES = {
     "W": REC / "take-B2-won.mp4",
     "C": REC / "take-C-decide.mp4",
     "D": REC / "take-D-honest.mp4",
+    "P": REC / "take-P-pdf.mp4",
 }
 
 # Virtual camera per take, in source seconds: (t, zoom, centre x, centre y) on the 1920×1080 frame.
 # Between keyframes the camera eases (smoothstep); repeat a keyframe to hold.
 CAM = {
-    "A": [(0, 1, 960, 540), (1.2, 1, 960, 540), (2.2, 1.4, 700, 420), (4.5, 1.4, 700, 420), (5.3, 1, 960, 540),
-          (8.6, 1, 960, 540), (9.5, 1.5, 1230, 470), (17.6, 1.5, 1230, 470), (18.5, 1.5, 1300, 760),
-          (46.9, 1.5, 1300, 760), (47.0, 1.4, 760, 800), (99, 1.4, 760, 800)],
-    "B": [(0, 1, 960, 540), (0.8, 1, 960, 540), (1.8, 1.25, 1060, 480), (5.0, 1.25, 1060, 480), (5.8, 1, 960, 540),
-          (6.2, 1, 960, 540), (6.9, 1.3, 640, 640), (8.2, 1.3, 640, 640), (9.0, 1.5, 1380, 420), (11.9, 1.5, 1380, 420),
-          (12.6, 1.5, 680, 640), (21.9, 1.5, 680, 640), (22.0, 1.4, 1380, 520), (23.6, 1.4, 1380, 520),
-          (24.4, 1.45, 1430, 500), (28.9, 1.45, 1430, 500), (29.6, 1.4, 1000, 520), (38.4, 1.4, 1000, 520),
-          (39.2, 1.45, 1500, 700), (99, 1.45, 1500, 700)],
-    "T": [(0, 1.6, 690, 720), (99, 1.6, 690, 720)],
-    "W": [(0, 1, 960, 540), (1.8, 1, 960, 540), (3.6, 1.5, 1350, 400), (99, 1.5, 1350, 400)],
-    "C": [(0, 1.25, 1060, 480), (2.6, 1.25, 1060, 480), (3.3, 1, 960, 540), (3.7, 1, 960, 540), (4.4, 1.4, 720, 600),
-          (6.6, 1.4, 720, 600), (7.3, 1.5, 1380, 420), (8.8, 1.5, 1380, 420), (9.5, 1.6, 1400, 800),
-          (20.2, 1.6, 1400, 800), (20.8, 1.45, 1050, 560), (28.4, 1.45, 1050, 560), (29.2, 1.4, 1440, 700),
-          (99, 1.4, 1440, 700)],
-    "D": [(0, 1, 960, 540), (1.0, 1, 960, 540), (2.0, 1.5, 1450, 520), (99, 1.5, 1450, 520)],
+    "A": [(0, 1, 960, 540), (9.0, 1, 960, 540), (10.0, 1.2, 1250, 500), (17.6, 1.2, 1250, 500),
+          (18.3, 1.2, 1300, 760), (99, 1.2, 1300, 760)],
+    "B": [(0, 1, 960, 540), (8.6, 1, 960, 540), (9.4, 1.2, 1300, 420), (12.0, 1.2, 1300, 420), (12.6, 1, 960, 540),
+          (21.9, 1, 960, 540), (22.0, 1.15, 1300, 520), (29.0, 1.15, 1300, 520), (29.6, 1.15, 1000, 520),
+          (38.9, 1.15, 1000, 520), (39.6, 1.2, 1450, 700), (99, 1.2, 1450, 700)],
+    "T": [(0, 1.3, 690, 700), (99, 1.3, 690, 700)],
+    "P": [(0, 1.2, 900, 540), (99, 1.2, 900, 540)],
+    "W": [(0, 1, 960, 540), (2.0, 1, 960, 540), (3.6, 1.25, 1300, 400), (99, 1.25, 1300, 400)],
+    "C": [(0, 1, 960, 540), (4.0, 1, 960, 540), (4.8, 1.2, 760, 560), (6.6, 1.2, 760, 560), (7.3, 1.2, 1300, 420),
+          (8.8, 1.2, 1300, 420), (9.5, 1.3, 1400, 800), (20.2, 1.3, 1400, 800), (20.8, 1.2, 1050, 560),
+          (28.4, 1.2, 1050, 560), (29.2, 1.2, 1440, 700), (99, 1.2, 1440, 700)],
+    "D": [(0, 1, 960, 540), (1.0, 1, 960, 540), (2.0, 1.2, 1400, 520), (99, 1.2, 1400, 520)],
 }
 
 
-def P(src, a, b, speed=1.0):
-    """A part: a take key (flexes to fit the VO, gets the camera) or a scene file (plays at 1x)."""
-    return (src, a, b, speed)
+def P(src, a, b, cue=None):
+    """A part: source range [a, b] that starts on screen when the VO reaches `cue` seconds
+    (word timings from ElevenLabs speech-to-text, audio/vo/words). The first part starts at 0."""
+    return (src, a, b, cue)
 
 
 # id, parts, vo line, vo offset into the segment, crossfade from the previous segment
@@ -60,14 +59,17 @@ SEGMENTS = [
     ("01", [P(G("s01-opener"), 0, 99)], "01", 0.5, 0),
     ("02", [P(G("s02-problem"), 0, 99)], "02", 0.3, 0.3),
     ("03", [P(G("s03-title"), 0, 99)], "03", 0.3, 0.3),
-    ("04", [P(G("ch-prevent"), 0, 1.6), P("A", 0.6, 5.2, 0.85), P("A", 5.2, 15.3), P("A", 15.3, 17.9, 2),
-            P("A", 17.9, 21.5), P("A", 47.0, 50.0)], "04", 0.25, 0.3),
-    ("05", [P(G("ch-defend"), 0, 2.0), P("B", 0.0, 5.8, 0.9)], "05", 0.25, 0.3),
-    ("06", [P("B", 5.8, 8.4, 0.6), P("B", 8.4, 12.2, 0.7), P("B", 12.2, 21.6, 1.8), P("T", 2.2, 7.6)], "06", 0.2, 0),
-    ("07", [P("B", 22.0, 29.2), P("B", 29.2, 34.2), P("B", 34.2, 38.8, 2.5), P("B", 38.8, 42.4)], "07", 0.2, 0),
+    ("04", [P(G("ch-prevent"), 0, 2.0), P("A", 0.0, 4.6, 2.0), P("A", 4.5, 6.0, 7.9), P("A", 7.0, 11.2, 9.2),
+            P("A", 11.2, 15.0, 14.4), P("A", 15.0, 15.5, 17.8), P("A", 15.5, 18.0, 18.1), P("A", 18.0, 21.5, 18.9)],
+     "04", 0.25, 0.3),
+    ("05", [P(G("ch-defend"), 0, 2.0), P("B", 0.0, 5.5, 1.9)], "05", 0.25, 0.3),
+    ("06", [P("B", 5.95, 8.3), P("B", 8.3, 12.3, 5.8), P("B", 12.3, 16.5, 12.4), P("T", 2.0, 8.0, 14.0)], "06", 0.2, 0),
+    ("07", [P("B", 22.0, 23.8), P("P", 1.3, 9.0, 3.0), P("B", 29.4, 31.3, 7.6), P("B", 31.3, 33.9, 9.9),
+            P("B", 33.9, 39.2, 11.3), P("B", 39.2, 42.4, 15.8)], "07", 0.2, 0),
     ("08", [P("W", 1.5, 7.6)], "08", 0.3, 0.4),
-    ("09", [P(G("ch-decide"), 0, 1.6), P("C", 1.0, 3.6), P("C", 3.6, 6.8, 0.8), P("C", 6.8, 8.8, 0.6), P("C", 8.8, 11.2),
-            P("C", 20.0, 24.6, 1.5), P("C", 24.6, 28.7, 2.5), P("C", 28.7, 31.0)], "09", 0.25, 0.3),
+    ("09", [P(G("ch-decide"), 0, 2.0), P("C", 1.7, 3.4, 2.2), P("C", 3.95, 6.8, 3.2), P("C", 6.8, 8.9, 7.3),
+            P("C", 8.9, 11.2, 12.7), P("C", 20.4, 23.7, 14.4), P("C", 23.7, 28.6, 16.1), P("C", 28.6, 31.5, 17.0)],
+     "09", 0.25, 0.3),
     ("10", [P("D", 0.5, 11.5)], "10", 0.3, 0.3),
     ("11", [P(G("s11-architecture"), 0, 99)], "11", 0.4, 0.3),
     ("12", [P(G("s12-outro"), 0, 99)], "12", 0.5, 0.3),
@@ -75,7 +77,7 @@ SEGMENTS = [
 # Source times of cursor clicks per take (from frame-difference spikes), for click sounds.
 CLICKS = {
     "A": [4.67, 11.3, 15.1],
-    "B": [5.43, 12.57, 20.7, 23.85, 29.1, 31.3, 33.93],
+    "B": [5.43, 12.57, 23.85, 31.3, 33.93],
     "C": [3.2, 9.2, 20.9, 23.67],
 }
 MUSIC = ROOT / "audio" / "music" / "vaitsez-trap-beat.mp3"  # "Trap - Trap Beat" by vaitsez, Pixabay licence
@@ -121,7 +123,7 @@ def camera(take, a):
     )
 
 
-def build_part(sid, i, src, a, b, speed):
+def build_part(sid, i, src, a, b, speed, length=None):
     take = src if isinstance(src, str) else None
     path = TAKES[take] if take else src
     b = min(b, dur(path))
@@ -129,27 +131,33 @@ def build_part(sid, i, src, a, b, speed):
     cam = camera(take, a) if take else ""
     run([
         "-ss", f"{a}", "-to", f"{b}", "-i", str(path),
-        "-vf", f"{cam}setpts=(PTS-STARTPTS)/{speed:.4f},fps=30,scale=1920:1080:flags=lanczos,format=yuv420p",
+        "-vf", f"{cam}setpts=(PTS-STARTPTS)/{speed:.4f},fps=30,scale=1920:1080:flags=lanczos,format=yuv420p"
+        + (f",tpad=stop_mode=clone:stop_duration=5,trim=duration={length:.3f}" if length else ""),
         "-an", "-c:v", "libx264", "-crf", "14", "-preset", "fast", "-threads", "4", str(part),
     ])
     return part
 
 
-def build_segment(sid, parts, target):
-    """Fit the parts to `target` seconds: recording parts share one speed factor; scenes play at 1x."""
-    fixed = sum(min(b, dur(s)) - a for s, a, b, _ in parts if not isinstance(s, str))
-    flex = sum((b - a) / sp for s, a, b, sp in parts if isinstance(s, str))
-    if flex:
-        k = max(0.75, min(3.0, flex / max(target - fixed, 0.5)))
-        parts = [(s, a, b, sp * k if isinstance(s, str) else sp) for s, a, b, sp in parts]
-    else:  # scene-only segment: cut it to length
-        s, a, b, sp = parts[0]
-        parts = [(s, a, min(b, a + target, dur(s)), sp)]
-    files = [build_part(sid, i, *p) for i, p in enumerate(parts)]
+def build_segment(sid, parts, target, at):
+    """Lay the parts out on the VO's word cues: each part fills the time until the next cue, its
+    speed set to fit (within 0.4x..4x; beyond that it is trimmed or holds its last frame)."""
+    starts = [0.0] + [at + p[3] for p in parts[1:]]
+    ends = starts[1:] + [target]
+    laid = []
+    for (src, a, b, _), t0, t1 in zip(parts, starts, ends):
+        length = t1 - t0
+        if isinstance(src, str):
+            sp = max(0.4, min(4.0, (b - a) / length))
+        else:
+            b = min(b, dur(src))
+            sp = 1.0
+        laid.append((src, a, b, sp, length))
+    parts = [(s_, a, b, sp) for s_, a, b, sp, _ in laid]
+    files = [build_part(sid, i, s_, a, b, sp, ln) for i, (s_, a, b, sp, ln) in enumerate(laid)]
     clicks, off = [], 0.0
-    for f, (s_, a, b, sp) in zip(files, parts):
+    for f, (s_, a, b, sp, ln) in zip(files, laid):
         if isinstance(s_, str):
-            clicks += [off + (c - a) / sp for c in CLICKS.get(s_, []) if a <= c < b]
+            clicks += [off + (c - a) / sp for c in CLICKS.get(s_, []) if a <= c < b and (c - a) / sp < ln - 0.05]
         off += dur(f)
     lst = TMP / f"seg{sid}.txt"
     lst.write_text("".join(f"file '{f}'\n" for f in files))
@@ -192,7 +200,7 @@ def main():
     for sid, parts, vo, at, fade in SEGMENTS:
         vo_d = dur(VO / f"seg-{vo}.wav")
         target = at + vo_d + TAIL.get(sid, DEFAULT_TAIL)
-        seg, seg_clicks = build_segment(sid, parts, target)
+        seg, seg_clicks = build_segment(sid, parts, target, at)
         start = t - fade if segs else 0.0
         segs.append((seg, fade, start))
         sfx += [("click", start + c) for c in seg_clicks]
@@ -283,7 +291,6 @@ def main():
     final = OUT / "counterclaim-demo.mp4"
     run([
         "-i", str(video), "-i", str(mixed),
-        "-vf", f"ass={ass}",
         "-c:v", "libx264", "-crf", "21", "-preset", "medium", "-threads", "4", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(final),
     ])

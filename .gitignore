@@ -19,3 +19,5 @@ video/node_modules
 *.log
 coverage
 scripts/tmp-*
+video/tools/__pycache__/
+video/audio/music/

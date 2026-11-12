@@ -319,6 +319,23 @@ const takes = {
 		});
 	},
 
+	/** Defend, insert: the evidence packet PDF (rendered on demand, so it shows the current design). Read-only. */
+	async P(page) {
+		const id = process.env.T_CASE ?? CASES.defend;
+		await page.goto(`${BASE}/app/disputes/${id}`, { waitUntil: "networkidle2" });
+		await settle(page);
+		await record(page, "take-P-pdf", async () => {
+			await sleep(400);
+			await page.goto(`${BASE}/api/disputes/${id}/evidence-preview`, { waitUntil: "networkidle2" }).catch(() => {});
+			await sleep(2500);
+			await page.mouse.move(720, 500, { steps: 20 });
+			await wheel(page, 400, 24);
+			await sleep(1800);
+			await wheel(page, 500, 24);
+			await sleep(1800);
+		});
+	},
+
 	/** Decide: SNAD case → partial refund proposal → adjust amount → Approve. */
 	async C(page) {
 		await page.goto(`${BASE}/app/disputes`, { waitUntil: "networkidle2" });

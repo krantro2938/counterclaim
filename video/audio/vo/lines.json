@@ -9,6 +9,6 @@
  ["08", "In the sandbox, PayPal rules for the seller. The case closes as won, and Maya keeps her sixty four dollars."],
  ["09", "Not every case is worth a fight. This buyer says the glaze looks different, but the listing warned that every piece varies. So Counterclaim suggests a small partial refund to keep the customer happy. Maya bumps the offer to fifteen dollars, approves it, and PayPal sends it to the buyer."],
  ["10", "And when a case can't be won, it says so. No tracking ever reached PayPal for this order, so it recommends accepting the claim, and points to how the next one could have been protected."],
- ["11", "Under the hood, PayPal webhooks, the PayPal Agent Toolkit and the Disputes API. The AI can only read and propose. It can only pick actions PayPal currently allows, and a person approves every move."],
+ ["11", "Under the hood it runs on PayPal webhooks, the Agent Toolkit and the Disputes API. The AI only reads and suggests, and nothing reaches PayPal until a person says yes."],
  ["12", "Counterclaim. Stop losing disputes you should win."]
 ]
