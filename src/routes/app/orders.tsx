@@ -215,8 +215,8 @@ export function ShipButton({
 					{ship.isPending ? "Sending to PayPal…" : "Confirm and add tracking"}
 				</Button>
 				<p className="tabular text-[11px] text-muted-foreground">
-					Agent Toolkit create_shipment_tracking → POST
-					/v1/shipping/trackers-batch
+					POST /v2/checkout/orders/{"{id}"}/track (Agent Toolkit
+					create_shipment_tracking first; it needs the trackers scope)
 				</p>
 			</PopoverContent>
 		</Popover>

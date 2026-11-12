@@ -7,5 +7,8 @@
     "check": "npx --yes hyperframes@0.9.31 check",
     "render": "npx --yes hyperframes@0.9.31 render",
     "publish": "npx --yes hyperframes@0.9.31 publish"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.15.0"
   }
 }
