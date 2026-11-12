@@ -1,14 +1,14 @@
 [
- ["01", "Maya runs Kiln and Thread, a two-person ceramics shop. Last year she lost over eleven hundred dollars to PayPal disputes she should have won."],
+ ["01", "Maya runs Kiln and Thread, a small ceramics shop that takes payments through PayPal. Last year she lost over eleven hundred dollars to disputes she should have won."],
  ["02", "The evidence usually exists. A tracking number, a delivery scan, a polite email thread. But pulling it together takes close to an hour per case, against a deadline."],
- ["03", "Counterclaim is an AI agent that prevents disputes, and fights the ones worth fighting."],
- ["04", "It watches every order. This one has no tracking, so it isn't covered by Seller Protection. One click sends tracking to PayPal, and the order is protected."],
- ["05", "When a buyer opens a dispute, PayPal's webhook brings it into the inbox within minutes, already scored."],
- ["06", "Counterclaim builds a case file from PayPal, the order and the shipment. It scores the case twice, with fixed rules and with an AI model, and every reason links to a fact. The trace shows which PayPal Agent Toolkit tools it called."],
- ["07", "It drafts the evidence packet and the response, but nothing is sent until Maya approves. Then it submits the tracking and the evidence packet through PayPal's Disputes API."],
- ["08", "In the sandbox, PayPal rules for the seller. Sixty-four dollars kept."],
- ["09", "Not every case should be fought. The listing warned that glaze colour varies, so it suggests a small partial refund to keep the customer. Maya adjusts it and sends the offer."],
- ["10", "And when a case can't be won, it says so, and points to how the next one could have been prevented."],
+ ["03", "So we built Counterclaim, an AI agent that prevents disputes, and fights the ones worth fighting."],
+ ["04", "It starts before anything goes wrong. The overview shows money at risk, money recovered, and how many orders are protected. On the Orders page, this one has no tracking, so PayPal's Seller Protection won't cover it. Maya clicks Mark shipped, Counterclaim generates a tracking number and sends it to PayPal, and the order is protected."],
+ ["05", "When a buyer opens a dispute, PayPal's webhook brings it into the inbox within minutes, already scored, with a recommendation and a deadline."],
+ ["06", "Inside the case, Counterclaim has built a case file from PayPal, the order and the shipment. It scores the case twice, with fixed rules and with an AI model, and lands on ninety three percent. Every reason links to a fact, and the trace shows which PayPal Agent Toolkit tools the model called."],
+ ["07", "Then it drafts the response and an evidence packet, a PDF with the tracking, the delivery scan and the buyer's own messages. Nothing goes to PayPal until Maya approves. One click, and the evidence is submitted through PayPal's Disputes API, and PayPal confirms it."],
+ ["08", "In the sandbox, PayPal rules for the seller. The case closes as won, and Maya keeps her sixty four dollars."],
+ ["09", "Not every case is worth a fight. This buyer says the glaze looks different, but the listing warned that every piece varies. So Counterclaim suggests a small partial refund to keep the customer happy. Maya bumps the offer to fifteen dollars, approves it, and PayPal sends it to the buyer."],
+ ["10", "And when a case can't be won, it says so. No tracking ever reached PayPal for this order, so it recommends accepting the claim, and points to how the next one could have been protected."],
  ["11", "Under the hood, PayPal webhooks, the PayPal Agent Toolkit and the Disputes API. The AI can only read and propose. It can only pick actions PayPal currently allows, and a person approves every move."],
  ["12", "Counterclaim. Stop losing disputes you should win."]
 ]

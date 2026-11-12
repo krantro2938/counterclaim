@@ -301,6 +301,24 @@ const takes = {
 		});
 	},
 
+	/** Defend, insert: the Trace tab (which Agent Toolkit tools the model called). Read-only. */
+	async T(page) {
+		const id = process.env.T_CASE ?? CASES.defend;
+		await page.goto(`${BASE}/app/disputes/${id}`, { waitUntil: "networkidle2" });
+		await settle(page);
+		await record(page, "take-T-trace", async () => {
+			await sleep(700);
+			await click(page, await find(page, "button", "Trace", { exact: true }));
+			await sleep(1600);
+			const rows = await page.$$("main li, main tr, main details");
+			for (const r of rows.slice(0, 3)) {
+				await moveTo(page, r).catch(() => {});
+				await sleep(900);
+			}
+			await sleep(1200);
+		});
+	},
+
 	/** Decide: SNAD case → partial refund proposal → adjust amount → Approve. */
 	async C(page) {
 		await page.goto(`${BASE}/app/disputes`, { waitUntil: "networkidle2" });
