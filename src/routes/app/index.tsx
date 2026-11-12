@@ -8,6 +8,7 @@ import {
 	SlidersHorizontal,
 	Truck,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { KpiTile } from "#/components/kpi-tile";
 import { Money } from "#/components/money";
 import {
@@ -34,6 +35,10 @@ export const Route = createFileRoute("/app/")({ component: Overview });
 type OverviewDto = Awaited<ReturnType<typeof getOverview>>;
 
 function Overview() {
+	// Date and greeting depend on the viewer's clock/time zone: set after mount so the
+	// server-rendered HTML (UTC) never disagrees with the browser (React hydration #418).
+	const [now, setNow] = useState<Date | null>(null);
+	useEffect(() => setNow(new Date()), []);
 	const interval = useFallbackInterval();
 	const q = useQuery({
 		queryKey: qk.overview,
@@ -53,8 +58,8 @@ function Overview() {
 	return (
 		<Page>
 			<PageHeader
-				eyebrow={`${formatDate(new Date())} · ${d?.storeName ?? "Kiln & Thread"}`}
-				title={`${greeting()}, ${d?.ownerName ?? "Maya"}`}
+				eyebrow={`${now ? `${formatDate(now)} · ` : ""}${d?.storeName ?? "Kiln & Thread"}`}
+				title={`${now ? greeting(now) : "Welcome back"}, ${d?.ownerName ?? "Maya"}`}
 			/>
 
 			{q.isError && (
