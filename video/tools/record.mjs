@@ -309,8 +309,10 @@ const takes = {
 		await record(page, "take-T-trace", async () => {
 			await sleep(500);
 			await click(page, await find(page, "button", "Reasoning", { exact: true }));
+			await page.evaluate(() => document.activeElement?.blur());
 			await sleep(1200);
 			await click(page, await find(page, "button", "Trace", { exact: true }));
+			await page.evaluate(() => document.activeElement?.blur());
 			await sleep(1600);
 			const rows = await page.$$("main li, main tr, main details");
 			for (const r of rows.slice(0, 3)) {
@@ -327,10 +329,13 @@ const takes = {
 		await page.goto(`${BASE}/app/disputes/${id}`, { waitUntil: "networkidle2" });
 		await settle(page);
 		await record(page, "take-P-pdf", async () => {
+			// Park the pointer in the corner: the PDF viewer draws its own cursor next to ours.
+			await page.mouse.move(1439, 809);
+			mx = 1439;
+			my = 809;
 			await sleep(400);
 			await page.goto(`${BASE}/api/disputes/${id}/evidence-preview`, { waitUntil: "networkidle2" }).catch(() => {});
 			await sleep(2500);
-			await page.mouse.move(720, 500, { steps: 20 });
 			await wheel(page, 400, 24);
 			await sleep(1800);
 			await wheel(page, 500, 24);
