@@ -155,7 +155,7 @@ function DisputesInbox() {
 						<SelectTrigger size="sm" className="w-44" aria-label="Reason">
 							<SelectValue />
 						</SelectTrigger>
-						<SelectContent>
+						<SelectContent position="popper" align="start" sideOffset={6}>
 							<SelectItem value="all">All reasons</SelectItem>
 							{Object.entries(REASON_LABELS).map(([k, v]) => (
 								<SelectItem key={k} value={k}>
