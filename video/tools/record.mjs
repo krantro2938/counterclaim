@@ -307,7 +307,9 @@ const takes = {
 		await page.goto(`${BASE}/app/disputes/${id}`, { waitUntil: "networkidle2" });
 		await settle(page);
 		await record(page, "take-T-trace", async () => {
-			await sleep(700);
+			await sleep(500);
+			await click(page, await find(page, "button", "Reasoning", { exact: true }));
+			await sleep(1200);
 			await click(page, await find(page, "button", "Trace", { exact: true }));
 			await sleep(1600);
 			const rows = await page.$$("main li, main tr, main details");
