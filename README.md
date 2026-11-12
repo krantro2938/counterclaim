@@ -2,7 +2,7 @@
 
 **An AI dispute agent for small PayPal merchants.** Counterclaim watches every order, keeps each one eligible for PayPal Seller Protection, and when a buyer opens a dispute it builds the case, scores it, and fights it with the right evidence, or recommends settling when fighting would lose. A human approves every money-moving action.
 
-**Live demo:** https://counterclaim.aansl.com (PayPal sandbox) · **Shop:** https://counterclaim.aansl.com/shop · **Video (2:32):** https://youtu.be/MfJ15A1PkwM · **Devpost:** https://devpost.com/software/counterclaim-zxiy5o
+**Live demo:** https://counterclaim.aansl.com (PayPal sandbox) · **Shop:** https://counterclaim.aansl.com/shop · **Video (2:30):** https://youtu.be/B_ailqDUGIc · **Devpost:** https://devpost.com/software/counterclaim-zxiy5o
 
 > Small sellers lose disputes they should win. The evidence exists (a tracking number, a delivery scan, a polite message thread) but gathering it takes 30–60 minutes per case, the deadline is short, and many sellers give up. Counterclaim turns a dispute into a 30-second decision: it reads the claim, assembles the evidence, explains its reasoning, and submits through PayPal's Disputes API once the seller taps *Approve*.
 
