@@ -21,3 +21,13 @@ coverage
 scripts/tmp-*
 video/tools/__pycache__/
 video/audio/music/
+
+# Working material kept locally, not part of the product repo
+video/
+docs/PROGRESS.md
+docs/VIDEO.md
+docs/DEMO.md
+docs/DESIGN.md
+CLAUDE.md
+.claude/
+.vscode/
