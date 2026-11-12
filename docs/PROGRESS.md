@@ -1,18 +1,13 @@
 # Counterclaim — Progress
 
-## ▶ Final summary (Thu Nov 12 12:30 MSK): G0–G3 passed (Expert); G4 waits on recording. Everything left needs you.
+## ▶ Final summary (Thu Nov 12 17:30 MSK): SUBMITTED. Video public, Devpost submitted, G0–G4 done
 
-**State:** Counterclaim runs end to end on the real PayPal sandbox at https://counterclaim.aansl.com. 14 sandbox purchases, 7 real disputes. Every PayPal action is verified through the product (message, offer, escalate, accept, evidence + PDF, sandbox require-evidence/adjudicate), with debug IDs in SPEC §6.3 and the README. Two real wins: **Recovered $112.00** (SKD $48 + ZHG $64, both `RESOLVED_SELLER_FAVOUR` after our evidence). Expert gate reviews: G0/G1 pass, G2/G3 pass; all requested fixes are in. No console errors on the main routes after the hydration fix. Video: graphics reel and 8 scene clips are rendered (`video/out/`); `video/script.md` uses real data with decided fallbacks.
+- **Devpost:** https://devpost.com/software/counterclaim-zxiy5o (submitted, editable until 23:00 MSK). Story, 18 tags, demo + repo links, 6 gallery images, thumbnail, all additional-info answers. Sponsor tool set to **AG Grid** (it was preset to Render, which we don't use).
+- **Video:** https://youtu.be/ry1AxQ0w4rw (public, 2:25, 1080p, burned-in captions, ElevenLabs VO "Sarah"). Built from HyperFrames scenes + headless recordings of the deployed app (`video/tools/record.mjs`, `video/tools/assemble.py`). Every PayPal moment is real: evidence approve (DMM, debug `f261359a2abe2`) → sandbox adjudicate (`f24902948fa5f`) → *Won · $64*; offer $15 (MGU, `f963419003e8c`); tracking (#9009 via v2 /track).
+- **Live app:** https://counterclaim.aansl.com. Three real wins now (SKD $48, ZHG $64, DMM $64). Evidence PDF preview fixed in production (React-PDF/pdfkit traced as node_modules).
+- **Nothing left that blocks submission.** Optional: a reply on the YouTube/Devpost pages, a US sandbox buyer for nicer names.
 
-**What's left for you, in order:**
-1. ~~Buyer login~~ ✅ 13:34: story-2 dispute PP-R-MGU-10200190 is filmable (offer proposal, 84%); spares PP-R-GSQ-10200192 (story 1) and PP-R-KMX-10200193 (story 3) filed.
-2. **Record** per `docs/DEMO.md` → "Recording day" (takes A–D, off-camera steps listed). Story 1 recipe on DMM: Lab *Require evidence* → film *Approve* → about 20 min later Lab *Adjudicate → Seller wins* → film *Won · $64*. Don't run `demo:reset`.
-3. **Voice-over:** a Mistral key from the workspace that has the TTS limits, in `.env` as `MISTRAL_API_KEY`. Otherwise record it yourself or use captions (decided fallback by 16:00).
-4. **Devpost + YouTube** before 20:00 (SPEC §12 checklist).
-
-**Known issues:** sandbox adjudicate links appear ~17–26 min into review and disappear hours later; the sandbox only accepts evidence type OTHER (tracking goes in the notes + PDF); the buyer is "John DoeskipKYC" (UK), see Needs Schreuder #5; the laptop's resolver caches NXDOMAIN for the domain (`sudo systemctl restart systemd-resolved`).
-
-_Last update: Thu Nov 12 12:30 MSK · Current gate: **G4**: G0–G3 passed (Expert); recording + submission are Schreuder's_
+_Last update: Thu Nov 12 17:30 MSK · Status: **submitted** (Devpost + public YouTube video)_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
