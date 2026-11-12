@@ -1,13 +1,13 @@
 # Counterclaim — Progress
 
-## ▶ Final summary (Thu Nov 12 17:30 MSK): SUBMITTED. Video public, Devpost submitted, G0–G4 done
+## ▶ Final summary (Thu Nov 12 22:25 MSK): DONE. Submitted; final video public; earlier video cuts unlisted
 
 - **Devpost:** https://devpost.com/software/counterclaim-zxiy5o (submitted, editable until 23:00 MSK). Story, 18 tags, demo + repo links, 6 gallery images, thumbnail, all additional-info answers. Sponsor tool set to **AG Grid** (it was preset to Render, which we don't use).
 - **Video:** https://youtu.be/ygv1x-Tzltc (public, 2:30, 1080p, shots cut to ElevenLabs speech-to-text word timings, continuous ElevenLabs VO "Sarah", music "Trap - Trap Beat" by vaitsez via Pixabay, synthesised click/whoosh SFX, virtual-camera zooms; replaces the first cut https://youtu.be/ry1AxQ0w4rw which had dead air). Built from HyperFrames scenes + headless recordings of the deployed app (`video/tools/record.mjs`, `video/tools/assemble.py`). Every PayPal moment is real: evidence approve (DMM, debug `f261359a2abe2`) → sandbox adjudicate (`f24902948fa5f`) → *Won · $64*; offer $15 (MGU, `f963419003e8c`); tracking (#9009 via v2 /track).
 - **Live app:** https://counterclaim.aansl.com. Three real wins now (SKD $48, ZHG $64, DMM $64). Evidence PDF preview fixed in production (React-PDF/pdfkit traced as node_modules).
 - **Nothing left that blocks submission.** Optional: a reply on the YouTube/Devpost pages, a US sandbox buyer for nicer names.
 
-_Last update: Thu Nov 12 17:30 MSK · Status: **submitted** (Devpost + public YouTube video)_
+_Last update: Thu Nov 12 22:25 MSK · Status: **done** (Devpost submitted with the final video; evidence PDF redesigned as a formal report and deployed; earlier uploads ry1AxQ0w4rw, MfJ15A1PkwM, B_ailqDUGIc set to unlisted)_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
