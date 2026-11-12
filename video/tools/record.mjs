@@ -292,7 +292,8 @@ const takes = {
 
 	/** Defend, outcome: the case after PayPal's (sandbox) decision. */
 	async B2(page) {
-		await page.goto(`${BASE}/app/disputes/${CASES.defend}`, { waitUntil: "domcontentloaded" });
+		const id = process.env.B2_CASE ?? CASES.defend;
+		await page.goto(`${BASE}/app/disputes/${id}`, { waitUntil: "domcontentloaded" });
 		await record(page, "take-B2-won", async () => {
 			await sleep(1500);
 			await moveTo(page, await find(page, "*", "recovered"));

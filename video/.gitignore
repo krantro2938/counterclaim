@@ -5,3 +5,6 @@ node_modules
 recordings
 audio/*.wav
 !audio/candidates/
+audio/vo/*.wav
+audio/vo/*.mp3
+audio/candidates/*.mp3
