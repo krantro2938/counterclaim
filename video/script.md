@@ -34,6 +34,6 @@ The fresh dispute for story 2 needs one buyer login, filed at least 10 minutes b
 | 12 | 2:40–2:47 | `s12-outro` (live URL + GitHub) | Counterclaim. Stop losing disputes you should win. |
 
 ## Fallbacks (decided, don't improvise on the day)
-- **Scene 8, if sandbox adjudicate keeps failing:** show the case at "Evidence sent · with PayPal" and change the VO to "The evidence is with PayPal now, sent in under a minute of her time." Never show a "Won" that PayPal didn't produce.
+- **Scene 8, if sandbox adjudicate keeps failing:** show the case at "Evidence sent · with PayPal" and change the VO to "The evidence is with PayPal now, and PayPal makes the call." Never show a "Won" that PayPal didn't produce.
 - **Scene 9, if make-offer were unavailable:** use PP-R-SKD-10199604 (SNAD claim, listing-disclosure evidence accepted by PayPal, debug `f803079a5ba6c`) with VO "Here the listing warned that glaze colour varies, so it fights with that disclosure." (make-offer is verified: debug `f68670898eba2`.)
 - **Voice-over:** Voxtral if the Mistral plan is active by Thu 14:00; otherwise Schreuder records it, or burned-in captions only.

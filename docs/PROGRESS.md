@@ -25,6 +25,12 @@ _Last update: Thu Nov 12 12:10 MSK · Current gate: **G2/G3 (Expert review runni
 5. _(optional, video polish)_ **A US sandbox buyer with a realistic name.** The current personal account is "John DoeskipKYC" in the UK (GBP balance, USPS to Surrey looks odd on camera). Dashboard → Testing Tools → Sandbox Accounts → Create account → Personal, **United States**, then View/Edit → set first/last name (e.g. "Emma Clarke") and a password. Then log in with it once; I'll buy + file the video disputes with it.
 6. _(optional)_ PayPal Claude Code plugin (`/plugin install paypal@claude-plugins-official`). Not needed: `scripts/paypal-check.ts` covers inspection.
 
+## Expert gate review G2/G3 (Thu 12:10 MSK): PASS
+- **G2 pass:** case file, rubric, toolkit tools mode (DMM trace: get_dispute/get_order/list_transactions), validator dropping uncited points; provide-evidence + PDF via the deployed executor (ZHG `f716391bc91b8`), accept-claim (UCV), make-offer (YBB `f68670898eba2`), send-message approved in the UI (YBB `f411215f6b996`). 37/37 tests, tsc clean.
+- **G3 pass:** every screen on real data, add-tracking, autopilot off + tested, deployed with webhook `3FV32316LX9093800`.
+- Applied: public Reset locked (`LAB_RESET_ENABLED`, off on prod), "recommendations waiting" instead of avg decision time, readable 503 text in timeline/toast, script story 1 → DMM with honest scene 7/8 wording ("Sandbox adjudication" caption), docs updated. Decision: **no `demo:reset` before recording** (would drop debug IDs, PDFs, UCV *settled*).
+- G4 note (Expert): "runs clean twice" can't hold for irreversible PayPal actions; one clean take per story + the decided fallbacks.
+
 ## Expert gate review G0/G1 (Thu 01:30 MSK): PASS
 - **G0 pass:** verified shapes (token, order create/capture/show, v2 `/track`, dispute list/show, provide-evidence `f803079a5ba6c`, accept-claim via toolkit), toolkit + AI SDK 7 in tools mode (assessment 18 trace), 3 real disputes fetched, INQUIRY → WAITING_FOR_SELLER_RESPONSE → UNDER_REVIEW → RESOLVED observed (PP-R-UCV-10199605, `RESOLVED_BUYER_FAVOUR` after accept). send-message / make-offer / escalate moved into G2 exit criteria.
 - **G1 pass:** 8 captures, 19 verified + processed webhook events, worker up, inbox live via SSE, `pnpm test` 36/36, `pnpm check` 0 errors.
