@@ -9,6 +9,7 @@ export function KpiTile({
 	badge,
 	badgeTone = "muted",
 	to,
+	hash,
 	className,
 }: {
 	label: string;
@@ -18,6 +19,8 @@ export function KpiTile({
 	badgeTone?: "won" | "lost" | "deadline" | "muted";
 	spark?: number[];
 	to?: string;
+	/** Scroll target on the destination page (an element id). */
+	hash?: string;
 	className?: string;
 }) {
 	const tone = {
@@ -60,7 +63,11 @@ export function KpiTile({
 		</div>
 	);
 	return to ? (
-		<Link to={to} className="block rounded-[28px] focus-visible:outline-2">
+		<Link
+			to={to}
+			hash={hash}
+			className="block rounded-[28px] focus-visible:outline-2"
+		>
 			{body}
 		</Link>
 	) : (

@@ -355,6 +355,8 @@ function DisputesGrid({
 	const apiRef = useRef<GridApi<Row> | null>(null);
 	const current = useRef<Map<string, DisputeRowDto>>(new Map());
 	const lastMode = useRef<boolean | null>(null);
+	const groupedRef = useRef(grouped);
+	groupedRef.current = grouped;
 
 	const columnDefs = useMemo<ColDef<Row>[]>(
 		() => [
@@ -602,7 +604,14 @@ function DisputesGrid({
 					780,
 					Math.max(
 						260,
-						42 + rows.length * (dense ? 44 : 56) + (grouped ? 4 * 48 : 0) + 24,
+						42 +
+							rows.length * (dense ? 44 : 56) +
+							(grouped
+								? new Set(
+										rows.map((r) => statusInfo(r.status, r.outcome).label),
+									).size * 48
+								: 0) +
+							24,
 					),
 				),
 			}}
@@ -618,6 +627,33 @@ function DisputesGrid({
 				getRowId={(p: GetRowIdParams<Row>) => p.data.id}
 				onGridReady={onGridReady}
 				quickFilterText={quick}
+				// Column sorting would scatter the group header rows: keep each header on top of its own rows,
+				// with the user's sort applied inside the group.
+				postSortRows={(p) => {
+					if (!groupedRef.current) return;
+					const members = new Map<string, typeof p.nodes>();
+					const headers: typeof p.nodes = [];
+					for (const n of p.nodes) {
+						if (isGroup(n.data)) headers.push(n);
+						else if (n.data) {
+							const label = statusInfo(n.data.status, n.data.outcome).label;
+							members.set(label, [...(members.get(label) ?? []), n]);
+						}
+					}
+					headers.sort(
+						(a, b) =>
+							((GROUP_ORDER.indexOf((a.data as GroupRow).__group) + 99) % 99) -
+							((GROUP_ORDER.indexOf((b.data as GroupRow).__group) + 99) % 99),
+					);
+					p.nodes.splice(
+						0,
+						p.nodes.length,
+						...headers.flatMap((h) => [
+							h,
+							...(members.get((h.data as GroupRow).__group) ?? []),
+						]),
+					);
+				}}
 				isFullWidthRow={(p) => isGroup(p.rowNode.data)}
 				fullWidthCellRenderer={GroupHeader}
 				getRowHeight={(p) => (isGroup(p.data) ? 48 : dense ? 44 : 56)}

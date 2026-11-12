@@ -106,7 +106,8 @@ function Overview() {
 									badge={d.needsDecision ? "Review" : undefined}
 									badgeTone="deadline"
 									hint="recommendations waiting"
-									to="/app/disputes"
+									to="/app"
+									hash="needs"
 								/>
 								<KpiTile
 									label="Protected"
