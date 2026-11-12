@@ -107,10 +107,10 @@ function LabPage() {
 	const act = useLabAction();
 	const run = (path: string, label: string, body?: unknown) =>
 		act.mutate({ path, label, body });
+	// Sandbox controls only work while PayPal lists them (adjudicate/require-evidence appear
+	// ~17–26 min into UNDER_REVIEW and can disappear later), so follow the links strictly.
 	const has = (d: LabDto["disputes"][number], rel: string) =>
-		hasRel(d.links, rel) ||
-		((rel === "require-evidence" || rel === "adjudicate") &&
-			d.status === "UNDER_REVIEW");
+		hasRel(d.links, rel);
 
 	return (
 		<Page>
@@ -128,7 +128,8 @@ function LabPage() {
 					<span className="tabular text-xs">require-evidence</span>,{" "}
 					<span className="tabular text-xs">adjudicate</span>) or local
 					simulators (carrier scans, demo inbox). They stand in for time passing
-					and for PayPal's reviewers.
+					and for PayPal's reviewers. PayPal only allows them once it lists them
+					on the dispute, usually 15–30 minutes into a review.
 				</p>
 				<div className="mt-5 flex flex-wrap gap-2">
 					<Button
