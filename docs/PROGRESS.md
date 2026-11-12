@@ -1,19 +1,18 @@
 # Counterclaim — Progress
 
-## ▶ Status summary (Thu Nov 12 01:10 MSK): real sandbox data flowing; G0 nearly done, G2 actions half verified
+## ▶ Status summary (Thu Nov 12 12:10 MSK): product verified end to end on the real sandbox; ready to record
 
-**New since 23:25:** 8 real sandbox purchases (#9006–9013) captured and imported into the deployed app via verified webhooks. Tracking upload works (v2 `/track`; the toolkit's trackers-batch is 403 for this app). 3 real disputes filed in the Resolution Center, synced by webhook, assessed by Mercury (93% / 82% / 2%) and visible in the inbox. **provide-evidence (+PDF) ✅** and **accept-claim (toolkit) ✅** against the real sandbox. SPEC §6.5 now holds the observed state machine. Six real bugs fixed along the way (see Done).
-
-**Blocking next step:** fresh disputes filed as *inquiries* (buyer skips "contacted the seller"), to verify send-message / make-offer / escalate → adjudicate and to have clean storylines for the video. The buyer sandbox session expires ~15 min after each login, so each batch of buyer steps needs one login (#2).
+**Done since 01:10:** every G2 PayPal action works against the real sandbox: send-message, make-offer, escalate, accept-claim (toolkit), provide-evidence (+PDF), sandbox require-evidence and adjudicate. First real **won** case: PP-R-SKD-10199604, evidence (listing disclosure + PDF) → PayPal resolved in the seller's favour → *Won · $48.00 recovered*. Expert G0/G1: pass. Expert G2/G3 review is running. Graphics reel and scene clips rendered (`video/out/`), `video/script.md` written from real data. Deploys now ship a locally built image (3 min instead of 25).
 
 **What's left for you, in order:**
-1. One more buyer login in the Claude-connected browser (#2). I'll then buy 4 spares and file 3–4 inquiry disputes in one go.
-2. Activate the Mistral workspace plan (#4) for the Voxtral voice-over, or plan to record the VO yourself.
-3. _(optional)_ `ANTHROPIC_API_KEY` for the Claude vs Mercury comparison.
+1. **One buyer login** (sandbox, Claude tab group) so I can file the story-2 dispute on spare bowl #9015, ideally ≥ 10 min before you record.
+2. **Record** per `docs/DEMO.md` "Recording day" (takes A–D) and `video/script.md`. Off-camera steps are listed per take.
+3. **Voice-over:** create an API key in the Mistral workspace that shows the TTS limits (Handro → Default Workspace → API Keys) and put it in `counterclaim/.env` as `MISTRAL_API_KEY`; I'll generate the VO. Otherwise record it yourself or ship with captions (decided fallback).
+4. _(optional)_ A US sandbox buyer with a realistic name (Needs Schreuder #5).
 
-**Known issues:** sandbox `require-evidence`/`adjudicate` refuse buyer-filed claims (`ACTION_NOT_ALLOWED_IN_CURRENT_DISPUTE_STATE`); the sandbox dispute list lags (webhooks are the reliable path); this laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com`: `sudo systemctl restart systemd-resolved` before recording.
+**Known issues:** the sandbox adjudicate link comes and goes (17–26 min into review, gone again hours later), so film "Won" when the Lab shows it. The sandbox rejects PROOF_OF_FULFILLMENT, so evidence goes as OTHER with tracking in the notes (SPEC §6.3). This laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com`: `sudo systemctl restart systemd-resolved` before recording.
 
-_Last update: Thu Nov 12 01:10 MSK · Current gate: **G0 → G2 (late)**: real purchases, tracking, disputes, evidence and accept verified; send-message/make-offer/escalate pending fresh inquiries; Expert G0/G1 review running_
+_Last update: Thu Nov 12 12:10 MSK · Current gate: **G2/G3 (Expert review running) → G4**: all PayPal actions verified; waiting on one buyer login + recording_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
