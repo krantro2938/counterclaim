@@ -258,7 +258,7 @@ export function ActionProposal({
 					<p className="font-medium">
 						{String((action.error as { name?: string }).name ?? "Failed")}
 					</p>
-					<p>{String((action.error as { message?: string }).message ?? "")}</p>
+					<p>{errorText(action.error)}</p>
 					{(action.error as { debugId?: string }).debugId && (
 						<p className="tabular text-xs">
 							PayPal debug ID {(action.error as { debugId?: string }).debugId}
@@ -435,4 +435,14 @@ export function ApproveDialog({
 			</AlertDialogContent>
 		</AlertDialog>
 	);
+}
+
+/** PayPal sometimes answers with an empty body (e.g. a sandbox 503): say what happened instead. */
+function errorText(error: unknown): string {
+	const e = error as { message?: string; status?: number };
+	const msg = (e.message ?? "").trim();
+	if (msg) return msg;
+	if (e.status && e.status >= 500)
+		return `PayPal was unavailable (HTTP ${e.status}) and nothing was submitted. Safe to retry.`;
+	return e.status ? `PayPal returned HTTP ${e.status}.` : "Failed.";
 }
