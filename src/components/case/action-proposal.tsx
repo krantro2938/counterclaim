@@ -438,7 +438,7 @@ export function ApproveDialog({
 }
 
 /** PayPal sometimes answers with an empty body (e.g. a sandbox 503): say what happened instead. */
-function errorText(error: unknown): string {
+export function errorText(error: unknown): string {
 	const e = error as { message?: string; status?: number };
 	const msg = (e.message ?? "").trim();
 	if (msg) return msg;

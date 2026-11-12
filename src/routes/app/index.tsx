@@ -23,12 +23,7 @@ import { DeadlineChip, ReasonLabel } from "#/components/status";
 import { Skeleton } from "#/components/ui/skeleton";
 import { useFallbackInterval } from "#/hooks/use-live";
 import { api, qk } from "#/lib/api";
-import {
-	formatDate,
-	formatDuration,
-	greeting,
-	relativeTime,
-} from "#/lib/format";
+import { formatDate, greeting, relativeTime } from "#/lib/format";
 import { formatMoney } from "#/lib/money";
 import type { getOverview, OrderRowDto } from "#/server/queries";
 import { ErrorBox } from "./disputes.index";
@@ -105,11 +100,7 @@ function Overview() {
 									value={d.needsDecision}
 									badge={d.needsDecision ? "Review" : undefined}
 									badgeTone="deadline"
-									hint={
-										d.avgDecisionSeconds != null
-											? `avg. ${formatDuration(d.avgDecisionSeconds)} to decide`
-											: "recommendations waiting"
-									}
+									hint="recommendations waiting"
 									to="/app/disputes"
 								/>
 								<KpiTile

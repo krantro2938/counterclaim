@@ -35,6 +35,8 @@ const EnvSchema = z.object({
 	PUBLIC_BASE_URL: z.string().default("http://localhost:3000"),
 	WORKER_MODE: z.enum(["separate", "inprocess"]).default("separate"),
 	LAB_ENABLED: bool,
+	/** "Reset demo data" wipes the shared demo for every visitor: off unless set. */
+	LAB_RESET_ENABLED: bool,
 	LOG_LEVEL: z.string().default("info"),
 });
 

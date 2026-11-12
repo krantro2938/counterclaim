@@ -142,7 +142,7 @@ export async function executeAction(actionId: string): Promise<void> {
 		await recordActivity({
 			actor: "paypal",
 			kind: "action_failed",
-			text: `PayPal rejected ${actionLabel(a.type)}: ${error.message}`,
+			text: `PayPal rejected ${actionLabel(a.type)}: ${failureText(error)}`,
 			disputeId: a.disputeId,
 			meta: { actionId: a.id, error },
 		});
@@ -369,4 +369,13 @@ function withTracking(
 	if (evidenceType === "PROOF_OF_FULFILLMENT" || !shipment) return notes;
 	if (notes.includes(shipment.trackingNumber)) return notes;
 	return `${notes}\n\nTracking: ${shipment.carrier} ${shipment.trackingNumber} (uploaded to PayPal; full delivery timeline in the attached PDF).`;
+}
+
+/** PayPal sometimes fails with an empty body (sandbox 503): say what happened instead of nothing. */
+function failureText(error: { message?: string; status?: number }): string {
+	const msg = (error.message ?? "").trim();
+	if (msg) return msg;
+	if (error.status && error.status >= 500)
+		return `PayPal was unavailable (HTTP ${error.status}); nothing was submitted`;
+	return error.status ? `HTTP ${error.status}` : "unknown error";
 }

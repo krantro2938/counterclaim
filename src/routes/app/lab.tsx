@@ -41,6 +41,7 @@ import { ErrorBox } from "./disputes.index";
 export const Route = createFileRoute("/app/lab")({ component: LabPage });
 
 type LabDto = {
+	resetEnabled?: boolean;
 	disputes: {
 		id: string;
 		status: string;
@@ -138,32 +139,34 @@ function LabPage() {
 					>
 						<RefreshCw className="size-3.5" /> Sync now
 					</Button>
-					<AlertDialog>
-						<AlertDialogTrigger asChild>
-							<Button size="sm" variant="outline" className="bg-card">
-								Reset demo data
-							</Button>
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Reset demo data?</AlertDialogTitle>
-								<AlertDialogDescription>
-									Clears assessments, actions, activity and the local dispute
-									cache. Orders, products and policies stay. Disputes re-sync
-									from PayPal within a minute and are assessed again. Nothing is
-									changed in PayPal.
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel>Cancel</AlertDialogCancel>
-								<AlertDialogAction
-									onClick={() => run("/api/lab/reset", "Demo data reset")}
-								>
-									Reset
-								</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
+					{q.data?.resetEnabled && (
+						<AlertDialog>
+							<AlertDialogTrigger asChild>
+								<Button size="sm" variant="outline" className="bg-card">
+									Reset demo data
+								</Button>
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>Reset demo data?</AlertDialogTitle>
+									<AlertDialogDescription>
+										Clears assessments, actions, activity and the local dispute
+										cache. Orders, products and policies stay. Disputes re-sync
+										from PayPal within a minute and are assessed again. Nothing
+										is changed in PayPal.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel>Cancel</AlertDialogCancel>
+									<AlertDialogAction
+										onClick={() => run("/api/lab/reset", "Demo data reset")}
+									>
+										Reset
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					)}
 				</div>
 			</div>
 

@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import {
 	ActionProposal,
 	ApproveDialog,
+	errorText,
 } from "#/components/case/action-proposal";
 import { AgentChat } from "#/components/case/agent-chat";
 import { EvidencePreview } from "#/components/case/evidence-preview";
@@ -115,7 +116,7 @@ function CasePage() {
 					});
 				if (a.status === "failed")
 					toast.error("PayPal rejected the action", {
-						description: `${(a.error as { message?: string } | null)?.message ?? ""}${(a.error as { debugId?: string } | null)?.debugId ? ` · debug ${(a.error as { debugId?: string }).debugId}` : ""}`,
+						description: `${errorText(a.error)}${(a.error as { debugId?: string } | null)?.debugId ? ` · debug ${(a.error as { debugId?: string }).debugId}` : ""}`,
 					});
 			}
 			prevStatuses.current.set(a.id, a.status);

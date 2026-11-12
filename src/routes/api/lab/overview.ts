@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { desc } from "drizzle-orm";
 import { db } from "#/server/db/client";
 import { carrierEvents, disputes, shipments } from "#/server/db/schema";
+import { env } from "#/server/env";
 import { handle, json, labGuard } from "#/server/http";
 import { listOrderRows, recentWebhooks } from "#/server/queries";
 
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/api/lab/overview")({
 					})),
 					orders: await listOrderRows(),
 					webhooks: await recentWebhooks(),
+					resetEnabled: env().LAB_RESET_ENABLED,
 				});
 			}),
 		},
