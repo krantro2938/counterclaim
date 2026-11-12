@@ -1,18 +1,18 @@
 # Counterclaim — Progress
 
-## ▶ Status summary (Thu Nov 12 12:10 MSK): product verified end to end on the real sandbox; ready to record
+## ▶ Final summary (Thu Nov 12 12:30 MSK): G0–G3 passed (Expert); G4 waits on recording. Everything left needs you.
 
-**Done since 01:10:** every G2 PayPal action works against the real sandbox: send-message, make-offer, escalate, accept-claim (toolkit), provide-evidence (+PDF), sandbox require-evidence and adjudicate. First real **won** case: PP-R-SKD-10199604, evidence (listing disclosure + PDF) → PayPal resolved in the seller's favour → *Won · $48.00 recovered*. Expert G0/G1: pass. Expert G2/G3 review is running. Graphics reel and scene clips rendered (`video/out/`), `video/script.md` written from real data. Deploys now ship a locally built image (3 min instead of 25).
+**State:** Counterclaim runs end to end on the real PayPal sandbox at https://counterclaim.aansl.com. 14 sandbox purchases, 7 real disputes. Every PayPal action is verified through the product (message, offer, escalate, accept, evidence + PDF, sandbox require-evidence/adjudicate), with debug IDs in SPEC §6.3 and the README. Two real wins: **Recovered $112.00** (SKD $48 + ZHG $64, both `RESOLVED_SELLER_FAVOUR` after our evidence). Expert gate reviews: G0/G1 pass, G2/G3 pass; all requested fixes are in. No console errors on the main routes after the hydration fix. Video: graphics reel and 8 scene clips are rendered (`video/out/`); `video/script.md` uses real data with decided fallbacks.
 
 **What's left for you, in order:**
-1. **One buyer login** (sandbox, Claude tab group) so I can file the story-2 dispute on spare bowl #9015, ideally ≥ 10 min before you record.
-2. **Record** per `docs/DEMO.md` "Recording day" (takes A–D) and `video/script.md`. Off-camera steps are listed per take.
-3. **Voice-over:** create an API key in the Mistral workspace that shows the TTS limits (Handro → Default Workspace → API Keys) and put it in `counterclaim/.env` as `MISTRAL_API_KEY`; I'll generate the VO. Otherwise record it yourself or ship with captions (decided fallback).
-4. _(optional)_ A US sandbox buyer with a realistic name (Needs Schreuder #5).
+1. **Buyer login** (Claude tab group, "Log in to your account"), then tell me: I file the story-2 SNAD inquiry on spare bowl #9015 (needs ~10 min before it's filmable).
+2. **Record** per `docs/DEMO.md` → "Recording day" (takes A–D, off-camera steps listed). Story 1 recipe on DMM: Lab *Require evidence* → film *Approve* → about 20 min later Lab *Adjudicate → Seller wins* → film *Won · $64*. Don't run `demo:reset`.
+3. **Voice-over:** a Mistral key from the workspace that has the TTS limits, in `.env` as `MISTRAL_API_KEY`. Otherwise record it yourself or use captions (decided fallback by 16:00).
+4. **Devpost + YouTube** before 20:00 (SPEC §12 checklist).
 
-**Known issues:** the sandbox adjudicate link comes and goes (17–26 min into review, gone again hours later), so film "Won" when the Lab shows it. The sandbox rejects PROOF_OF_FULFILLMENT, so evidence goes as OTHER with tracking in the notes (SPEC §6.3). This laptop's resolver caches NXDOMAIN for `counterclaim.aansl.com`: `sudo systemctl restart systemd-resolved` before recording.
+**Known issues:** sandbox adjudicate links appear ~17–26 min into review and disappear hours later; the sandbox only accepts evidence type OTHER (tracking goes in the notes + PDF); the buyer is "John DoeskipKYC" (UK), see Needs Schreuder #5; the laptop's resolver caches NXDOMAIN for the domain (`sudo systemctl restart systemd-resolved`).
 
-_Last update: Thu Nov 12 12:10 MSK · Current gate: **G2/G3 (Expert review running) → G4**: all PayPal actions verified; waiting on one buyer login + recording_
+_Last update: Thu Nov 12 12:30 MSK · Current gate: **G4**: G0–G3 passed (Expert); recording + submission are Schreuder's_
 
 **Live:** https://counterclaim.aansl.com · **Repo:** https://github.com/krantro2938/counterclaim (public, MIT)
 
